@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Books</title>
+  </head>
+  <body>
+    <header>
+      <h1 id="mainLogo">TheDeadAuthorSociety</h1>
+
+      <nav>
+        <a href="About.html">About Us</a> |
+        <a href="Contact.html">Contact Us</a> |
+        <a href="Manage.html">Manage Books</a> |
+        <a href="Add_Book.html">Add Book</a> |
+        <a href="Profile.html">My profile</a>
+        <!-- if the user is logged in then show the logout btn -->
+        <!-- if hte user is not logged in, then show the login and signup btns -->
+        <!-- it the user is logged in as an admin, then show the manage books page -->
+        <!-- if user is admin, show add new book btn -->
+      </nav>
+    </header>
+
+    <hr />
+
+    <main>
+      <h2>Manage Books</h2>
+      <hr />
+      <p>Here you can manage the books in the library.</p>
+
+      <!-- we can do a for loop if we are using js, fetching all books and make a book card for them -->
+      <!-- for now i would make eight cards as a reference -->
+
+      <!-- here we should add a search bar -->
+
+      <div class="bookContainer">
+        <div class="bookCard">
+          <h3>And Then There Were None</h3>
+          <p>Author: Agatha Christie</p>
+          <p>Category: Mystery</p>
+          <p>Description: A classic mystery novel.</p>
+          <p>Availability: In Stock (8 copies)</p>
+          <!-- a btn that adds a new copy in the stock for that book -->
+          <button>+</button>
+          <button>Edit</button>
+          <button>Delete</button>
+        </div>
+        <div class="bookCard">
+          <h3>Steal like an Artist</h3>
+          <p>Author: Agatha Christie</p>
+          <p>Category: Mystery</p>
+          <p>Description: A classic mystery novel.</p>
+          <!-- in stock or fully borrowed -->
+          <p>Availability: In Stock</p>
+          <p>No. of Copies: 8</p>
+          <!-- a btn that adds a new copy in the stock for that book -->
+          <button>+</button>
+          <button>Edit</button>
+          <button>Delete</button>
+        </div>
+        <div class="bookCard">
+          <h3>Rich Dad Poor Dad</h3>
+          <p>Author: Agatha Christie</p>
+          <p>Category: Mystery</p>
+          <p>Description: A classic mystery novel.</p>
+          <p>Availability: In Stock (8 copies)</p>
+          <!-- a btn that adds a new copy in the stock for that book -->
+          <button>+</button>
+          <button>Edit</button>
+          <button>Delete</button>
+        </div>
+        <div class="bookCard">
+          <h3>A good girl's guide to murder</h3>
+          <p>Author: Agatha Christie</p>
+          <p>Category: Mystery</p>
+          <p>Description: A classic mystery novel.</p>
+          <p>Availability: In Stock (8 copies)</p>
+          <!-- a btn that adds a new copy in the stock for that book -->
+          <button>+</button>
+          <button>Edit</button>
+          <button>Delete</button>
+        </div>
+      </div>
+    </main>
+
+    <hr />
+    <footer>
+      <a href="About.html">About Us</a> |
+      <a href="Contact.html">Contact Us</a>
+      <p>&copy; Library Management System. All rights reserved.</p>
+    </footer>
+  </body>
+</html>

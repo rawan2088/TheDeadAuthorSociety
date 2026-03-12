@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>Profile</title>
+  </head>
+
+  <body>
+    <header>
+      <h1 id="mainLogo">TheDeadAuthorSociety</h1>
+
+      <nav>
+        <a href="About.html">About Us</a> |
+        <a href="Contact.html">Contact Us</a> |
+        <a href="Manage.html">Manage Books</a> |
+        <a href="Add_Book.html">Add Book</a> |
+        <a href="Profile.html">My profile</a>
+        <!-- if the user is logged in then show the logout btn -->
+        <!-- if hte user is not logged in, then show the login and signup btns -->
+        <!-- it the user is logged in as an admin, then show the manage books page -->
+        <!-- if user is admin, show add new book btn -->
+      </nav>
+    </header>
+
+    <hr />
+    <h1>My profile</h1>
+    <form>
+      <h3><strong>Role : </strong>User</h3>
+      <hr />
+      <div>
+        <h3><strong>Username : </strong>Adham</h3>
+
+        <label for="user">Edit User Name : </label>
+        <input type="text" id="user" name="new_name" />
+        <br />
+
+        <hr />
+      </div>
+
+      <div>
+        <h3><strong>Email : </strong>Adham@gmail.com</h3>
+        <label for="email">Edit Email :</label>
+        <input type="email" id="email" name="newemail" />
+        <br />
+      </div>
+      <hr />
+      <div>
+        <label for="Cpass"> <b> Current Password : </b></label>
+        <input type="password" id="Cpass" />
+        <label for="pass"> <b> New password : </b></label>
+        <input type="password" id="pass" name="New password" />
+        <hr />
+      </div>
+
+      <input type="submit" value="Save Changes" />
+    </form>
+
+    <hr />
+    <footer>
+      <a href="About.html">About Us</a> |
+      <a href="Contact.html">Contact Us</a>
+      <p>&copy; Library Management System. All rights reserved.</p>
+    </footer>
+  </body>
+</html>
