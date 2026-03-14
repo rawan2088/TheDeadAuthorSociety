@@ -1,14 +1,22 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Borrowed</title>
-</head>
-<body>
-<header>
-    <h1 id="mainLogo">TheDeadAuthorSociety</h1>
+  </head>
+  <body>
+    <header>
+      <h1 id="mainLogo">TheDeadAuthorSociety</h1>
 
-    <nav>
+      <nav>
+        <a href="index.html">Home</a> | <a href="SearchPage.html">Search</a> |
+        <!-- <a href="new-arrivals.html">New Arrivals</a> | -->
+        <a href="Borrowed.html">My Books</a> |
+        <!-- we should make some pages show to only the admin, and some to logged in user only -->
+        <!-- for now we would show everything -->
+        <a href="CategoryPage.html">Categories</a> |
+        <a href="Manage.html">Manage Books</a>
+        <a href="login.html">Login</a> | <a href="signup.html">Sign Up</a> |
         <a href="About.html">About Us</a> |
         <a href="Contact.html">Contact Us</a> |
         <a href="Manage.html">Manage Books</a> |
@@ -18,110 +26,110 @@
         <!-- if hte user is not logged in, then show the login and signup btns -->
         <!-- it the user is logged in as an admin, then show the manage books page -->
         <!-- if user is admin, show add new book btn -->
-    </nav>
-</header>
-<hr/>
-<main>
-<div class="bookContainer">
-    <div class="bookCard">
-        <img
-                src="../Assets/book3.jpg"
-                height="200"
-                width="150"
-                alt="Call It What You Want"
-        />
-        <h3>Call It What You Want</h3>
-        <p><strong>Author:</strong> Brigid Kemmerer</p>
-        <p><strong>Published:</strong> 2023</p>
-        <p><strong>Category:</strong> Young Adult</p>
-        <p>
+      </nav>
+    </header>
+    <hr />
+    <main>
+      <div class="bookContainer">
+        <div class="bookCard">
+          <img
+            src="../Assets/book3.jpg"
+            height="200"
+            width="150"
+            alt="Call It What You Want"
+          />
+          <h3>Call It What You Want</h3>
+          <p><strong>Author:</strong> Brigid Kemmerer</p>
+          <p><strong>Published:</strong> 2023</p>
+          <p><strong>Category:</strong> Young Adult</p>
+          <p>
             <strong>Description:</strong> When his dad is caught embezzling
             funds from half the town, Rob goes from popular lacrosse player to
             social pariah, while Maegan hides secrets of her own.
-        </p>
-        <a href="./book3.html">Details</a>
-        <p><strong>Burrowed since: </strong>13/3/2026</p>
-        <p><strong>Return Deadline: </strong>23/3/2026</p>
-        <p><strong>Late Fee: </strong>You have no late fee</p>
-        <button>Return Book</button>
-    </div>
+          </p>
+          <a href="./book3.html">Details</a>
+          <p><strong>Burrowed since: </strong>13/3/2026</p>
+          <p><strong>Return Deadline: </strong>23/3/2026</p>
+          <p><strong>Late Fee: </strong>You have no late fee</p>
+          <button>Return Book</button>
+        </div>
 
-    <div class="bookCard">
-        <img
-                src="../Assets/book5.jpg"
-                height="200"
-                width="150"
-                alt="Betting on You"
-        />
-        <h3>Betting on You</h3>
-        <p><strong>Author:</strong> Lynn Painter</p>
-        <p><strong>Published:</strong> 2023</p>
-        <p><strong>Category:</strong> Romance</p>
-        <p>
+        <div class="bookCard">
+          <img
+            src="../Assets/book5.jpg"
+            height="200"
+            width="150"
+            alt="Betting on You"
+          />
+          <h3>Betting on You</h3>
+          <p><strong>Author:</strong> Lynn Painter</p>
+          <p><strong>Published:</strong> 2023</p>
+          <p><strong>Category:</strong> Romance</p>
+          <p>
             <strong>Description:</strong> When seventeen-year-old Bailey starts
             a new job at a hotel waterpark, she runs into Charlie — an old
             acquaintance whose cynicism clashes with her careful temperament.
-        </p>
-        <a href="./book5.html">Details</a>
-        <p><strong>Burrowed since: </strong>1/2/2026</p>
-        <p><strong>Return Deadline: </strong>10/2/2026</p>
-        <p><strong>Late Fee: </strong>LE 15</p>
-        <button>Return Book</button>
-    </div>
+          </p>
+          <a href="./book5.html">Details</a>
+          <p><strong>Burrowed since: </strong>1/2/2026</p>
+          <p><strong>Return Deadline: </strong>10/2/2026</p>
+          <p><strong>Late Fee: </strong>LE 15</p>
+          <button>Return Book</button>
+        </div>
 
-    <div class="bookCard">
-        <img
-                src="../Assets/book7.jpg"
-                height="200"
-                width="150"
-                alt="Steal Like an Artist"
-        />
-        <h3>Steal Like an Artist</h3>
-        <p><strong>Author:</strong> Austin Kleon</p>
-        <p><strong>Published:</strong> 2012</p>
-        <p><strong>Category:</strong> Self Help</p>
-        <p>
+        <div class="bookCard">
+          <img
+            src="../Assets/book7.jpg"
+            height="200"
+            width="150"
+            alt="Steal Like an Artist"
+          />
+          <h3>Steal Like an Artist</h3>
+          <p><strong>Author:</strong> Austin Kleon</p>
+          <p><strong>Published:</strong> 2012</p>
+          <p><strong>Category:</strong> Self Help</p>
+          <p>
             <strong>Description:</strong> A manifesto for the digital age — a
             guide with positive messages, illustrations, and exercises that puts
             readers directly in touch with their artistic side.
-        </p>
-        <a href="./book7.html">Details</a>
-        <p><strong>Burrowed since: </strong>1/4/2026</p>
-        <p><strong>Return Deadline: </strong>10/4/2026</p>
-        <p><strong>Late Fee: </strong>You have no late fee</p>
-        <button>Return Book</button>
-    </div>
+          </p>
+          <a href="./book7.html">Details</a>
+          <p><strong>Burrowed since: </strong>1/4/2026</p>
+          <p><strong>Return Deadline: </strong>10/4/2026</p>
+          <p><strong>Late Fee: </strong>You have no late fee</p>
+          <button>Return Book</button>
+        </div>
 
-    <div class="bookCard">
-        <img
-                src="../Assets/book9.jpg"
-                height="200"
-                width="150"
-                alt="Little Women"
-        />
-        <h3>Little Women</h3>
-        <p><strong>Author:</strong> Louisa May Alcott</p>
-        <p><strong>Published:</strong> 1868</p>
-        <p><strong>Category:</strong> Historical Fiction</p>
-        <p>
+        <div class="bookCard">
+          <img
+            src="../Assets/book9.jpg"
+            height="200"
+            width="150"
+            alt="Little Women"
+          />
+          <h3>Little Women</h3>
+          <p><strong>Author:</strong> Louisa May Alcott</p>
+          <p><strong>Published:</strong> 1868</p>
+          <p><strong>Category:</strong> Historical Fiction</p>
+          <p>
             <strong>Description:</strong> Generations of readers have fallen in
             love with the March sisters — Jo, Beth, Meg, and Amy — united in
             devotion to each other during the Civil War era.
-        </p>
-        <a href="./book9.html">Details</a>
-        <p><strong>Burrowed since: </strong>1/3/2026</p>
-        <p><strong>Return Deadline: </strong>10/3/2026</p>
-        <p><strong>Late Fee: </strong>LE 15</p>
-        <button>Return Book</button>
-    </div>
-</div>
-</main>
+          </p>
+          <a href="./book9.html">Details</a>
+          <p><strong>Burrowed since: </strong>1/3/2026</p>
+          <p><strong>Return Deadline: </strong>10/3/2026</p>
+          <p><strong>Late Fee: </strong>LE 15</p>
+          <button>Return Book</button>
+        </div>
+      </div>
+    </main>
 
-<hr/>
-<footer>
-    <a href="About.html">About Us</a> |
-    <a href="Contact.html">Contact Us</a>
-    <p>&copy; Library Management System. All rights reserved.</p>
-</footer>
-</body>
+    <hr />
+    <footer>
+      <a href="About.html">About Us</a> |
+      <a href="Contact.html">Contact Us</a>
+      <p>&copy; Library Management System. All rights reserved.</p>
+    </footer>
+  </body>
 </html>

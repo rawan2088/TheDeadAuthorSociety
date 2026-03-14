@@ -1,38 +1,69 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Signup - Online Library</title>
-</head>
-<body>
-    <h1>Get Started</h1>
+  </head>
+  <body>
+    <header>
+      <h1 id="mainLogo">TheDeadAuthorSociety</h1>
+
+      <nav>
+        <a href="index.html">Home</a> | <a href="SearchPage.html">Search</a> |
+        <!-- <a href="new-arrivals.html">New Arrivals</a> | -->
+        <a href="Borrowed.html">My Books</a> |
+        <!-- we should make some pages show to only the admin, and some to logged in user only -->
+        <!-- for now we would show everything -->
+        <a href="CategoryPage.html">Categories</a> |
+        <a href="Manage.html">Manage Books</a>
+        <a href="login.html">Login</a> | <a href="signup.html">Sign Up</a> |
+        <a href="About.html">About Us</a> |
+        <a href="Contact.html">Contact Us</a> |
+        <a href="Manage.html">Manage Books</a> |
+        <a href="Add_Book.html">Add Book</a> |
+        <a href="Profile.html">My profile</a>
+        <!-- if the user is logged in then show the logout btn -->
+        <!-- if hte user is not logged in, then show the login and signup btns -->
+        <!-- it the user is logged in as an admin, then show the manage books page -->
+        <!-- if user is admin, show add new book btn -->
+      </nav>
+    </header>
     <form action="signup-action.php" method="POST">
-        <label for="First Name">First Name</label>
-        <input type="text" id="first-name" name="first-name" required>
-        <label for="Last Name">Last Name</label> 
-        <input type="text" id="last-name" name="last-name" required>
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" required>
+      <label for="First Name">First Name</label>
+      <input type="text" id="first-name" name="first-name" required />
+      <label for="Last Name">Last Name</label>
+      <input type="text" id="last-name" name="last-name" required />
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" required />
 
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" required>
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required />
 
-        <label for="confirm-password">Confirm Password</label>
-        <input type="password" id="confirm-password" name="confirm-password" required>
+      <label for="confirm-password">Confirm Password</label>
+      <input
+        type="password"
+        id="confirm-password"
+        name="confirm-password"
+        required
+      />
 
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" required>
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required />
 
-        <label for="role-user">User</label>
-        <input type="radio" id="role-user" name="role" value="user" checked>
-        
-        <label for="role-admin">Admin</label>
-        <input type="radio" id="role-admin" name="role" value="admin">
+      <label for="role-user">User</label>
+      <input type="radio" id="role-user" name="role" value="user" checked />
 
-        <button type="Create Account">Create Account</button>
-    
+      <label for="role-admin">Admin</label>
+      <input type="radio" id="role-admin" name="role" value="admin" />
+
+      <button type="Create Account">Create Account</button>
     </form>
     <p>Already have an account? <a href="login.html">Login here</a></p>
-</body>
+    <footer>
+      <a href="About.html">About Us</a> |
+      <a href="Contact.html">Contact Us</a>
+      <p>&copy; Library Management System. All rights reserved.</p>
+    </footer>
+  </body>
 </html>

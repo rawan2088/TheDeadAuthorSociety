@@ -6,17 +6,34 @@
     <title>Online Library</title>
   </head>
   <body bgcolor="#f0f4f8">
-    <nav>
-      <a href="index.html">Home</a> | <a href="books.html">Browse Books</a> |
-      <!-- <a href="new-arrivals.html">New Arrivals</a> | -->
-      <a href="my-books.html">My Books</a> | <a href="login.html">Login</a> |
-      <a href="signup.html">Sign Up</a>
+    <header>
+      <h1 id="mainLogo">TheDeadAuthorSociety</h1>
+
+      <nav>
+        <a href="index.html">Home</a> | <a href="SearchPage.html">Search</a> |
+        <!-- <a href="new-arrivals.html">New Arrivals</a> | -->
+        <a href="Borrowed.html">My Books</a> |
+        <!-- we should make some pages show to only the admin, and some to logged in user only -->
+        <!-- for now we would show everything -->
+        <a href="CategoryPage.html">Categories</a> |
+        <a href="Manage.html">Manage Books</a>
+        <a href="login.html">Login</a> | <a href="signup.html">Sign Up</a> |
+        <a href="About.html">About Us</a> |
+        <a href="Contact.html">Contact Us</a> |
+        <a href="Manage.html">Manage Books</a> |
+        <a href="Add_Book.html">Add Book</a> |
+        <a href="Profile.html">My profile</a>
+        <!-- if the user is logged in then show the logout btn -->
+        <!-- if hte user is not logged in, then show the login and signup btns -->
+        <!-- it the user is logged in as an admin, then show the manage books page -->
+        <!-- if user is admin, show add new book btn -->
+      </nav>
       <br /><br />
       <form>
         <input type="text" name="search" placeholder="Search for a book..." />
         <button type="submit">Search</button>
       </form>
-    </nav>
+    </header>
 
     <h1>Welcome to the Online Library</h1>
     <p>Browse, search, and borrow books from our collection.</p>
@@ -107,11 +124,10 @@
       </li>
     </ul>
     <hr />
-    <p>
-      <a href="index.html">Home</a> | <a href="books.html">Browse</a> |
-      <a href="login.html">Login</a> |
-      <a href="signup.html">Sign Up</a>
-    </p>
-    <p>&copy; 2025 Online Library</p>
+    <footer>
+      <a href="About.html">About Us</a> |
+      <a href="Contact.html">Contact Us</a>
+      <p>&copy; Library Management System. All rights reserved.</p>
+    </footer>
   </body>
 </html>
