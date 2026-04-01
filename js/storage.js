@@ -247,33 +247,108 @@ function initializeData() {
 
 initializeData();
 
+function getUsers() {
+  return JSON.parse(localStorage.getItem("users")) || [];
+} // login + signup both need this
+
 function saveUser(user) {
-  let users = JSON.parse(localStorage.getItem("users")) || [];
+  let users = getUsers();
   users.push(user);
   localStorage.setItem("users", JSON.stringify(users));
-}
+} // signup needs this
 
-getUsers(); // login + signup both need this
-getUserByUsername(name); // login needs this
-updateUser(updatedUser); // profile page needs this
+function getUserByUsername(name) {
+  let users = getUsers();
+  return users.find((u) => u.username == name);
+} // login needs this
+// returns the object of the user with the given username
+
+function updateUser(updatedUser) {
+  let users = getUsers();
+  let index = users.findIndex((u) => u.id === updatedUser.id);
+
+  users[index] = updatedUser;
+
+  localStorage.setItem("users", JSON.stringify(users));
+}
+// profile page needs this
 
 // BOOKS
-saveBook(book); // add-book page needs this
-getBooks(); // home, search, manage, book template all need this
-getBookById(id); // book template + manage need this
-updateBook(updatedBook); // manage (edit + add copies) needs this
-deleteBook(id); // manage needs this
+function getBooks() {
+  return JSON.parse(localStorage.getItem("books")) || [];
+} // home, search, manage, book template all need this
+
+function saveBook(book) {
+  let books = getBooks();
+  books.push(book);
+  localStorage.setItem("books", JSON.stringify(books));
+}
+
+function getBookById(id) {
+  let books = getBooks();
+  return books.find((b) => b.id == id);
+} // book template + manage need this
+
+function updateBook(updatedBook) {
+  let books = getBooks();
+  let index = books.findIndex((b) => b.id === updatedBook.id);
+
+  books[index] = updatedBook;
+
+  localStorage.setItem("books", JSON.stringify(books));
+} // manage (edit + add copies) needs this
+
+function deleteBook(id) {
+  let books = getBooks();
+  books = books.filter((b) => b.id != id); // returns the books without that id
+
+  localStorage.setItem("books", JSON.stringify(books));
+} // manage needs this
 
 // BORROWED
-borrowBook(userId, bookId); // book details needs this
-getBorrowedByUser(userId); // borrowed-books page needs this
-isBookBorrowed(userId, bookId); // book details needs this (to disable button)
+function borrowBook(userId, bookId) {
+  let borrowed = JSON.parse(localStorage.getItem("borrowed")) || [];
+  borrowed.push({
+    id: borrowed.length + 1,
+    userId: userId,
+    bookId: bookId,
+    borrowDate: Date.now(),
+  });
+  localStorage.setItem("borrowed", JSON.stringify(borrowed));
+} // book details needs this
+
+function getBorrowedByUser(user) {
+  let borrowed = JSON.parse(localStorage.getItem("borrowed")) || [];
+
+  return borrowed.filter((b) => b.userId == user.id);
+} // borrowed-books page needs this
+
+function isBookBorrowed(userId, bookId) {
+  let borrowed = JSON.parse(localStorage.getItem("borrowed")) || [];
+  return borrowed.some((b) => b.userId == userId && b.bookId == bookId);
+} // book details needs this (to disable button)
 
 // COMMENTS
-saveComment(comment); // book details needs this
-getCommentsByBook(bookId); // book details needs this
+function saveComment(comment) {
+  let comments = JSON.parse(localStorage.getItem("comments")) || [];
+  comments.push(comment);
+  localStorage.setItem("comments", JSON.stringify(comments));
+} // book details needs this
+
+function getCommentsByBook(bookId) {
+  let comments = JSON.parse(localStorage.getItem("comments")) || [];
+  return comments.filter((c) => c.bookId == bookId);
+} // book details needs this
 
 // CURRENT USER (sessionStorage)
-setCurrentUser(user); // login needs this
-getCurrentUser(); // every page needs this for the navbar
-logoutUser(); // logout button needs this
+function setCurrentUser(user) {
+  sessionStorage.setItem("currentUser", JSON.stringify(user)); // we save the whole
+} // login needs this
+
+function getCurrentUser() {
+  return JSON.parse(sessionStorage.getItem("currentUser"));
+} // every page needs this for the navbar
+
+function logoutUser() {
+  sessionStorage.removeItem("currentUser");
+} // logout button needs this
