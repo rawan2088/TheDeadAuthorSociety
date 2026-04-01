@@ -253,8 +253,16 @@ function getUsers() {
 
 function saveUser(user) {
   let users = getUsers();
+
+  if (user.id == null) {
+    const ids = borrowed.map((b) => b.id);
+    user.id = users.length > 0 ? Math.max(...ids) + 1 : 1;
+  }
+
   users.push(user);
   localStorage.setItem("users", JSON.stringify(users));
+
+  return true;
 } // signup needs this
 
 function getUserByUsername(name) {
@@ -270,6 +278,7 @@ function updateUser(updatedUser) {
   users[index] = updatedUser;
 
   localStorage.setItem("users", JSON.stringify(users));
+  return updatedUser;
 }
 // profile page needs this
 
@@ -282,6 +291,8 @@ function saveBook(book) {
   let books = getBooks();
   books.push(book);
   localStorage.setItem("books", JSON.stringify(books));
+
+  return books;
 }
 
 function getBookById(id) {
@@ -307,13 +318,24 @@ function deleteBook(id) {
 
 // BORROWED
 function borrowBook(userId, bookId) {
+  const book = getBookById(bookId);
+  if (book.availableCopies <= 0) {
+    alert("Sorry, no copies available for this book.");
+    return;
+  }
   let borrowed = JSON.parse(localStorage.getItem("borrowed")) || [];
+
+  const ids = borrowed.map((b) => b.id);
   borrowed.push({
-    id: borrowed.length + 1,
-    userId: userId,
-    bookId: bookId,
-    borrowDate: Date.now(),
+    id: borrowed.length > 0 ? Math.max(...ids) + 1 : 1,
+    userId: parseInt(userId),
+    bookId: parseInt(bookId),
+    borrowDate: new Date().toISOString().split("T")[0],
   });
+
+  book.availableCopies -= 1;
+  updateBook(book);
+
   localStorage.setItem("borrowed", JSON.stringify(borrowed));
 } // book details needs this
 
@@ -352,3 +374,23 @@ function getCurrentUser() {
 function logoutUser() {
   sessionStorage.removeItem("currentUser");
 } // logout button needs this
+
+// export {
+//   getUsers,
+//   saveUser,
+//   getUserByUsername,
+//   updateUser,
+//   getBooks,
+//   saveBook,
+//   getBookById,
+//   updateBook,
+//   deleteBook,
+//   borrowBook,
+//   getBorrowedByUser,
+//   isBookBorrowed,
+//   saveComment,
+//   getCommentsByBook,
+//   setCurrentUser,
+//   getCurrentUser,
+//   logoutUser,
+// };
