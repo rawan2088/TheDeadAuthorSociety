@@ -43,6 +43,7 @@
 
 html {
   scroll-behavior: smooth;
+  min-height: 100vh;
   /* font-size: 16px; */
 }
 
@@ -125,6 +126,12 @@ strong {
 }
 
 /* HEADER & NAVBAR */
+#navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
 header {
   background-color: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
@@ -482,6 +489,8 @@ footer {
   text-align: center;
   font-size: 0.85rem;
   color: var(--color-text-muted);
+  bottom: 0;
+  width: 100%;
 }
 
 .footer-inner {

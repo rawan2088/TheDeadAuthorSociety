@@ -4,33 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>About</title>
+    <link rel="stylesheet" href="../CSS/main.css" />
+    <!-- <link rel="stylesheet" href="../CSS/about.css" /> -->
   </head>
   <body>
-    <header>
-      <h1 id="mainLogo">TheDeadAuthorSociety</h1>
+    <div id="navbar"></div>
 
-      <nav>
-        <a href="index.html">Home</a> | <a href="SearchPage.html">Search</a> |
-        <!-- <a href="new-arrivals.html">New Arrivals</a> | -->
-        <a href="Borrowed.html">My Books</a> |
-        <!-- we should make some pages show to only the admin, and some to logged in user only -->
-        <!-- for now we would show everything -->
-        <a href="CategoryPage.html">Categories</a> |
-        <!-- <a href="Manage.html">Manage Books</a> -->
-        <a href="login.html">Login</a> | <a href="signup.html">Sign Up</a> |
-        <a href="About.html">About Us</a> |
-        <a href="Contact.html">Contact Us</a> |
-        <a href="Manage.html">Manage Books</a> |
-        <a href="Add_Book.html">Add Book</a> |
-        <a href="Profile.html">My profile</a>
-        <!-- if the user is logged in then show the logout btn -->
-        <!-- if hte user is not logged in, then show the login and signup btns -->
-        <!-- it the user is logged in as an admin, then show the manage books page -->
-        <!-- if user is admin, show add new book btn -->
-      </nav>
-    </header>
-
-    <hr />
+    <!-- <hr /> -->
 
     <main>
       <h2>Welcome to our Library Management System</h2>
@@ -56,5 +36,8 @@
       <a href="Contact.html">Contact Us</a>
       <p>&copy; Library Management System. All rights reserved.</p>
     </footer>
+
+    <script src="../js/storage.js"></script>
+    <script src="../js/navbar.js"></script>
   </body>
 </html>
