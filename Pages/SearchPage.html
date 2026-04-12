@@ -1,199 +1,266 @@
 <!doctype html>
-<html>
-  <header>
-    <h1 id="mainLogo">TheDeadAuthorSociety</h1>
-
-    <nav>
-      <a href="index.html">Home</a> | <a href="SearchPage.html">Search</a> |
-      <!-- <a href="new-arrivals.html">New Arrivals</a> | -->
-      <a href="Borrowed.html">My Books</a> |
-      <!-- we should make some pages show to only the admin, and some to logged in user only -->
-      <!-- for now we would show everything -->
-      <a href="CategoryPage.html">Categories</a> |
-      <!-- <a href="Manage.html">Manage Books</a> -->
-      <a href="login.html">Login</a> | <a href="signup.html">Sign Up</a> |
-      <a href="About.html">About Us</a> |
-      <a href="Contact.html">Contact Us</a> |
-      <a href="Manage.html">Manage Books</a> |
-      <a href="Add_Book.html">Add Book</a> |
-      <a href="Profile.html">My profile</a>
-      <!-- if the user is logged in then show the logout btn -->
-      <!-- if hte user is not logged in, then show the login and signup btns -->
-      <!-- it the user is logged in as an admin, then show the manage books page -->
-      <!-- if user is admin, show add new book btn -->
-    </nav>
-  </header>
-
+<html lang="en">
   <head>
-    <title>Search Books</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search Books — TheDeadAuthorSociety</title>
+    <link rel="stylesheet" href="../CSS/main.css" />
+    <link rel="stylesheet" href="../CSS/pages/SearchPage_Style.css" />
   </head>
-
   <body>
-    <h1>Search Books</h1>
 
-    <form>
-      <label>Search:</label>
-      <input type="text" placeholder="Enter book name" />
-      <label>Category:</label>
-      <select>
-        <option>All</option>
-        <option>Classic Fiction</option>
-        <option>Southern Gothic / Bildungsroman</option>
-        <option>Young Adult</option>
-        <option>Mystery Thriller</option>
-        <option>Romance</option>
-        <option>Classical Romance</option>
-        <option>Self Help</option>
-        <option>Historical Fiction</option>
-      </select>
-      <button type="submit">Search</button>
-    </form>
+    <header>
+      <div class="header-inner">
+        <h1 id="mainLogo">TheDeadAuthorSociety</h1>
+        <nav>
+          <a href="index.html">Home</a>
+          <a href="SearchPage.html">Search</a>
+          <a href="Borrowed.html">My Books</a>
+          <a href="CategoryPage.html">Categories</a>
+          <a href="login.html">Login</a>
+          <a href="signup.html">Sign Up</a>
+          <a href="About.html">About Us</a>
+          <a href="Contact.html">Contact Us</a>
+          <a href="Manage.html">Manage Books</a>
+          <a href="Add_Book.html">Add Book</a>
+          <a href="Profile.html">My Profile</a>
+        </nav>
+      </div>
+    </header>
 
-    <hr />
+    <main>
 
-    <h2>All Books</h2>
+      <h1 class="page-title">Search Books</h1>
+      <p class="page-subtitle">Press <kbd style="background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.3);padding:1px 6px;border-radius:3px;font-size:0.8em;">/</kbd> to jump to the search field</p>
 
-    <table border="1" cellpadding="10">
-      <tr>
-        <th>Title</th>
-        <th>Author</th>
-        <th>Published</th>
-        <th>Category</th>
-        <th>Description</th>
-        <th>Availability</th>
-        <th>Options</th>
-      </tr>
+      <!-- ── Search Controls ─────────────────────────────── -->
+      <div class="search-controls">
 
-      <tr>
-        <td>The Great Gatsby</td>
-        <td>F. Scott Fitzgerald</td>
-        <td>1925</td>
-        <td>Classic Fiction</td>
-        <td>
-          Published in 1925, The Great Gatsby is a classic piece of American
-          fiction told from the perspective of Nick Carraway about the eponymous
-          Jay Gatsby.
-        </td>
-        <td>In Stock</td>
-        <td>Details</td>
-      </tr>
+        <div class="control-group" style="flex: 2; min-width: 220px;">
+          <label for="searchInput">Search</label>
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Title, author, or keyword…"
+            autocomplete="off"
+          />
+        </div>
 
-      <tr>
-        <td>To Kill A Mockingbird</td>
-        <td>Harper Lee</td>
-        <td>1960</td>
-        <td>Southern Gothic / Bildungsroman</td>
-        <td>
-          Set in small-town Alabama, the novel chronicles the childhood of Scout
-          and Jem Finch as their father Atticus defends a Black man falsely
-          accused of rape.
-        </td>
-        <td>In Stock</td>
-        <td>Details</td>
-      </tr>
+        <div class="control-group">
+          <label for="categoryFilter">Category</label>
+          <select id="categoryFilter">
+            <option value="all">All Categories</option>
+            <option value="classic fiction">Classic Fiction</option>
+            <option value="southern gothic / bildungsroman">Southern Gothic / Bildungsroman</option>
+            <option value="young adult">Young Adult</option>
+            <option value="mystery thriller">Mystery Thriller</option>
+            <option value="romance">Romance</option>
+            <option value="classical romance">Classical Romance</option>
+            <option value="self help">Self Help</option>
+            <option value="historical fiction">Historical Fiction</option>
+          </select>
+        </div>
 
-      <tr>
-        <td>Call It What You Want</td>
-        <td>Brigid Kemmerer</td>
-        <td>2023</td>
-        <td>Young Adult</td>
-        <td>
-          When his dad is caught embezzling funds from half the town, Rob goes
-          from popular lacrosse player to social pariah, while Maegan hides
-          secrets of her own.
-        </td>
-        <td>Not Available</td>
-        <td>Details</td>
-      </tr>
+        <div class="control-group">
+          <label for="availFilter">Availability</label>
+          <select id="availFilter">
+            <option value="all">All</option>
+            <option value="in stock">In Stock</option>
+            <option value="not available">Not Available</option>
+          </select>
+        </div>
 
-      <tr>
-        <td>A Good Girl's Guide to Murder</td>
-        <td>Holly Jackson</td>
-        <td>2019</td>
-        <td>Mystery Thriller</td>
-        <td>
-          Five years ago, schoolgirl Andie Bell was murdered by Sal Singh — or
-          so everyone believes. Pippa Fitz-Amobi isn't convinced and starts
-          digging for the truth.
-        </td>
-        <td>In Stock</td>
-        <td>Details</td>
-      </tr>
+        <button class="search-btn" id="clearBtn">Clear Filters</button>
 
-      <tr>
-        <td>Betting on You</td>
-        <td>Lynn Painter</td>
-        <td>2023</td>
-        <td>Romance</td>
-        <td>
-          When seventeen-year-old Bailey starts a new job at a hotel waterpark,
-          she runs into Charlie — an old acquaintance whose cynicism clashes
-          with her careful temperament.
-        </td>
-        <td>Not Available</td>
-        <td>Details</td>
-      </tr>
+      </div>
 
-      <tr>
-        <td>Pride and Prejudice</td>
-        <td>Jane Austen</td>
-        <td>1813</td>
-        <td>Classical Romance</td>
-        <td>
-          Jane Austen's much-adapted novel is famed for its witty, spirited
-          heroine and sensational romances, with deft remarks on the triumphs
-          and pitfalls of social convention.
-        </td>
-        <td>In Stock</td>
-        <td>Details</td>
-      </tr>
+      <!-- ── Results Info ────────────────────────────────── -->
+      <div class="results-info">
+        <span class="results-count" id="resultCount">
+          Showing <span>9</span> of <span>9</span> books
+        </span>
+      </div>
 
-      <tr>
-        <td>Steal Like an Artist</td>
-        <td>Austin Kleon</td>
-        <td>2012</td>
-        <td>Self Help</td>
-        <td>
-          A manifesto for the digital age — a guide with positive messages,
-          illustrations, and exercises that puts readers directly in touch with
-          their artistic side.
-        </td>
-        <td>Not Available</td>
-        <td>Details</td>
-      </tr>
+      <!-- ── Books Table ─────────────────────────────────── -->
+      <div class="books-table-wrap">
+        <table class="books-table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Author</th>
+              <th>Year</th>
+              <th>Category</th>
+              <th>Description</th>
+              <th>Status</th>
+              <th>Options</th>
+            </tr>
+          </thead>
+          <tbody>
 
-      <tr>
-        <td>The Silent Patient</td>
-        <td>Alex Michaelides</td>
-        <td>2019</td>
-        <td>Mystery Thriller</td>
-        <td>
-          Alicia Berenson's life seems perfect until she shoots her husband five
-          times in the face — and then never speaks another word.
-        </td>
-        <td>In Stock</td>
-        <td>Details</td>
-      </tr>
+            <tr
+              data-title="the great gatsby"
+              data-author="f. scott fitzgerald"
+              data-category="classic fiction"
+              data-availability="in stock"
+              data-description="published in 1925, the great gatsby is a classic piece of american fiction told from the perspective of nick carraway about the eponymous jay gatsby."
+            >
+              <td class="book-title-cell">The Great Gatsby</td>
+              <td class="book-author-cell">F. Scott Fitzgerald</td>
+              <td class="book-year-cell">1925</td>
+              <td class="book-category-cell">Classic Fiction</td>
+              <td class="book-desc-cell"><p>Published in 1925, a classic piece of American fiction told from the perspective of Nick Carraway about the eponymous Jay Gatsby.</p></td>
+              <td><span class="badge badge-available">In Stock</span></td>
+              <td><a href="book1.html" class="details-link">Details</a></td>
+            </tr>
 
-      <tr>
-        <td>Little Women</td>
-        <td>Louisa May Alcott</td>
-        <td>1868</td>
-        <td>Historical Fiction</td>
-        <td>
-          Generations of readers have fallen in love with the March sisters —
-          Jo, Beth, Meg, and Amy, united in devotion to each other during the
-          Civil War era.
-        </td>
-        <td>Not Available</td>
-        <td>Details</td>
-      </tr>
-    </table>
+            <tr
+              data-title="to kill a mockingbird"
+              data-author="harper lee"
+              data-category="southern gothic / bildungsroman"
+              data-availability="in stock"
+              data-description="set in small-town alabama, the novel chronicles the childhood of scout and jem finch as their father atticus defends a black man falsely accused of rape."
+            >
+              <td class="book-title-cell">To Kill A Mockingbird</td>
+              <td class="book-author-cell">Harper Lee</td>
+              <td class="book-year-cell">1960</td>
+              <td class="book-category-cell">Southern Gothic / Bildungsroman</td>
+              <td class="book-desc-cell"><p>Set in small-town Alabama, the novel chronicles the childhood of Scout and Jem Finch as their father defends a man falsely accused of rape.</p></td>
+              <td><span class="badge badge-available">In Stock</span></td>
+              <td><a href="book2.html" class="details-link">Details</a></td>
+            </tr>
+
+            <tr
+              data-title="call it what you want"
+              data-author="brigid kemmerer"
+              data-category="young adult"
+              data-availability="not available"
+              data-description="when his dad is caught embezzling funds from half the town, rob goes from popular lacrosse player to social pariah, while maegan hides secrets of her own."
+            >
+              <td class="book-title-cell">Call It What You Want</td>
+              <td class="book-author-cell">Brigid Kemmerer</td>
+              <td class="book-year-cell">2023</td>
+              <td class="book-category-cell">Young Adult</td>
+              <td class="book-desc-cell"><p>When his dad is caught embezzling funds, Rob goes from popular lacrosse player to social pariah, while Maegan hides secrets of her own.</p></td>
+              <td><span class="badge badge-unavailable">Not Available</span></td>
+              <td><a href="book3.html" class="details-link">Details</a></td>
+            </tr>
+
+            <tr
+              data-title="a good girl's guide to murder"
+              data-author="holly jackson"
+              data-category="mystery thriller"
+              data-availability="in stock"
+              data-description="five years ago, schoolgirl andie bell was murdered by sal singh — or so everyone believes. pippa fitz-amobi isn't convinced and starts digging for the truth."
+            >
+              <td class="book-title-cell">A Good Girl's Guide to Murder</td>
+              <td class="book-author-cell">Holly Jackson</td>
+              <td class="book-year-cell">2019</td>
+              <td class="book-category-cell">Mystery Thriller</td>
+              <td class="book-desc-cell"><p>Five years ago, Andie Bell was murdered — or so everyone believes. Pippa Fitz-Amobi isn't convinced and starts digging for the truth.</p></td>
+              <td><span class="badge badge-available">In Stock</span></td>
+              <td><a href="book4.html" class="details-link">Details</a></td>
+            </tr>
+
+            <tr
+              data-title="betting on you"
+              data-author="lynn painter"
+              data-category="romance"
+              data-availability="not available"
+              data-description="when seventeen-year-old bailey starts a new job at a hotel waterpark, she runs into charlie — an old acquaintance whose cynicism clashes with her careful temperament."
+            >
+              <td class="book-title-cell">Betting on You</td>
+              <td class="book-author-cell">Lynn Painter</td>
+              <td class="book-year-cell">2023</td>
+              <td class="book-category-cell">Romance</td>
+              <td class="book-desc-cell"><p>When Bailey starts a new job at a hotel waterpark, she runs into Charlie — an old acquaintance whose cynicism clashes with her careful temperament.</p></td>
+              <td><span class="badge badge-unavailable">Not Available</span></td>
+              <td><a href="book5.html" class="details-link">Details</a></td>
+            </tr>
+
+            <tr
+              data-title="pride and prejudice"
+              data-author="jane austen"
+              data-category="classical romance"
+              data-availability="in stock"
+              data-description="jane austen's much-adapted novel is famed for its witty spirited heroine and sensational romances with deft remarks on the triumphs and pitfalls of social convention."
+            >
+              <td class="book-title-cell">Pride and Prejudice</td>
+              <td class="book-author-cell">Jane Austen</td>
+              <td class="book-year-cell">1813</td>
+              <td class="book-category-cell">Classical Romance</td>
+              <td class="book-desc-cell"><p>Jane Austen's much-adapted novel famed for its witty, spirited heroine and sensational romances — and deft remarks on social convention.</p></td>
+              <td><span class="badge badge-available">In Stock</span></td>
+              <td><a href="book6.html" class="details-link">Details</a></td>
+            </tr>
+
+            <tr
+              data-title="steal like an artist"
+              data-author="austin kleon"
+              data-category="self help"
+              data-availability="not available"
+              data-description="a manifesto for the digital age — a guide with positive messages illustrations and exercises that puts readers directly in touch with their artistic side."
+            >
+              <td class="book-title-cell">Steal Like an Artist</td>
+              <td class="book-author-cell">Austin Kleon</td>
+              <td class="book-year-cell">2012</td>
+              <td class="book-category-cell">Self Help</td>
+              <td class="book-desc-cell"><p>A manifesto for the digital age — positive messages, illustrations, and exercises that puts readers directly in touch with their artistic side.</p></td>
+              <td><span class="badge badge-unavailable">Not Available</span></td>
+              <td><a href="book7.html" class="details-link">Details</a></td>
+            </tr>
+
+            <tr
+              data-title="the silent patient"
+              data-author="alex michaelides"
+              data-category="mystery thriller"
+              data-availability="in stock"
+              data-description="alicia berenson's life seems perfect until she shoots her husband five times in the face — and then never speaks another word."
+            >
+              <td class="book-title-cell">The Silent Patient</td>
+              <td class="book-author-cell">Alex Michaelides</td>
+              <td class="book-year-cell">2019</td>
+              <td class="book-category-cell">Mystery Thriller</td>
+              <td class="book-desc-cell"><p>Alicia Berenson's life seems perfect until she shoots her husband five times in the face — and then never speaks another word.</p></td>
+              <td><span class="badge badge-available">In Stock</span></td>
+              <td><a href="book8.html" class="details-link">Details</a></td>
+            </tr>
+
+            <tr
+              data-title="little women"
+              data-author="louisa may alcott"
+              data-category="historical fiction"
+              data-availability="not available"
+              data-description="generations of readers have fallen in love with the march sisters — jo beth meg and amy united in devotion to each other during the civil war era."
+            >
+              <td class="book-title-cell">Little Women</td>
+              <td class="book-author-cell">Louisa May Alcott</td>
+              <td class="book-year-cell">1868</td>
+              <td class="book-category-cell">Historical Fiction</td>
+              <td class="book-desc-cell"><p>Generations of readers have fallen in love with the March sisters — Jo, Beth, Meg, and Amy — united in devotion during the Civil War era.</p></td>
+              <td><span class="badge badge-unavailable">Not Available</span></td>
+              <td><a href="book9.html" class="details-link">Details</a></td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ── No Results State ────────────────────────────── -->
+      <div class="no-results" id="noResults">
+        <div class="no-results-icon">📚</div>
+        <h3>No books found</h3>
+        <p>Try a different search term or clear the filters.</p>
+      </div>
+
+    </main>
 
     <footer>
       <a href="About.html">About Us</a> |
       <a href="Contact.html">Contact Us</a>
-      <p>&copy; Library Management System. All rights reserved.</p>
+      <p>&copy; TheDeadAuthorSociety Library. All rights reserved.</p>
     </footer>
+
+    <script src="../js/SearchPage_Script.js" defer></script>
+
   </body>
 </html>
