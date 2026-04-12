@@ -1,0 +1,259 @@
+/* ============================================================
+   CategoryPage — Stylesheet
+   ============================================================ */
+
+/* ── Category Filter Tabs ──────────────────────────────────── */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 36px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.filter-tab {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  border-radius: 20px;
+  padding: 6px 18px;
+  font-family: 'Crimson Text', serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.filter-tab:hover {
+  border-color: var(--gold-dim);
+  color: var(--gold);
+}
+
+.filter-tab.active {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ── Category Section ──────────────────────────────────────── */
+.category-section {
+  margin-bottom: 28px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  animation: fadeUp 0.45s ease both;
+}
+
+.category-section.hidden { display: none; }
+
+/* ── Category Header (Accordion) ───────────────────────────── */
+.category-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  background: linear-gradient(135deg, #26211b 0%, var(--ink-mid) 100%);
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid var(--border);
+  transition: background var(--transition);
+  gap: 16px;
+}
+
+.category-header:hover {
+  background: linear-gradient(135deg, #2e2820 0%, #312c27 100%);
+}
+
+.category-header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.category-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(201,168,76,0.12);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.category-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--parchment);
+}
+
+.category-count {
+  font-family: 'Crimson Text', serif;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.category-chevron {
+  color: var(--gold-dim);
+  font-size: 0.9rem;
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.category-header.open .category-chevron {
+  transform: rotate(180deg);
+}
+
+/* ── Category Body (Collapsible) ───────────────────────────── */
+.category-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: var(--ink-mid);
+}
+
+.category-body.open {
+  max-height: 1200px;
+}
+
+/* ── Book Cards Grid ───────────────────────────────────────── */
+.book-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+  padding: 24px;
+}
+
+.book-card {
+  background: var(--ink-light);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  transition: border-color var(--transition), transform 0.2s, box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.book-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+
+.book-card:hover {
+  border-color: var(--gold-dim);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+.book-card:hover::before { opacity: 1; }
+
+.card-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--parchment);
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.card-author {
+  font-style: italic;
+  color: var(--text-dim);
+  font-size: 0.88rem;
+  margin-bottom: 10px;
+}
+
+.card-meta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.card-year {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  background: rgba(255,255,255,0.04);
+  padding: 2px 8px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.card-desc {
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  line-height: 1.55;
+  margin-bottom: 16px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.card-details-link {
+  display: inline-block;
+  padding: 6px 16px;
+  background: transparent;
+  border: 1px solid var(--gold-dim);
+  color: var(--gold);
+  border-radius: var(--radius);
+  font-family: 'Crimson Text', serif;
+  font-size: 0.85rem;
+  text-decoration: none;
+  transition: all var(--transition);
+}
+
+.card-details-link:hover {
+  background: var(--gold);
+  color: var(--ink);
+  border-color: var(--gold);
+}
+
+/* ── Empty Category ────────────────────────────────────────── */
+.category-empty {
+  text-align: center;
+  padding: 32px;
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+/* ── Staggered animation ───────────────────────────────────── */
+.category-section:nth-child(1) { animation-delay: 0.05s; }
+.category-section:nth-child(2) { animation-delay: 0.10s; }
+.category-section:nth-child(3) { animation-delay: 0.15s; }
+.category-section:nth-child(4) { animation-delay: 0.20s; }
+.category-section:nth-child(5) { animation-delay: 0.25s; }
+.category-section:nth-child(6) { animation-delay: 0.30s; }
+.category-section:nth-child(7) { animation-delay: 0.35s; }
+
+/* ── Responsive ────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .book-cards-grid { grid-template-columns: 1fr; gap: 12px; padding: 16px; }
+  .filter-bar { gap: 6px; }
+  .filter-tab { padding: 5px 12px; font-size: 0.83rem; }
+  main { padding: 24px 16px 48px; }
+  .header-inner { padding: 14px 16px 0; }
+}
