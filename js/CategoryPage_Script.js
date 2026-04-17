@@ -5,16 +5,16 @@
   const filterBar = document.getElementById("filterBar");
 
   const categoryIcons = {
-    "classic fiction": "📖",
-    "southern gothic": "🌿",
-    "southern gothic / bildungsroman": "🌿",
-    bildungsroman: "🌿",
-    "young adult": "✨",
-    "mystery thriller": "🔍",
-    romance: "🌹",
-    "classical romance": "🌹",
-    "self help": "💡",
-    "historical fiction": "🏛️",
+    "classic fiction",
+    "southern gothic",
+    "southern gothic / bildungsroman",
+    bildungsroman,
+    "young adult",
+    "mystery thriller",
+    romance,
+    "classical romance",
+    "self help",
+    "historical fiction",
   };
 
   function getIcon(category) {
