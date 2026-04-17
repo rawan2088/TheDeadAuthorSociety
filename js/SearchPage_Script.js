@@ -1,28 +1,16 @@
-/**
- * SearchPage_Script.js
- * TheDeadAuthorSociety — Search Page Functionality
- *
- * Features:
- *  - Live text search (title, author, description)
- *  - Category filter dropdown
- *  - Availability filter
- *  - Result count display
- *  - Clear filters button
- *  - Keyboard shortcut (/ to focus search)
- *  - No-results state
- */
+
 
 (function () {
   "use strict";
 
-  /* ── State ─────────────────────────────────────────────── */
+  
   const state = {
     query: "",
     category: "all",
     availability: "all",
   };
 
-  /* ── DOM refs ───────────────────────────────────────────── */
+ 
   const searchInput    = document.getElementById("searchInput");
   const categorySelect = document.getElementById("categoryFilter");
   const availSelect    = document.getElementById("availFilter");
@@ -31,10 +19,8 @@
   const noResults      = document.getElementById("noResults");
   const tbody          = document.querySelector(".books-table tbody");
 
-  /* ── Gather all rows once ───────────────────────────────── */
   const allRows = Array.from(tbody ? tbody.querySelectorAll("tr") : []);
 
-  /* ── Core filter function ───────────────────────────────── */
   function applyFilters() {
     const q    = state.query.toLowerCase().trim();
     const cat  = state.category;
@@ -63,32 +49,32 @@
       row.style.display = visible ? "" : "none";
 
       if (visible) {
-        /* re-trigger animation for filtered rows */
+        
         row.style.animation = "none";
-        void row.offsetHeight; /* reflow */
+        void row.offsetHeight; 
         row.style.animation = `fadeUp 0.35s ease ${(visibleCount * 0.04)}s both`;
         visibleCount++;
       }
     });
 
-    /* update count */
+    
     if (countEl) {
       countEl.innerHTML = `Showing <span>${visibleCount}</span> of <span>${allRows.length}</span> books`;
     }
 
-    /* toggle no-results */
+    
     if (noResults) {
       noResults.classList.toggle("visible", visibleCount === 0);
     }
 
-    /* toggle table visibility */
+    
     const tableWrap = document.querySelector(".books-table-wrap");
     if (tableWrap) {
       tableWrap.style.display = visibleCount === 0 ? "none" : "";
     }
   }
 
-  /* ── Event listeners ────────────────────────────────────── */
+  /
   if (searchInput) {
     searchInput.addEventListener("input", () => {
       state.query = searchInput.value;
@@ -124,7 +110,7 @@
     });
   }
 
-  /* ── Keyboard shortcut: "/" focuses search ──────────────── */
+  
   document.addEventListener("keydown", (e) => {
     if (e.key === "/" && document.activeElement !== searchInput) {
       e.preventDefault();
@@ -134,12 +120,10 @@
       searchInput.blur();
     }
   });
-
-  /* ── Active nav link ────────────────────────────────────── */
   document.querySelectorAll("nav a").forEach((link) => {
     if (link.href === window.location.href) link.classList.add("active");
   });
 
-  /* ── Init ───────────────────────────────────────────────── */
+  
   applyFilters();
 })();
