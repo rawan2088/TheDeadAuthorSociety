@@ -268,11 +268,15 @@ nav .nav-divider {
     flex-direction: column;
     align-items: flex-start;
     gap: 0;
-    transform: translateX(100%);
     transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: var(--shadow-lg);
     overflow-y: auto;
     z-index: 1000;
+    transform: translateX(100%);
+    -webkit-transform: translateX(100%);
+    -moz-transform: translateX(100%);
+    -ms-transform: translateX(100%);
+    -o-transform: translateX(100%);
   }
 
   nav.open {

@@ -25,6 +25,15 @@ document.getElementById("bookImg").src = book.image;
 
 let borrowBtn = document.getElementById("borrowBtn");
 
+const user = getCurrentUser();
+
+if (user.role == "admin") {
+  console.log("Admin viewing book details - hiding borrow button");
+  bookStatus.textContent = `Available Copies: ${book.availableCopies} - 
+  Total Copies: ${book.totalCopies}`;
+  borrowBtn.style.display = "none";
+}
+
 if (book.availableCopies <= 0) {
   borrowBtn.textContent = "Unavailable";
   borrowBtn.disabled = true;
@@ -42,8 +51,18 @@ borrowBtn.addEventListener("click", () => {
     return;
   }
 
+  if (user.role === "admin") {
+    alert("Admins cannot borrow books.");
+    return;
+  }
+
   if (isBookBorrowed(user.id, book.id)) {
     alert("You have already borrowed this book.");
+    return;
+  }
+
+  if (book.availableCopies <= 0) {
+    alert("Sorry, this book is currently unavailable.");
     return;
   }
 
