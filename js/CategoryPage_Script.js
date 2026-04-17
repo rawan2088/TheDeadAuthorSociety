@@ -3,7 +3,6 @@
 (function () {
   "use strict";
 
-  /* ── Accordion logic ────────────────────────────────────── */
   function initAccordions() {
     const sections = document.querySelectorAll(".category-section");
 
@@ -12,7 +11,7 @@
       const body   = section.querySelector(".category-body");
       if (!header || !body) return;
 
-      /* open first section by default */
+      
       if (idx === 0) openSection(header, body);
 
       header.addEventListener("click", () => {
@@ -35,8 +34,6 @@
     header.classList.remove("open");
     body.classList.remove("open");
   }
-
-  /* ── Expand / Collapse All ──────────────────────────────── */
   function initExpandCollapse() {
     const btn = document.getElementById("expandCollapseBtn");
     if (!btn) return;
@@ -60,15 +57,13 @@
       btn.textContent = allExpanded ? "Collapse All" : "Expand All";
     });
   }
-
-  /* ── Filter Tabs ────────────────────────────────────────── */
   function initFilterTabs() {
     const tabs     = document.querySelectorAll(".filter-tab");
     const sections = document.querySelectorAll(".category-section");
 
     tabs.forEach((tab) => {
       tab.addEventListener("click", () => {
-        /* update active tab */
+        
         tabs.forEach((t) => t.classList.remove("active"));
         tab.classList.add("active");
 
@@ -79,7 +74,7 @@
 
           if (filter === "all" || sectionCat === filter) {
             section.classList.remove("hidden");
-            /* re-trigger fade animation */
+            
             section.style.animation = "none";
             void section.offsetHeight;
             section.style.animation = "";
@@ -91,12 +86,12 @@
     });
   }
 
-  /* ── Active nav link ────────────────────────────────────── */
+
   document.querySelectorAll("nav a").forEach((link) => {
     if (link.href === window.location.href) link.classList.add("active");
   });
 
-  /* ── Init ───────────────────────────────────────────────── */
+  
   initAccordions();
   initFilterTabs();
   initExpandCollapse();
