@@ -3,13 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <title>Add book</title>
+    <link rel="stylesheet" href="../CSS/main.css" />
     <link rel="stylesheet" href="../CSS/pages/Add_Book_Style.css" />
   </head>
 
   <body>
     <div id="navbar"></div>
 
-    <h1>Add your book</h1>
+    <h1>Add A new book</h1>
     <hr />
 
     <h2>Please enter your specifications of the book .</h2>
@@ -19,30 +20,40 @@
         <label for="num">Book ID :</label>
         <input type="number" id="num" name="Book_ID" required />
       </div>
-      <hr />
+      <!-- <hr /> -->
 
       <div>
         <label for="name">Book Name :</label>
         <input type="text" id="name" name="Book_Name" required />
       </div>
-      <hr />
+      <!-- <hr /> -->
       <div>
         <label for="auth">Author :</label>
         <input type="text" id="auth" name="Author_Name" required />
       </div>
-      <hr />
+      <!-- <hr /> -->
       <div>
         <label for="cat"> Category :</label>
-        <input list="Category" id="cat" name="category" required />
+        <input
+          list="Category"
+          id="cat"
+          name="category"
+          required
+          placeholder="e.g. Mystery Thriller"
+        />
         <datalist id="Category">
-          <option value="Programming"></option>
-          <option value="Math"></option>
-          <option value="Physics"></option>
-          <option value="History"></option>
-          <option value="Medicine"></option>
+          <option value="Classic Fiction"></option>
+          <option value="Southern Gothic"></option>
+          <option value="Young Adult"></option>
+          <option value="Mystery Thriller"></option>
+          <option value="Romance"></option>
+          <option value="Classical Romance"></option>
+          <option value="Self Help"></option>
+          <option value="Historical Fiction"></option>
+          <option value="Bildungsroman"></option>
         </datalist>
       </div>
-      <hr />
+      <!-- <hr /> -->
 
       <div>
         <label for="desc">Description:</label>

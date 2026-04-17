@@ -34,10 +34,10 @@
 //   `;
 // }
 
-// function handleLogout() {
-//   logoutUser();
-//   window.location.href = "../index.html";
-// }
+function handleLogout() {
+  logoutUser();
+  window.location.href = "../pages/INDEX.HTML";
+}
 
 const navbarContainer = document.getElementById("navbar");
 function renderNavbar() {
@@ -71,7 +71,7 @@ function renderNavbar() {
   navbarContainer.innerHTML = `
     <header>
       <div class="navbar-inner">
-        <h1 id="mainLogo" onclick="window.location.href='.//index.html'">
+        <h1 id="mainLogo" onclick="window.location.href='../pages/INDEX.html'">
           TheDeadAuthorSociety
         </h1>
 

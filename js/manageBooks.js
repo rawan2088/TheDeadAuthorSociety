@@ -37,7 +37,7 @@ function renderBooks() {
 
     bookCard.classList.add("bookCard");
     bookCard.innerHTML = `
-        <a href="./book${book.id}.html"></a>
+        <a href="./book.html?id=${book.id}"></a>
           <img
             src="${book.image}"
             height="200"

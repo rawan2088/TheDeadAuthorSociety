@@ -3,6 +3,9 @@
 /* CSS VARIABLES */
 :root {
   --color-bg: #1a1612;
+  /* --color-bg: linear-gradient(135deg, #24100d 0%, #351b14 45%, #2b120e 100%); */
+  /* --color-bg: #351b14; */
+  /* --color-bg: #2b120e; */
   --color-surface: #231f1a;
   --color-surface-2: #2e2820;
   --color-border: #3d3328;
@@ -58,13 +61,13 @@ body {
   flex-direction: column;
 
   /* gradient */
-  background-image: repeating-linear-gradient(
+  /* background-image: repeating-linear-gradient(
     0deg,
     transparent,
     transparent 2px,
     rgba(255, 255, 255, 0.01) 2px,
     rgba(255, 255, 255, 0.01) 4px
-  );
+  ); */
 }
 
 main {

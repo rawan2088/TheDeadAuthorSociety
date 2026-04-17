@@ -16,9 +16,10 @@ if (!book) {
 
 document.getElementById("bookTitle").textContent = book.title;
 document.getElementById("bookAuthor").textContent = book.author;
-document.getElementById("bookPublishedDate").textContent = book.publishedDate;
+document.getElementById("bookPublishedDate").textContent = book.published;
 document.getElementById("bookCategory").textContent = book.category;
-document.getElementById("bookStatus").textContent = book.status;
+document.getElementById("bookStatus").textContent =
+  book.availableCopies > 0 ? "Available" : "Not Available";
 document.getElementById("bookDescription").textContent = book.description;
 document.getElementById("bookImg").src = book.image;
 
