@@ -4,47 +4,32 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login - Online Library</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link rel="stylesheet" href="../css/pages/Login.css" />
   </head>
   <body>
-    <header>
-      <h1 id="mainLogo">TheDeadAuthorSociety</h1>
-
-      <nav>
-        <a href="index.html">Home</a> | <a href="SearchPage.html">Search</a> |
-        <!-- <a href="new-arrivals.html">New Arrivals</a> | -->
-        <a href="Borrowed.html">My Books</a> |
-        <!-- we should make some pages show to only the admin, and some to logged in user only -->
-        <!-- for now we would show everything -->
-        <a href="CategoryPage.html">Categories</a> |
-        <!-- <a href="Manage.html">Manage Books</a> -->
-        <a href="login.html">Login</a> | <a href="signup.html">Sign Up</a> |
-        <a href="About.html">About Us</a> |
-        <a href="Contact.html">Contact Us</a> |
-        <a href="Manage.html">Manage Books</a> |
-        <a href="Add_Book.html">Add Book</a> |
-        <a href="Profile.html">My profile</a>
-        <!-- if the user is logged in then show the logout btn -->
-        <!-- if hte user is not logged in, then show the login and signup btns -->
-        <!-- it the user is logged in as an admin, then show the manage books page -->
-        <!-- if user is admin, show add new book btn -->
-      </nav>
-      <hr />
-    </header>
+    <div id="navbar"></div>
+    <br />
     <h1>Login</h1>
-    <form action="" method="POST">
+    <p id="loginError" style="color: red;"></p>
+    <form id="loginForm">
       <label for="username">Username</label>
       <input type="text" id="username" name="username" required />
 
       <label for="password">Password</label>
       <input type="password" id="password" name="password" required />
 
-      <button type="Login">Login</button>
+      <button type="submit">Login</button>
     </form>
+    
     <p>Don't have an account? <a href="signup.html">Sign up here</a></p>
     <footer>
       <a href="About.html">About Us</a> |
       <a href="Contact.html">Contact Us</a>
       <p>&copy; Library Management System. All rights reserved.</p>
     </footer>
+    <script src="../js/storage.js"></script>
+    <script src="../js/navbar.js"></script>
+    <script src="../js/Login.js"></script>
   </body>
 </html>

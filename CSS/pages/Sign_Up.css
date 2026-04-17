@@ -1,0 +1,272 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Lora:wght@400;500;600&display=swap");
+
+/* RESET */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+/* BODY */
+body {
+  min-height: 100vh;
+  font-family: var(--font-body);
+  color: var(--color-text);
+
+  background:
+    radial-gradient(circle at 85% 18%, rgba(201,168,76,0.10), transparent 18%),
+    linear-gradient(135deg, #24100d 0%, #351b14 45%, #2b120e 100%);
+
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow-x: hidden;
+}
+
+body > br {
+  display: none;
+}
+
+#navbar {
+  position: relative;
+  z-index: 50;
+}
+
+/* NAVBAR FIX (logo left) */
+.navbar-inner {
+  justify-content: flex-start !important;
+}
+
+#mainLogo {
+  margin-right: auto !important;
+}
+
+nav {
+  margin-left: auto !important;
+}
+
+/* LEFT IMAGE PANEL (BIG + REALISTIC) */
+body::before {
+  content: "";
+  position: fixed;
+  top: var(--nav-height);
+  left: 0;
+
+  width: 50%;
+  height: calc(100vh - var(--nav-height));
+
+  background:
+    linear-gradient(rgba(20,8,6,0.35), rgba(20,8,6,0.75)),
+    url("https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=1400&q=80");
+
+  background-size: cover;
+  background-position: center;
+
+  border-right: 1px solid rgba(201,168,76,0.15);
+
+  box-shadow:
+    inset -40px 0 80px rgba(0,0,0,0.5),
+    inset 0 -40px 80px rgba(0,0,0,0.2);
+
+  z-index: 0;
+}
+
+/* LEFT TEXT (MOVED UP) */
+body::after {
+  content: "Join the Library\A Begin Your Story\A\A Discover timeless books\A and build your own collection.";
+  white-space: pre-line;
+
+  position: fixed;
+  top: calc(var(--nav-height) + 30%);
+  left: 0;
+  transform: translateY(-50%);
+
+  width: 50%;
+  padding: 0 3rem;
+
+  text-align: left;
+
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 2vw, 1.9rem);
+  line-height: 1.7;
+
+  color: var(--color-cream);
+  text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+
+  z-index: 1;
+}
+
+/* RIGHT SIDE */
+#signupForm,
+#signupError,
+body > p:last-of-type {
+  position: relative;
+  z-index: 3;
+
+  width: min(100%, 480px);
+  margin-left: calc(50% + 4vw);
+  margin-right: 3vw;
+}
+
+/* FORM POSITION (UNDER NAVBAR) */
+#signupForm {
+  margin-top: calc(var(--nav-height) + 2rem);
+
+  display: flex;
+  flex-direction: column;
+
+  background:
+    linear-gradient(180deg, rgba(54,12,12,0.9), rgba(30,8,8,0.95));
+
+  border: 1px solid rgba(201,168,76,0.15);
+  border-radius: 16px;
+
+  padding: 1.8rem;
+
+  box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+}
+
+/* TITLE */
+#signupForm::before {
+  content: "Create Account";
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  color: var(--color-cream);
+  margin-bottom: 1rem;
+}
+
+/* REMOVE EXTRA TEXT */
+#signupForm::after {
+  display: none;
+}
+
+/* ERROR */
+#signupError {
+  display: none;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+
+  padding: 0.7rem;
+  border-radius: 8px;
+
+  border: 1px solid var(--color-red);
+  background: rgba(139,46,46,0.15);
+}
+
+#signupError:not(:empty) {
+  display: block;
+}
+
+/* LABELS */
+#signupForm label {
+  margin-top: 0.7rem;
+  margin-bottom: 0.3rem;
+
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  color: var(--color-cream-dim);
+}
+
+/* INPUTS */
+#signupForm input {
+  width: 100%;
+  padding: 0.8rem;
+
+  border-radius: 8px;
+  border: 1px solid rgba(201,168,76,0.1);
+
+  background: rgba(50,40,30,0.9);
+  color: var(--color-text);
+
+  outline: none;
+}
+
+#signupForm input:focus {
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.15);
+}
+
+/* RADIO */
+#signupForm input[type="radio"] {
+  accent-color: var(--color-gold);
+  margin-right: 0.4rem;
+}
+
+/* BUTTON */
+#signupForm button {
+  margin-top: 1.2rem;
+  padding: 0.85rem;
+
+  border-radius: 8px;
+  border: none;
+
+  background: linear-gradient(#e0c06b, #c9a84c);
+  color: #2a160d;
+
+  font-weight: bold;
+  letter-spacing: 0.08em;
+
+  cursor: pointer;
+}
+
+#signupForm button:hover {
+  box-shadow: 0 0 18px rgba(201,168,76,0.3);
+}
+
+/* FOOTER TEXT */
+body > p:last-of-type {
+  margin-top: 1rem;
+  color: var(--color-text-muted);
+}
+
+body > p:last-of-type a {
+  color: var(--color-gold);
+}
+
+/* FOOTER */
+footer {
+  margin-top: auto;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+
+  padding: 1rem;
+  text-align: center;
+
+  font-size: 0.8rem;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  body::before,
+  body::after {
+    width: 100%;
+  }
+
+  body::before {
+    height: 250px;
+  }
+
+  body::after {
+    top: calc(var(--nav-height) + 130px);
+  }
+
+  #signupForm,
+  #signupError,
+  body > p:last-of-type {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  #signupForm {
+    margin-top: 300px;
+  }
+}

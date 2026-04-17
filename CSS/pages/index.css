@@ -1,0 +1,182 @@
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4rem 0 3rem;
+  position: relative;
+  overflow: hidden;
+  gap: 2rem;
+}
+
+.hero-text {
+  max-width: 600px;
+  z-index: 1;
+}
+
+.hero-eyebrow {
+  font-size: 0.85rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  margin-bottom: 0.5rem;
+  font-family: var(--font-body);
+}
+
+.hero-title {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--color-cream);
+  line-height: 1.05;
+  margin-bottom: 1.25rem;
+  /* gold underline on last word */
+  position: relative;
+}
+
+.hero-subtitle {
+  font-size: 1.05rem;
+  color: var(--color-text-muted);
+  line-height: 1.8;
+  margin-bottom: 2rem;
+  max-width: 480px;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* decorative background element */
+.hero-decoration {
+  position: absolute;
+  right: -60px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.deco-circle {
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  opacity: 0.4;
+  position: relative;
+}
+
+.deco-circle::before {
+  content: "";
+  position: absolute;
+  inset: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--color-gold);
+  opacity: 0.2;
+}
+
+.deco-line {
+  width: 200px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--color-gold), transparent);
+  margin: 1rem auto 0;
+  opacity: 0.3;
+}
+
+.book-section {
+  padding: 1.5rem 0;
+}
+
+.section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.section-header h2 {
+  position: relative;
+  padding-bottom: 0.4rem;
+}
+
+/* gold underline accent on section titles */
+.section-header h2::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background: var(--color-gold);
+  border-radius: 2px;
+}
+
+.section-link {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  letter-spacing: 0.05em;
+  transition: color var(--transition);
+  white-space: nowrap;
+}
+
+.section-link:hover {
+  color: var(--color-gold);
+}
+
+#recentBooks .bookCard,
+#popularBooks .bookCard,
+#recommendedBooks .bookCard {
+  padding: 1rem;
+}
+
+#recentBooks .bookCard img,
+#popularBooks .bookCard img,
+#recommendedBooks .bookCard img {
+  height: 180px;
+}
+
+/* hide description on home page cards to keep them compact */
+#recentBooks .bookCard .card-desc,
+#popularBooks .bookCard .card-desc,
+#recommendedBooks .bookCard .card-desc {
+  display: none;
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .hero {
+    padding: 2.5rem 0 2rem;
+    flex-direction: column;
+  }
+
+  .hero-decoration {
+    display: none;
+  }
+
+  .hero-title {
+    font-size: clamp(2rem, 8vw, 3rem);
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-actions {
+    flex-direction: column;
+  }
+
+  .hero-actions .btn {
+    text-align: center;
+    width: 100%;
+  }
+
+  .section-header {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+}

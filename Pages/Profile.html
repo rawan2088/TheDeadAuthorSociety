@@ -2,75 +2,79 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-
     <title>Profile</title>
+    <link rel="stylesheet" href="../CSS/main.css" />
     <link rel="stylesheet" href="../CSS/pages/profile_Style.css" />
   </head>
 
   <body>
-    <header>
-      <h1 id="mainLogo">TheDeadAuthorSociety</h1>
+    <div id="navbar"></div>
 
-      <nav>
-        <a href="index.html">Home</a> | <a href="SearchPage.html">Search</a> |
-        <!-- <a href="new-arrivals.html">New Arrivals</a> | -->
-        <a href="Borrowed.html">My Books</a> |
-        <!-- we should make some pages show to only the admin, and some to logged in user only -->
-        <!-- for now we would show everything -->
-        <a href="CategoryPage.html">Categories</a> |
-        <!-- <a href="Manage.html">Manage Books</a> -->
-        <a href="login.html">Login</a> | <a href="signup.html">Sign Up</a> |
-        <a href="About.html">About Us</a> |
-        <a href="Contact.html">Contact Us</a> |
-        <a href="Manage.html">Manage Books</a> |
-        <a href="Add_Book.html">Add Book</a> |
-        <a href="Profile.html">My profile</a>
-        <!-- if the user is logged in then show the logout btn -->
-        <!-- if hte user is not logged in, then show the login and signup btns -->
-        <!-- it the user is logged in as an admin, then show the manage books page -->
-        <!-- if user is admin, show add new book btn -->
-      </nav>
-    </header>
-
-    <hr />
-    <h1>My profile</h1>
-    <form>
-      <h3><strong>Role : </strong>User</h3>
+    <main>
+      <h1>My Profile</h1>
       <hr />
-      <div>
-        <h3><strong>Username : </strong>Adham</h3>
 
-        <label for="user">Edit User Name : </label>
-        <input type="text" id="user" name="new_name" />
-        <br />
+      <section style="margin-bottom: 1.5rem">
+        <p><strong>Role:</strong> <span id="displayRole">—</span></p>
+        <p><strong>Username:</strong> <span id="displayUsername">—</span></p>
+        <p><strong>Email:</strong> <span id="displayEmail">—</span></p>
+      </section>
 
-        <hr />
-      </div>
-
-      <div>
-        <h3><strong>Email : </strong>Adham@gmail.com</h3>
-        <label for="email">Edit Email :</label>
-        <input type="email" id="email" name="newemail" />
-        <br />
-      </div>
       <hr />
-      <div>
-        <label for="Cpass"> <b> Current Password : </b></label>
-        <input type="password" id="Cpass" />
-        <label for="pass"> <b> New password : </b></label>
-        <input type="password" id="pass" name="New password" />
+
+      <form>
+        <div>
+          <label for="user">New Username:</label>
+          <input
+            type="text"
+            id="user"
+            name="new_name"
+            placeholder="Leave blank to keep current"
+          />
+        </div>
         <hr />
-      </div>
 
-      <input type="submit" value="Save Changes" />
-    </form>
+        <div>
+          <label for="email">New Email:</label>
+          <input
+            type="email"
+            id="email"
+            name="newemail"
+            placeholder="Leave blank to keep current"
+          />
+        </div>
+        <hr />
 
-    <hr />
+        <div>
+          <label for="Cpass"><strong>Current Password:</strong></label>
+          <input
+            type="password"
+            id="Cpass"
+            placeholder="Required to change password"
+          />
+
+          <label for="pass"><strong>New Password:</strong></label>
+          <input
+            type="password"
+            id="pass"
+            name="new_password"
+            placeholder="At least 6 characters"
+          />
+        </div>
+        <hr />
+
+        <input type="submit" value="Save Changes" class="btn btn-primary" />
+      </form>
+    </main>
+
     <footer>
       <a href="About.html">About Us</a> |
       <a href="Contact.html">Contact Us</a>
       <p>&copy; Library Management System. All rights reserved.</p>
     </footer>
+
+    <script src="../js/storage.js"></script>
+    <script src="../js/navbar.js"></script>
     <script defer src="../js/profile_script.js"></script>
   </body>
 </html>

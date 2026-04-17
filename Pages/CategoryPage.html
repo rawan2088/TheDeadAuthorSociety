@@ -8,338 +8,44 @@
     <link rel="stylesheet" href="../CSS/pages/CategoryPage_Style.css" />
   </head>
   <body>
-
-    <header>
-      <div class="header-inner">
-        <h1 id="mainLogo">TheDeadAuthorSociety</h1>
-        <nav>
-          <a href="index.html">Home</a>
-          <a href="SearchPage.html">Search</a>
-          <a href="Borrowed.html">My Books</a>
-          <a href="CategoryPage.html">Categories</a>
-          <a href="login.html">Login</a>
-          <a href="signup.html">Sign Up</a>
-          <a href="About.html">About Us</a>
-          <a href="Contact.html">Contact Us</a>
-          <a href="Manage.html">Manage Books</a>
-          <a href="Add_Book.html">Add Book</a>
-          <a href="Profile.html">My Profile</a>
-        </nav>
-      </div>
-    </header>
+    <div id="navbar"></div>
 
     <main>
-
       <h1 class="page-title">Browse by Category</h1>
-      <p class="page-subtitle">Explore our collection grouped by genre and literary style</p>
+      <p class="page-subtitle">
+        Explore our collection grouped by genre and literary style
+      </p>
 
-      <!-- ── Filter Tabs ──────────────────────────────────── -->
-      <div class="filter-bar">
+      <div class="filter-bar" id="filterBar">
         <button class="filter-tab active" data-filter="all">All Genres</button>
-        <button class="filter-tab" data-filter="classic fiction">Classic Fiction</button>
-        <button class="filter-tab" data-filter="southern gothic">Southern Gothic</button>
-        <button class="filter-tab" data-filter="young adult">Young Adult</button>
-        <button class="filter-tab" data-filter="mystery thriller">Mystery Thriller</button>
-        <button class="filter-tab" data-filter="romance">Romance</button>
-        <button class="filter-tab" data-filter="self help">Self Help</button>
-        <button class="filter-tab" data-filter="historical fiction">Historical Fiction</button>
-
         <button
           id="expandCollapseBtn"
           style="
             margin-left: auto;
             background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text-dim);
+            border: 1px solid var(--color-border);
+            color: var(--color-cream-dim);
             border-radius: 20px;
             padding: 6px 18px;
-            font-family: 'Crimson Text', serif;
+            font-family: var(--font-body);
             font-size: 0.9rem;
             cursor: pointer;
             transition: all 0.25s;
           "
-          onmouseover="this.style.borderColor='var(--gold-dim)';this.style.color='var(--gold)'"
-          onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-dim)'"
-        >Expand All</button>
+          onmouseover="
+            this.style.borderColor = 'var(--color-gold)';
+            this.style.color = 'var(--color-gold)';
+          "
+          onmouseout="
+            this.style.borderColor = 'var(--color-border)';
+            this.style.color = 'var(--color-cream-dim)';
+          "
+        >
+          Expand All
+        </button>
       </div>
 
-      <!-- ══════════════════════════════════════════════════ -->
-      <!-- Classic Fiction                                    -->
-      <!-- ══════════════════════════════════════════════════ -->
-      <div class="category-section" data-category="classic fiction">
-        <div class="category-header">
-          <div class="category-header-left">
-            <div class="category-icon">📖</div>
-            <div>
-              <div class="category-name">Classic Fiction</div>
-              <div class="category-count">2 books</div>
-            </div>
-          </div>
-          <span class="category-chevron">▼</span>
-        </div>
-        <div class="category-body">
-          <div class="book-cards-grid">
-
-            <div class="book-card">
-              <div class="card-title">The Great Gatsby</div>
-              <div class="card-author">F. Scott Fitzgerald</div>
-              <div class="card-meta">
-                <span class="card-year">1925</span>
-                <span class="badge badge-available">In Stock</span>
-              </div>
-              <div class="card-desc">Published in 1925, a classic piece of American fiction told from the perspective of Nick Carraway about the eponymous Jay Gatsby.</div>
-              <div class="card-footer">
-                <a href="book1.html" class="card-details-link">View Details</a>
-              </div>
-            </div>
-
-            <div class="book-card">
-              <div class="card-title">Pride and Prejudice</div>
-              <div class="card-author">Jane Austen</div>
-              <div class="card-meta">
-                <span class="card-year">1813</span>
-                <span class="badge badge-available">In Stock</span>
-              </div>
-              <div class="card-desc">Jane Austen's much-adapted novel famed for its witty, spirited heroine and sensational romances — and deft remarks on social convention.</div>
-              <div class="card-footer">
-                <a href="book6.html" class="card-details-link">View Details</a>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-      <!-- ══════════════════════════════════════════════════ -->
-      <!-- Southern Gothic                                    -->
-      <!-- ══════════════════════════════════════════════════ -->
-      <div class="category-section" data-category="southern gothic">
-        <div class="category-header">
-          <div class="category-header-left">
-            <div class="category-icon">🌿</div>
-            <div>
-              <div class="category-name">Southern Gothic / Bildungsroman</div>
-              <div class="category-count">1 book</div>
-            </div>
-          </div>
-          <span class="category-chevron">▼</span>
-        </div>
-        <div class="category-body">
-          <div class="book-cards-grid">
-
-            <div class="book-card">
-              <div class="card-title">To Kill A Mockingbird</div>
-              <div class="card-author">Harper Lee</div>
-              <div class="card-meta">
-                <span class="card-year">1960</span>
-                <span class="badge badge-available">In Stock</span>
-              </div>
-              <div class="card-desc">Set in small-town Alabama, the novel chronicles the childhood of Scout and Jem Finch as their father defends a man falsely accused of rape.</div>
-              <div class="card-footer">
-                <a href="book2.html" class="card-details-link">View Details</a>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-      <!-- ══════════════════════════════════════════════════ -->
-      <!-- Young Adult                                        -->
-      <!-- ══════════════════════════════════════════════════ -->
-      <div class="category-section" data-category="young adult">
-        <div class="category-header">
-          <div class="category-header-left">
-            <div class="category-icon">✨</div>
-            <div>
-              <div class="category-name">Young Adult</div>
-              <div class="category-count">2 books</div>
-            </div>
-          </div>
-          <span class="category-chevron">▼</span>
-        </div>
-        <div class="category-body">
-          <div class="book-cards-grid">
-
-            <div class="book-card">
-              <div class="card-title">Call It What You Want</div>
-              <div class="card-author">Brigid Kemmerer</div>
-              <div class="card-meta">
-                <span class="card-year">2023</span>
-                <span class="badge badge-unavailable">Not Available</span>
-              </div>
-              <div class="card-desc">When his dad is caught embezzling funds, Rob goes from popular lacrosse player to social pariah, while Maegan hides secrets of her own.</div>
-              <div class="card-footer">
-                <a href="book3.html" class="card-details-link">View Details</a>
-              </div>
-            </div>
-
-            <div class="book-card">
-              <div class="card-title">Betting on You</div>
-              <div class="card-author">Lynn Painter</div>
-              <div class="card-meta">
-                <span class="card-year">2023</span>
-                <span class="badge badge-unavailable">Not Available</span>
-              </div>
-              <div class="card-desc">When Bailey starts a new job at a hotel waterpark, she runs into Charlie — an old acquaintance whose cynicism clashes with her careful temperament.</div>
-              <div class="card-footer">
-                <a href="book5.html" class="card-details-link">View Details</a>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-      <!-- ══════════════════════════════════════════════════ -->
-      <!-- Mystery Thriller                                   -->
-      <!-- ══════════════════════════════════════════════════ -->
-      <div class="category-section" data-category="mystery thriller">
-        <div class="category-header">
-          <div class="category-header-left">
-            <div class="category-icon">🔍</div>
-            <div>
-              <div class="category-name">Mystery Thriller</div>
-              <div class="category-count">2 books</div>
-            </div>
-          </div>
-          <span class="category-chevron">▼</span>
-        </div>
-        <div class="category-body">
-          <div class="book-cards-grid">
-
-            <div class="book-card">
-              <div class="card-title">A Good Girl's Guide to Murder</div>
-              <div class="card-author">Holly Jackson</div>
-              <div class="card-meta">
-                <span class="card-year">2019</span>
-                <span class="badge badge-available">In Stock</span>
-              </div>
-              <div class="card-desc">Five years ago, Andie Bell was murdered — or so everyone believes. Pippa Fitz-Amobi isn't convinced and starts digging for the truth.</div>
-              <div class="card-footer">
-                <a href="book4.html" class="card-details-link">View Details</a>
-              </div>
-            </div>
-
-            <div class="book-card">
-              <div class="card-title">The Silent Patient</div>
-              <div class="card-author">Alex Michaelides</div>
-              <div class="card-meta">
-                <span class="card-year">2019</span>
-                <span class="badge badge-available">In Stock</span>
-              </div>
-              <div class="card-desc">Alicia Berenson's life seems perfect until she shoots her husband five times in the face — and then never speaks another word.</div>
-              <div class="card-footer">
-                <a href="book8.html" class="card-details-link">View Details</a>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-      <!-- ══════════════════════════════════════════════════ -->
-      <!-- Romance                                            -->
-      <!-- ══════════════════════════════════════════════════ -->
-      <div class="category-section" data-category="romance">
-        <div class="category-header">
-          <div class="category-header-left">
-            <div class="category-icon">🌹</div>
-            <div>
-              <div class="category-name">Romance</div>
-              <div class="category-count">1 book</div>
-            </div>
-          </div>
-          <span class="category-chevron">▼</span>
-        </div>
-        <div class="category-body">
-          <div class="book-cards-grid">
-
-            <div class="book-card">
-              <div class="card-title">Betting on You</div>
-              <div class="card-author">Lynn Painter</div>
-              <div class="card-meta">
-                <span class="card-year">2023</span>
-                <span class="badge badge-unavailable">Not Available</span>
-              </div>
-              <div class="card-desc">When Bailey starts a new job at a hotel waterpark, she runs into Charlie — an old acquaintance whose cynicism clashes with her careful temperament.</div>
-              <div class="card-footer">
-                <a href="book5.html" class="card-details-link">View Details</a>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-      <!-- ══════════════════════════════════════════════════ -->
-      <!-- Self Help                                          -->
-      <!-- ══════════════════════════════════════════════════ -->
-      <div class="category-section" data-category="self help">
-        <div class="category-header">
-          <div class="category-header-left">
-            <div class="category-icon">💡</div>
-            <div>
-              <div class="category-name">Self Help</div>
-              <div class="category-count">1 book</div>
-            </div>
-          </div>
-          <span class="category-chevron">▼</span>
-        </div>
-        <div class="category-body">
-          <div class="book-cards-grid">
-
-            <div class="book-card">
-              <div class="card-title">Steal Like an Artist</div>
-              <div class="card-author">Austin Kleon</div>
-              <div class="card-meta">
-                <span class="card-year">2012</span>
-                <span class="badge badge-unavailable">Not Available</span>
-              </div>
-              <div class="card-desc">A manifesto for the digital age — positive messages, illustrations, and exercises that puts readers directly in touch with their artistic side.</div>
-              <div class="card-footer">
-                <a href="book7.html" class="card-details-link">View Details</a>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-      <!-- ══════════════════════════════════════════════════ -->
-      <!-- Historical Fiction                                 -->
-      <!-- ══════════════════════════════════════════════════ -->
-      <div class="category-section" data-category="historical fiction">
-        <div class="category-header">
-          <div class="category-header-left">
-            <div class="category-icon">🏛️</div>
-            <div>
-              <div class="category-name">Historical Fiction</div>
-              <div class="category-count">1 book</div>
-            </div>
-          </div>
-          <span class="category-chevron">▼</span>
-        </div>
-        <div class="category-body">
-          <div class="book-cards-grid">
-
-            <div class="book-card">
-              <div class="card-title">Little Women</div>
-              <div class="card-author">Louisa May Alcott</div>
-              <div class="card-meta">
-                <span class="card-year">1868</span>
-                <span class="badge badge-unavailable">Not Available</span>
-              </div>
-              <div class="card-desc">Generations of readers have fallen in love with the March sisters — Jo, Beth, Meg, and Amy — united in devotion during the Civil War era.</div>
-              <div class="card-footer">
-                <a href="book9.html" class="card-details-link">View Details</a>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
+      <div id="categoriesContainer"></div>
     </main>
 
     <footer>
@@ -348,7 +54,8 @@
       <p>&copy; TheDeadAuthorSociety Library. All rights reserved.</p>
     </footer>
 
+    <script src="../js/storage.js"></script>
+    <script src="../js/navbar.js"></script>
     <script src="../js/CategoryPage_Script.js" defer></script>
-
   </body>
 </html>

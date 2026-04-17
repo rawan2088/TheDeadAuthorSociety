@@ -255,7 +255,7 @@ function saveUser(user) {
   let users = getUsers();
 
   if (user.id == null) {
-    const ids = borrowed.map((b) => b.id);
+    const ids = users.map((b) => b.id);
     user.id = users.length > 0 ? Math.max(...ids) + 1 : 1;
   }
 
@@ -298,7 +298,8 @@ function saveBook(book) {
 function getBookById(id) {
   let books = getBooks();
   return books.find((b) => b.id == id);
-} // book template + manage need this
+}
+// book template + manage need this
 
 function updateBook(updatedBook) {
   let books = getBooks();
@@ -349,6 +350,24 @@ function isBookBorrowed(userId, bookId) {
   let borrowed = JSON.parse(localStorage.getItem("borrowed")) || [];
   return borrowed.some((b) => b.userId == userId && b.bookId == bookId);
 } // book details needs this (to disable button)
+
+function returnBook(borrowId) {
+  let borrowed = JSON.parse(localStorage.getItem("borrowed")) || [];
+
+  const record = borrowed.find((b) => b.id == borrowId);
+  if (!record) return;
+
+  // Give the copy back
+  const book = getBookById(record.bookId);
+  if (book) {
+    book.availableCopies += 1;
+    updateBook(book);
+  }
+
+  // Remove the borrow record
+  borrowed = borrowed.filter((b) => b.id != borrowId);
+  localStorage.setItem("borrowed", JSON.stringify(borrowed));
+}
 
 // COMMENTS
 function saveComment(comment) {

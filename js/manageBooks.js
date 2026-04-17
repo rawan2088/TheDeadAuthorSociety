@@ -7,6 +7,22 @@ function handleDelete(id) {
   }
 }
 
+function handleAddCopy(id) {
+  const book = getBookById(id);
+  if (!book) return;
+  book.totalCopies += 1;
+  book.availableCopies += 1;
+  updateBook(book);
+  renderBooks();
+}
+
+function handleEdit(id) {
+  const book = getBookById(id);
+  if (!book) return;
+  sessionStorage.setItem("editBook", JSON.stringify(book));
+  window.location.href = "Add_Book.html";
+}
+
 function renderBooks() {
   booksContainer.innerHTML = "";
 
@@ -38,29 +54,34 @@ function renderBooks() {
           <!-- would only be a true or false statement depending on the number in stock -->
           <p><strong>Availability:</strong> ${book.availableCopies > 0 ? "In Stock" : "Out of Stock"}</p>
           <div class="card-actions">
-            <button class="btn btn-primary">+</button>
-            <button class="btn btn-secondary">Edit</button>
-            <button class="btn btn-danger" onclick="handleDelete(${book.id})">Delete</button>
+            <button class="btn btn-primary add-copy-btn">+ Copy</button>
+            <button class="btn btn-secondary edit-btn">Edit</button>
+            <button class="btn btn-danger delete-btn">Delete</button>
           </div>
     `;
 
     const invisible = document.createElement("a");
     invisible.classList.add("invisible-link");
-    invisible.href = `book${book.id}.html`;
+    invisible.href = `book.html?id=${book.id}`;
     bookCard.appendChild(invisible);
 
     bookCard.querySelectorAll(".card-actions button").forEach((btn) => {
       btn.addEventListener("click", (e) => e.stopPropagation());
     });
 
-    bookCard.querySelector(".btn-danger").addEventListener("click", () => {
-      handleDelete(book.id);
-    });
-
+    bookCard
+      .querySelector(".add-copy-btn")
+      .addEventListener("click", () => handleAddCopy(book.id));
+    bookCard
+      .querySelector(".edit-btn")
+      .addEventListener("click", () => handleEdit(book.id));
+    bookCard
+      .querySelector(".delete-btn")
+      .addEventListener("click", () => handleDelete(book.id));
     booksContainer.appendChild(bookCard);
   });
 }
-//   would save the current book in the session storage,
+// would save the current book in the session storage,
 // then check inside the add book page if there is data, if there is then it would be an edit, if not then it would be an add
 
 renderBooks();

@@ -1,24 +1,19 @@
-/* ============================================================
-   CategoryPage — Stylesheet
-   ============================================================ */
-
-/* ── Category Filter Tabs ──────────────────────────────────── */
 .filter-bar {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   margin-bottom: 36px;
   padding-bottom: 20px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .filter-tab {
   background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text-dim);
+  border: 1px solid var(--color-border);
+  color: var(--color-cream-dim);
   border-radius: 20px;
   padding: 6px 18px;
-  font-family: 'Crimson Text', serif;
+  font-family: var(--font-body);
   font-size: 0.9rem;
   letter-spacing: 0.04em;
   cursor: pointer;
@@ -26,39 +21,50 @@
 }
 
 .filter-tab:hover {
-  border-color: var(--gold-dim);
-  color: var(--gold);
+  border-color: rgba(201, 168, 76, 0.5);
+  color: var(--color-gold);
 }
 
 .filter-tab.active {
-  background: var(--gold);
-  border-color: var(--gold);
-  color: var(--ink);
+  background: var(--color-gold);
+  border-color: var(--color-gold);
+  color: var(--color-bg);
   font-weight: 600;
 }
 
-/* ── Category Section ──────────────────────────────────────── */
 .category-section {
   margin-bottom: 28px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
   animation: fadeUp 0.45s ease both;
 }
 
-.category-section.hidden { display: none; }
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-/* ── Category Header (Accordion) ───────────────────────────── */
+.category-section.hidden {
+  display: none;
+}
+
 .category-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 18px 24px;
-  background: linear-gradient(135deg, #26211b 0%, var(--ink-mid) 100%);
+  background: linear-gradient(135deg, #26211b 0%, var(--color-surface) 100%);
   cursor: pointer;
   user-select: none;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--color-border);
   transition: background var(--transition);
   gap: 16px;
 }
@@ -77,8 +83,8 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: rgba(201,168,76,0.12);
-  border: 1px solid var(--border);
+  background: rgba(201, 168, 76, 0.12);
+  border: 1px solid var(--color-border);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -87,21 +93,21 @@
 }
 
 .category-name {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-display);
   font-size: 1.15rem;
   font-weight: 600;
-  color: var(--parchment);
+  color: var(--color-cream);
 }
 
 .category-count {
-  font-family: 'Crimson Text', serif;
+  font-family: var(--font-body);
   font-size: 0.8rem;
-  color: var(--text-muted);
+  color: var(--color-text-muted);
   margin-top: 2px;
 }
 
 .category-chevron {
-  color: var(--gold-dim);
+  color: rgba(201, 168, 76, 0.5);
   font-size: 0.9rem;
   transition: transform 0.3s ease;
   flex-shrink: 0;
@@ -111,19 +117,17 @@
   transform: rotate(180deg);
 }
 
-/* ── Category Body (Collapsible) ───────────────────────────── */
 .category-body {
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  background: var(--ink-mid);
+  background: var(--color-surface);
 }
 
 .category-body.open {
   max-height: 1200px;
 }
 
-/* ── Book Cards Grid ───────────────────────────────────────── */
 .book-cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -132,47 +136,52 @@
 }
 
 .book-card {
-  background: var(--ink-light);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
   padding: 20px;
-  transition: border-color var(--transition), transform 0.2s, box-shadow 0.2s;
+  transition:
+    border-color var(--transition),
+    transform 0.2s,
+    box-shadow 0.2s;
   position: relative;
   overflow: hidden;
 }
 
 .book-card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, var(--gold), transparent);
+  background: linear-gradient(90deg, var(--color-gold), transparent);
   opacity: 0;
   transition: opacity var(--transition);
 }
 
 .book-card:hover {
-  border-color: var(--gold-dim);
+  border-color: rgba(201, 168, 76, 0.5);
   transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
-.book-card:hover::before { opacity: 1; }
+.book-card:hover::before {
+  opacity: 1;
+}
 
 .card-title {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--font-display);
   font-size: 1.05rem;
   font-weight: 600;
-  color: var(--parchment);
+  color: var(--color-cream);
   margin-bottom: 4px;
   line-height: 1.3;
 }
 
 .card-author {
   font-style: italic;
-  color: var(--text-dim);
+  color: var(--color-cream-dim);
   font-size: 0.88rem;
   margin-bottom: 10px;
 }
@@ -187,16 +196,16 @@
 
 .card-year {
   font-size: 0.78rem;
-  color: var(--text-muted);
-  background: rgba(255,255,255,0.04);
+  color: var(--color-text-muted);
+  background: rgba(255, 255, 255, 0.04);
   padding: 2px 8px;
   border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.06);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .card-desc {
   font-size: 0.82rem;
-  color: var(--text-dim);
+  color: var(--color-cream-dim);
   line-height: 1.55;
   margin-bottom: 16px;
   display: -webkit-box;
@@ -216,44 +225,65 @@
   display: inline-block;
   padding: 6px 16px;
   background: transparent;
-  border: 1px solid var(--gold-dim);
-  color: var(--gold);
-  border-radius: var(--radius);
-  font-family: 'Crimson Text', serif;
+  border: 1px solid rgba(201, 168, 76, 0.5);
+  color: var(--color-gold);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
   font-size: 0.85rem;
   text-decoration: none;
   transition: all var(--transition);
 }
 
 .card-details-link:hover {
-  background: var(--gold);
-  color: var(--ink);
-  border-color: var(--gold);
+  background: var(--color-gold);
+  color: var(--color-bg);
+  border-color: var(--color-gold);
 }
 
-/* ── Empty Category ────────────────────────────────────────── */
 .category-empty {
   text-align: center;
   padding: 32px;
-  color: var(--text-muted);
+  color: var(--color-text-muted);
   font-style: italic;
   font-size: 0.9rem;
 }
 
-/* ── Staggered animation ───────────────────────────────────── */
-.category-section:nth-child(1) { animation-delay: 0.05s; }
-.category-section:nth-child(2) { animation-delay: 0.10s; }
-.category-section:nth-child(3) { animation-delay: 0.15s; }
-.category-section:nth-child(4) { animation-delay: 0.20s; }
-.category-section:nth-child(5) { animation-delay: 0.25s; }
-.category-section:nth-child(6) { animation-delay: 0.30s; }
-.category-section:nth-child(7) { animation-delay: 0.35s; }
+.category-section:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.category-section:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.category-section:nth-child(3) {
+  animation-delay: 0.15s;
+}
+.category-section:nth-child(4) {
+  animation-delay: 0.2s;
+}
+.category-section:nth-child(5) {
+  animation-delay: 0.25s;
+}
+.category-section:nth-child(6) {
+  animation-delay: 0.3s;
+}
+.category-section:nth-child(7) {
+  animation-delay: 0.35s;
+}
 
-/* ── Responsive ────────────────────────────────────────────── */
 @media (max-width: 600px) {
-  .book-cards-grid { grid-template-columns: 1fr; gap: 12px; padding: 16px; }
-  .filter-bar { gap: 6px; }
-  .filter-tab { padding: 5px 12px; font-size: 0.83rem; }
-  main { padding: 24px 16px 48px; }
-  .header-inner { padding: 14px 16px 0; }
+  .book-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 16px;
+  }
+  .filter-bar {
+    gap: 6px;
+  }
+  .filter-tab {
+    padding: 5px 12px;
+    font-size: 0.83rem;
+  }
+  main {
+    padding: 24px 16px 48px;
+  }
 }

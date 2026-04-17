@@ -1,145 +1,138 @@
-/**
- * SearchPage_Script.js
- * TheDeadAuthorSociety — Search Page Functionality
- *
- * Features:
- *  - Live text search (title, author, description)
- *  - Category filter dropdown
- *  - Availability filter
- *  - Result count display
- *  - Clear filters button
- *  - Keyboard shortcut (/ to focus search)
- *  - No-results state
- */
-
 (function () {
   "use strict";
 
-  /* ── State ─────────────────────────────────────────────── */
-  const state = {
-    query: "",
-    category: "all",
-    availability: "all",
-  };
+  const state = { query: "", category: "all", availability: "all" };
 
-  /* ── DOM refs ───────────────────────────────────────────── */
-  const searchInput    = document.getElementById("searchInput");
+  const searchInput = document.getElementById("searchInput");
   const categorySelect = document.getElementById("categoryFilter");
-  const availSelect    = document.getElementById("availFilter");
-  const clearBtn       = document.getElementById("clearBtn");
-  const countEl        = document.getElementById("resultCount");
-  const noResults      = document.getElementById("noResults");
-  const tbody          = document.querySelector(".books-table tbody");
+  const availSelect = document.getElementById("availFilter");
+  const clearBtn = document.getElementById("clearBtn");
+  const visibleCountEl = document.getElementById("visibleCount");
+  const totalCountEl = document.getElementById("totalCount");
+  const noResults = document.getElementById("noResults");
+  const tbody = document.getElementById("booksTableBody");
+  const tableWrap = document.querySelector(".books-table-wrap");
 
-  /* ── Gather all rows once ───────────────────────────────── */
-  const allRows = Array.from(tbody ? tbody.querySelectorAll("tr") : []);
+  function buildTable() {
+    const books = getBooks();
 
-  /* ── Core filter function ───────────────────────────────── */
+    tbody.innerHTML = "";
+
+    const categories = [...new Set(books.map((b) => b.category))].sort();
+    categorySelect.innerHTML = '<option value="all">All Categories</option>';
+    categories.forEach((cat) => {
+      const opt = document.createElement("option");
+      opt.value = cat.toLowerCase();
+      opt.textContent = cat;
+      categorySelect.appendChild(opt);
+    });
+
+    if (totalCountEl) totalCountEl.textContent = books.length;
+
+    books.forEach((book, i) => {
+      const isAvailable = book.availableCopies > 0;
+      const avail = isAvailable ? "in stock" : "not available";
+
+      const tr = document.createElement("tr");
+      tr.dataset.title = book.title.toLowerCase();
+      tr.dataset.author = book.author.toLowerCase();
+      tr.dataset.description = book.description.toLowerCase();
+      tr.dataset.category = book.category.toLowerCase();
+      tr.dataset.availability = avail;
+
+      tr.style.animationDelay = `${i * 0.04}s`;
+
+      tr.innerHTML = `
+        <td class="book-title-cell">${book.title}</td>
+        <td class="book-author-cell">${book.author}</td>
+        <td class="book-year-cell">${book.published}</td>
+        <td class="book-category-cell">${book.category}</td>
+        <td class="book-desc-cell"><p>${book.description}</p></td>
+        <td>
+          <span class="badge ${isAvailable ? "badge-available" : "badge-unavailable"}">
+            ${isAvailable ? "In Stock" : "Not Available"}
+          </span>
+        </td>
+        <td><a href="book.html?id=${book.id}" class="details-link">Details</a></td>
+      `;
+
+      tbody.appendChild(tr);
+    });
+
+    applyFilters();
+  }
+
   function applyFilters() {
-    const q    = state.query.toLowerCase().trim();
-    const cat  = state.category;
+    const rows = Array.from(tbody.querySelectorAll("tr"));
+    const q = state.query.toLowerCase().trim();
+    const cat = state.category;
     const avail = state.availability;
 
-    let visibleCount = 0;
+    let visible = 0;
 
-    allRows.forEach((row, i) => {
-      const title  = (row.dataset.title       || "").toLowerCase();
-      const author = (row.dataset.author      || "").toLowerCase();
-      const desc   = (row.dataset.description || "").toLowerCase();
-      const rowCat = (row.dataset.category    || "").toLowerCase();
-      const rowAv  = (row.dataset.availability || "").toLowerCase();
-
+    rows.forEach((row, i) => {
       const matchesText =
         !q ||
-        title.includes(q) ||
-        author.includes(q) ||
-        desc.includes(q);
+        row.dataset.title.includes(q) ||
+        row.dataset.author.includes(q) ||
+        row.dataset.description.includes(q);
 
-      const matchesCat  = cat === "all" || rowCat === cat;
-      const matchesAvail = avail === "all" || rowAv === avail;
+      const matchesCat = cat === "all" || row.dataset.category === cat;
+      const matchesAvail =
+        avail === "all" || row.dataset.availability === avail;
 
-      const visible = matchesText && matchesCat && matchesAvail;
+      const show = matchesText && matchesCat && matchesAvail;
+      row.style.display = show ? "" : "none";
 
-      row.style.display = visible ? "" : "none";
-
-      if (visible) {
-        /* re-trigger animation for filtered rows */
+      if (show) {
         row.style.animation = "none";
-        void row.offsetHeight; /* reflow */
-        row.style.animation = `fadeUp 0.35s ease ${(visibleCount * 0.04)}s both`;
-        visibleCount++;
+        void row.offsetHeight;
+        row.style.animation = `fadeUp 0.35s ease ${visible * 0.04}s both`;
+        visible++;
       }
     });
 
-    /* update count */
-    if (countEl) {
-      countEl.innerHTML = `Showing <span>${visibleCount}</span> of <span>${allRows.length}</span> books`;
-    }
+    if (visibleCountEl) visibleCountEl.textContent = visible;
 
-    /* toggle no-results */
-    if (noResults) {
-      noResults.classList.toggle("visible", visibleCount === 0);
-    }
-
-    /* toggle table visibility */
-    const tableWrap = document.querySelector(".books-table-wrap");
-    if (tableWrap) {
-      tableWrap.style.display = visibleCount === 0 ? "none" : "";
-    }
+    const empty = visible === 0;
+    if (noResults) noResults.classList.toggle("visible", empty);
+    if (tableWrap) tableWrap.style.display = empty ? "none" : "";
   }
 
-  /* ── Event listeners ────────────────────────────────────── */
-  if (searchInput) {
-    searchInput.addEventListener("input", () => {
-      state.query = searchInput.value;
-      applyFilters();
-    });
-  }
+  searchInput.addEventListener("input", () => {
+    state.query = searchInput.value;
+    applyFilters();
+  });
 
-  if (categorySelect) {
-    categorySelect.addEventListener("change", () => {
-      state.category = categorySelect.value;
-      applyFilters();
-    });
-  }
+  categorySelect.addEventListener("change", () => {
+    state.category = categorySelect.value;
+    applyFilters();
+  });
 
-  if (availSelect) {
-    availSelect.addEventListener("change", () => {
-      state.availability = availSelect.value;
-      applyFilters();
-    });
-  }
+  availSelect.addEventListener("change", () => {
+    state.availability = availSelect.value;
+    applyFilters();
+  });
 
-  if (clearBtn) {
-    clearBtn.addEventListener("click", () => {
-      state.query        = "";
-      state.category     = "all";
-      state.availability = "all";
+  clearBtn.addEventListener("click", () => {
+    state.query = "";
+    state.category = "all";
+    state.availability = "all";
+    searchInput.value = "";
+    categorySelect.value = "all";
+    availSelect.value = "all";
+    applyFilters();
+  });
 
-      if (searchInput)    searchInput.value    = "";
-      if (categorySelect) categorySelect.value = "all";
-      if (availSelect)    availSelect.value    = "all";
-
-      applyFilters();
-    });
-  }
-
-  /* ── Keyboard shortcut: "/" focuses search ──────────────── */
   document.addEventListener("keydown", (e) => {
     if (e.key === "/" && document.activeElement !== searchInput) {
       e.preventDefault();
-      if (searchInput) searchInput.focus();
+      searchInput.focus();
     }
     if (e.key === "Escape" && document.activeElement === searchInput) {
       searchInput.blur();
     }
   });
 
-  /* ── Active nav link ────────────────────────────────────── */
-  document.querySelectorAll("nav a").forEach((link) => {
-    if (link.href === window.location.href) link.classList.add("active");
-  });
-
-  /* ── Init ───────────────────────────────────────────────── */
-  applyFilters();
+  document.addEventListener("DOMContentLoaded", buildTable);
 })();

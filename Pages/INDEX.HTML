@@ -3,131 +3,75 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Online Library</title>
+    <title>TheDeadAuthorSociety — Online Library</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link rel="stylesheet" href="../css/pages/index.css" />
   </head>
-  <body bgcolor="#f0f4f8">
-    <header>
-      <h1 id="mainLogo">TheDeadAuthorSociety</h1>
+  <body>
+    <div id="navbar"></div>
 
-      <nav>
-        <a href="index.html">Home</a> | <a href="SearchPage.html">Search</a> |
-        <!-- <a href="new-arrivals.html">New Arrivals</a> | -->
-        <a href="Borrowed.html">My Books</a> |
-        <!-- we should make some pages show to only the admin, and some to logged in user only -->
-        <!-- for now we would show everything -->
-        <a href="CategoryPage.html">Categories</a> |
-        <!-- <a href="Manage.html">Manage Books</a> -->
-        <a href="login.html">Login</a> | <a href="signup.html">Sign Up</a> |
-        <a href="About.html">About Us</a> |
-        <a href="Contact.html">Contact Us</a> |
-        <a href="Manage.html">Manage Books</a> |
-        <a href="Add_Book.html">Add Book</a> |
-        <a href="Profile.html">My profile</a>
-        <!-- if the user is logged in then show the logout btn -->
-        <!-- if hte user is not logged in, then show the login and signup btns -->
-        <!-- it the user is logged in as an admin, then show the manage books page -->
-        <!-- if user is admin, show add new book btn -->
-      </nav>
-      <br /><br />
-      <form>
-        <input type="text" name="search" placeholder="Search for a book..." />
-        <button type="submit">Search</button>
-      </form>
-    </header>
+    <main>
+      <section class="hero">
+        <div class="hero-text">
+          <p class="hero-eyebrow">Welcome to</p>
+          <h1 class="hero-title">TheDeadAuthor<br />Society</h1>
+          <p class="hero-subtitle">
+            A sanctuary for every book lover. Browse our collection, borrow a
+            classic, and join a society that never stops reading.
+          </p>
+          <div class="hero-actions">
+            <a href="SearchPage.html" class="btn btn-primary"
+              >Browse All Books</a
+            >
+            <a href="signup.html" class="btn btn-secondary">Join the Society</a>
+          </div>
+        </div>
+        <div class="hero-decoration">
+          <div class="deco-circle"></div>
+          <div class="deco-line"></div>
+        </div>
+      </section>
 
-    <h1>Welcome to the Online Library</h1>
-    <p>Browse, search, and borrow books from our collection.</p>
+      <hr />
 
-    <hr />
-    <ul>
-      <li>
-        <h2>Recently Added Books</h2>
-        <ul>
-          <li><a href="book1.html">The Great Gatsby </a></li>
-          <b>Author: F. Scott Fitzgerald</b>
-          <img
-            src="../Assets/the great gatspy.png"
-            alt="The Great Gatsby"
-            width="100"
-          />
-          <li><a href="book2.html">To Kill a Mockingbird </a></li>
-          <b>Author: Harper Lee</b>
-          <img
-            src="../Assets/to kill a mochingbird.png"
-            alt="To Kill a Mockingbird"
-            width="100"
-          />
-          <li><a href="book3.html">Call It What You Want </a></li>
-          <b>Author: Alissa Dergogatis</b>
-          <img
-            src="../Assets/call it what you want.jpg"
-            alt="Call It What You Want"
-            width="100"
-          />
-        </ul>
-      </li>
-    </ul>
-    <ul>
-      <li>
-        <h2>Popular Books</h2>
-        <ul>
-          <li><a href="book4.html">A Good Girl's Guide To Murder </a></li>
-          <b>Author: Holly Jackson</b>
-          <img
-            src="../Assets/a good girls guid to murder.jpg"
-            alt="A Good Girl's Guide To Murder"
-            width="100"
-          />
-          <li><a href="book5.html">Betting On You </a></li>
-          <b>Author: Lynn Painter</b>
-          <img
-            src="../Assets/betting on you.jpg"
-            alt="Betting On You"
-            width="100"
-          />
-          <li><a href="book6.html">Pride And Prejudice </a></li>
-          <b>Author: Jane Austen</b>
-          <img
-            src="../Assets/pride and prejudice.jpg"
-            alt="Pride And Prejudice"
-            width="100"
-          />
-        </ul>
-      </li>
-    </ul>
-    <ul>
-      <li>
-        <h2>Recommended Books</h2>
-        <ul>
-          <li><a href="book7.html">Steal Like An Artist </a></li>
-          <b>Author: Austin Kleon</b>
-          <img
-            src="../Assets/steal like an artist.jpg"
-            alt="Steal Like An Artist"
-            width="100"
-          />
-          <li><a href="book8.html">The Silent Patient </a></li>
-          <b>Author: Alex Michaelides</b>
-          <img
-            src="../Assets/the silent patient.jpg"
-            alt="The Silent Patient"
-            width="100"
-          />
-          <li><a href="book9.html">Little Women</a></li>
-          <b>Author: Louisa May Alcott</b>
-          <img
-            src="../Assets/little women.jpg"
-            alt="Little Women"
-            width="100"
-          />
-        </ul>
-      </li>
-    </ul>
-    <hr />
+      <section class="book-section">
+        <div class="section-header">
+          <h2>Recently Added</h2>
+          <a href="SearchPage.html" class="section-link">View all →</a>
+        </div>
+        <div class="bookContainer" id="recentBooks"></div>
+      </section>
+
+      <hr />
+
+      <!-- POPULAR BOOKS -->
+      <section class="book-section">
+        <div class="section-header">
+          <h2>Popular Books</h2>
+          <a href="SearchPage.html" class="section-link">View all →</a>
+        </div>
+        <div class="bookContainer" id="popularBooks"></div>
+      </section>
+
+      <hr />
+
+      <section class="book-section">
+        <div class="section-header">
+          <h2>Recommended for You</h2>
+          <a href="SearchPage.html" class="section-link">View all →</a>
+        </div>
+        <div class="bookContainer" id="recommendedBooks"></div>
+      </section>
+    </main>
+
     <footer>
       <a href="About.html">About Us</a> |
       <a href="Contact.html">Contact Us</a>
       <p>&copy; Library Management System. All rights reserved.</p>
     </footer>
+
+    <script src="../js/storage.js"></script>
+    <script src="../js/navbar.js"></script>
+    <script src="../js/index.js"></script>
   </body>
 </html>
