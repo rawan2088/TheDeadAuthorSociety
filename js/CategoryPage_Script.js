@@ -1,14 +1,4 @@
-/**
- * CategoryPage_Script.js
- * TheDeadAuthorSociety — Category Page Functionality
- *
- * Features:
- *  - Accordion-style collapsible category sections
- *  - Filter tabs to show/hide specific categories
- *  - "Expand All / Collapse All" toggle
- *  - Opens first section by default
- *  - Active nav link highlight
- */
+
 
 (function () {
   "use strict";
