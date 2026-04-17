@@ -1,9 +1,4 @@
-/* ============================================================
-   SearchPage — Stylesheet
-   ============================================================ */
 
-/* ── Search Controls ───────────────────────────────────────── */
-.search-controls {
   background: var(--ink-mid);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -84,7 +79,6 @@
 
 .search-btn:active { transform: translateY(0); }
 
-/* ── Results Info ──────────────────────────────────────────── */
 .results-info {
   display: flex;
   align-items: center;
@@ -124,7 +118,6 @@
   color: var(--gold);
 }
 
-/* ── Books Table ───────────────────────────────────────────── */
 .books-table-wrap {
   overflow-x: auto;
   border-radius: var(--radius-lg);
@@ -231,7 +224,7 @@
   border-color: var(--gold);
 }
 
-/* ── No Results ────────────────────────────────────────────── */
+
 .no-results {
   text-align: center;
   padding: 64px 32px;
@@ -259,7 +252,7 @@
   font-style: italic;
 }
 
-/* ── Staggered row animation ───────────────────────────────── */
+
 .books-table tbody tr:nth-child(1)  { animation-delay: 0.05s; }
 .books-table tbody tr:nth-child(2)  { animation-delay: 0.10s; }
 .books-table tbody tr:nth-child(3)  { animation-delay: 0.15s; }
@@ -270,7 +263,6 @@
 .books-table tbody tr:nth-child(8)  { animation-delay: 0.40s; }
 .books-table tbody tr:nth-child(9)  { animation-delay: 0.45s; }
 
-/* ── Responsive ────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .search-controls { flex-direction: column; }
   main { padding: 24px 16px 48px; }
