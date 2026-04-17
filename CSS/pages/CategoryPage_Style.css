@@ -33,7 +33,7 @@
   font-weight: 600;
 }
 
-/* ── Category Section ──────────────────────────────────────── */
+
 .category-section {
   margin-bottom: 28px;
   border: 1px solid var(--border);
@@ -45,7 +45,6 @@
 
 .category-section.hidden { display: none; }
 
-/* ── Category Header (Accordion) ───────────────────────────── */
 .category-header {
   display: flex;
   align-items: center;
@@ -107,7 +106,7 @@
   transform: rotate(180deg);
 }
 
-/* ── Category Body (Collapsible) ───────────────────────────── */
+
 .category-body {
   max-height: 0;
   overflow: hidden;
@@ -119,7 +118,7 @@
   max-height: 1200px;
 }
 
-/* ── Book Cards Grid ───────────────────────────────────────── */
+
 .book-cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -227,7 +226,7 @@
   border-color: var(--gold);
 }
 
-/* ── Empty Category ────────────────────────────────────────── */
+
 .category-empty {
   text-align: center;
   padding: 32px;
@@ -236,7 +235,7 @@
   font-size: 0.9rem;
 }
 
-/* ── Staggered animation ───────────────────────────────────── */
+
 .category-section:nth-child(1) { animation-delay: 0.05s; }
 .category-section:nth-child(2) { animation-delay: 0.10s; }
 .category-section:nth-child(3) { animation-delay: 0.15s; }
@@ -245,7 +244,6 @@
 .category-section:nth-child(6) { animation-delay: 0.30s; }
 .category-section:nth-child(7) { animation-delay: 0.35s; }
 
-/* ── Responsive ────────────────────────────────────────────── */
 @media (max-width: 600px) {
   .book-cards-grid { grid-template-columns: 1fr; gap: 12px; padding: 16px; }
   .filter-bar { gap: 6px; }
