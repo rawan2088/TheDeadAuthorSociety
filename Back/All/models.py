@@ -4,8 +4,6 @@ from django.contrib.auth.models import AbstractUser
 
 # id is default in django
 class User(AbstractUser):
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
     is_admin = models.BooleanField(default=False)
     
     

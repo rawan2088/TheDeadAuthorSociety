@@ -1,47 +1,37 @@
-// import { getCurrentUser, logoutUser } from "./storage.js";
-// function renderNavbar() {
-//   const user = getCurrentUser();
+// navbar.js — updated for Django backend
 
-//   let links = `
-//     <a href="../index.html">Home</a>
-//   `;
-
-//   if (!user) {
-//     links += `
-//       <a href="../login.html">Login</a>
-//       <a href="../signup.html">Sign Up</a>
-//     `;
-//   } else if (user.role === "admin") {
-//     links += `
-//       <a href="../Manage.html">Manage Books</a>
-//       <a href="../Add_Book.html">Add Book</a>
-//       <a href="../Profile.html">My Profile</a>
-//       <button onclick="handleLogout()">Logout</button>
-//     `;
-//   } else {
-//     links += `
-//       <a href="../borrowed.html">My Books</a>
-//       <a href="../Profile.html">My Profile</a>
-//       <button onclick="handleLogout()">Logout</button>
-//     `;
-//   }
-
-//   document.getElementById("navbar").innerHTML = `
-//     <header>
-//       <h1 id="mainLogo">TheDeadAuthorSociety</h1>
-//       <nav>${links}</nav>
-//     </header>
-//   `;
-// }
-
-function handleLogout() {
-  logoutUser();
-  window.location.href = "../pages/INDEX.HTML";
+async function fetchCurrentUser() {
+  try {
+    const response = await fetch("/api/me/", {
+      credentials: "include",  // sends the session cookie
+    });
+    if (!response.ok) return null;  // 401 = not logged in
+    return await response.json();
+  } catch {
+    return null;
+  }
 }
 
-const navbarContainer = document.getElementById("navbar");
-function renderNavbar() {
-  const user = getCurrentUser();
+async function handleLogout() {
+  await fetch("/api/logout/", {
+    method: "POST",
+    credentials: "include",
+  });
+  sessionStorage.removeItem("currentUser");
+  window.location.href = "/pages/index.html";
+}
+
+async function renderNavbar() {
+  // First check sessionStorage (fast, avoids extra request on every page)
+  let user = JSON.parse(sessionStorage.getItem("currentUser"));
+
+  // If nothing in sessionStorage, ask the server (e.g. after page refresh)
+  if (!user) {
+    user = await fetchCurrentUser();
+    if (user) {
+      sessionStorage.setItem("currentUser", JSON.stringify(user));
+    }
+  }
 
   let navLinks = `
     <a href="/pages/index.html">Home</a>
@@ -68,10 +58,11 @@ function renderNavbar() {
     `;
   }
 
+  const navbarContainer = document.getElementById("navbar");
   navbarContainer.innerHTML = `
     <header>
       <div class="navbar-inner">
-        <h1 id="mainLogo" onclick="window.location.href='../pages/INDEX.html'">
+        <h1 id="mainLogo" onclick="window.location.href='/pages/index.html'">
           TheDeadAuthorSociety
         </h1>
 
@@ -92,6 +83,7 @@ function renderNavbar() {
 
   highlightActiveLink();
 
+  // Wire up logout button
   const logoutBtn = document.getElementById("logoutBtn");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", (e) => {
@@ -100,26 +92,19 @@ function renderNavbar() {
     });
   }
 
-  // --- hamburger toggle ---
+  // Hamburger toggle
   const hamburger = document.getElementById("hamburgerBtn");
   const nav = document.getElementById("mainNav");
   const overlay = document.getElementById("navOverlay");
 
   hamburger.addEventListener("click", () => {
     const isOpen = nav.classList.toggle("open");
-
-    // whatever the state is, toggle the same state on all related elements
     hamburger.classList.toggle("open", isOpen);
     overlay.classList.toggle("open", isOpen);
-
-    // prevent body scroll when drawer is open
     document.body.style.overflow = isOpen ? "hidden" : "";
   });
 
-  // close drawer when clicking the overlay
   overlay.addEventListener("click", closeNav);
-
-  // close drawer when a nav link is clicked (on mobile)
   nav.querySelectorAll("a").forEach((link) => {
     link.addEventListener("click", closeNav);
   });
@@ -134,7 +119,6 @@ function renderNavbar() {
 
 function highlightActiveLink() {
   const currentPath = window.location.pathname.split("/").pop() || "index.html";
-  console.log(currentPath);
   const links = document.querySelectorAll("#mainNav a");
   links.forEach((link) => {
     const linkPath = link.getAttribute("href").split("/").pop();
