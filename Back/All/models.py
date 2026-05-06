@@ -15,7 +15,7 @@ class Book(models.Model):
     published_date = models.DateField()
     category = models.CharField(max_length=255)
     description = models.TextField()
-    # i want to deal with this in the future
+    # I want to deal with this in the future
     image = models.ImageField(upload_to='book_covers/')
     totalCopies = models.IntegerField()
     availableCopies = models.IntegerField()

@@ -1,4 +1,4 @@
-# 📚 Online Library Website
+# TheDeadPoetSociety Online Library
 
 **IS231 - Web Technology | Project 2**
 This is a project made for the Web Course, at FCAI (Facility of computing and Artificial Intelligence)
@@ -88,9 +88,3 @@ project/
 ```
 
 ---
-
-## 📦 Submission
-
-- Compressed as: `LeaderID_2_TAname_1.zip`
-- Submitted by team leader via Google Classroom
-- **Phase 1 Deadline: 7/3/2026**
