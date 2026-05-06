@@ -1,5 +1,11 @@
 from django.db import models
 # to import the default user model
+from django.contrib.auth.models import AbstractUser
+
+# id is default in django
+class User(AbstractUser):
+    is_admin = models.BooleanField(default=False)
+    
     
 class Book(models.Model):
     title = models.CharField(max_length=255)
@@ -7,7 +13,7 @@ class Book(models.Model):
     published_date = models.DateField()
     category = models.CharField(max_length=255)
     description = models.TextField()
-    # I want to deal with this in the future
+    # i want to deal with this in the future
     image = models.ImageField(upload_to='book_covers/')
     totalCopies = models.IntegerField()
     availableCopies = models.IntegerField()
