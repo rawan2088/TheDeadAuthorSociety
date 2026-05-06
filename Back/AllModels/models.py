@@ -1,13 +1,5 @@
 from django.db import models
 # to import the default user model
-from django.contrib.auth.models import AbstractUser
-
-# id is default in django
-class User(AbstractUser):
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
-    is_admin = models.BooleanField(default=False)
-    
     
 class Book(models.Model):
     title = models.CharField(max_length=255)
