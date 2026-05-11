@@ -1,11 +1,12 @@
 // navbar.js — updated for Django backend
+const API = "http://127.0.0.1:8000/api";
 
 async function fetchCurrentUser() {
   try {
     const response = await fetch("/api/me/", {
-      credentials: "include",  // sends the session cookie
+      credentials: "include", // sends the session cookie
     });
-    if (!response.ok) return null;  // 401 = not logged in
+    if (!response.ok) return null; // 401 = not logged in
     return await response.json();
   } catch {
     return null;

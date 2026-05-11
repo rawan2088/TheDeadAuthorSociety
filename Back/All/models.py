@@ -14,7 +14,7 @@ class Book(models.Model):
     category = models.CharField(max_length=255)
     description = models.TextField()
     # i want to deal with this in the future
-    image = models.ImageField(upload_to='book_covers/')
+    image = models.ImageField(upload_to='book_covers/', blank=True, null=True)
     totalCopies = models.IntegerField()
     availableCopies = models.IntegerField()
     

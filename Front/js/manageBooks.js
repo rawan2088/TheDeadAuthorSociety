@@ -1,32 +1,45 @@
 let booksContainer = document.getElementById("bookContainer");
+const API = "http://127.0.0.1:8000/api";
 
-function handleDelete(id) {
+async function handleDelete(id) {
   if (confirm("Are you sure you want to delete this book?")) {
-    deleteBook(id);
+    await fetch(`${API}/books/${id}/`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": getCookie("csrftoken"),
+      },
+    });
     renderBooks();
   }
 }
 
-function handleAddCopy(id) {
-  const book = getBookById(id);
-  if (!book) return;
-  book.totalCopies += 1;
-  book.availableCopies += 1;
-  updateBook(book);
+async function handleAddCopy(id) {
+  await fetch(`${API}/books/${id}/add-copy/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": getCookie("csrftoken"),
+    },
+  });
   renderBooks();
 }
 
 function handleEdit(id) {
-  const book = getBookById(id);
-  if (!book) return;
-  sessionStorage.setItem("editBook", JSON.stringify(book));
+  sessionStorage.setItem("editBook", id);
   window.location.href = "Add_Book.html";
 }
 
-function renderBooks() {
+async function renderBooks() {
   booksContainer.innerHTML = "";
 
-  const books = getBooks();
+  const response = await fetch("${API}/books/", {
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": getCookie("csrftoken"),
+    },
+  });
+  const books = await response.json();
 
   books.forEach((book) => {
     // it is better to make an invisible anchor over the div card element
@@ -46,7 +59,7 @@ function renderBooks() {
           />
           <h3>${book.title}</h3>
           <p><strong>Author:</strong> ${book.author}</p>
-          <p><strong>Published:</strong> ${book.published}</p>
+          <p><strong>Published:</strong> ${book.published_date}</p>
           <p><strong>Category:</strong> ${book.category}</p>
           <p>
              ${book.description}

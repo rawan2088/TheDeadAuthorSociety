@@ -1,3 +1,5 @@
+const API = "http://127.0.0.1:8000/api";
+
 // This is the central js page, which contains all the main functions related to local storage
 // We would keep use the local storage only, since json files, which were my initial thoughts, are only really efficient in backend.
 
@@ -413,3 +415,10 @@ function logoutUser() {
 //   getCurrentUser,
 //   logoutUser,
 // };
+
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(";").shift();
+  return "";
+}

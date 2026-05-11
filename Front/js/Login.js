@@ -1,6 +1,8 @@
 // Login.js - updated for Django backend
+const API = "http://127.0.0.1:8000/api";
+
 document.addEventListener("DOMContentLoaded", function () {
-  const form     = document.getElementById("loginForm");
+  const form = document.getElementById("loginForm");
   const errorMsg = document.getElementById("loginError");
 
   form.addEventListener("submit", async function (e) {
@@ -29,7 +31,6 @@ document.addEventListener("DOMContentLoaded", function () {
       sessionStorage.setItem("currentUser", JSON.stringify(data.user));
 
       window.location.href = "index.html";
-
     } catch (err) {
       errorMsg.textContent = "Something went wrong. Please try again.";
       console.error(err);

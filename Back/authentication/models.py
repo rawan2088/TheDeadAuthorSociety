@@ -2,21 +2,5 @@
 from django.db import models
 from django.conf import settings
 
-class Profile(models.Model):
-    ROLE_CHOICES = [
-        ('user', 'User'),
-        ('admin', 'Admin'),
-    ]
-
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE
-    )
-    role = models.CharField(
-        max_length=10,
-        choices=ROLE_CHOICES,
-        default='user'
-    )
-
-    def __str__(self):
-        return f"{self.user.username} ({self.role})"
+# this resets everything in the database, we would do this here because we deleted the profile model
+# python manage.py migrate authentication zero

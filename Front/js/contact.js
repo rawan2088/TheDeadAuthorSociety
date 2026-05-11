@@ -2,6 +2,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const form = document.querySelector("form");
   if (!form) return;
 
+  const API = "http://127.0.0.1:8000/api";
+
   form.addEventListener("submit", (e) => {
     e.preventDefault();
 

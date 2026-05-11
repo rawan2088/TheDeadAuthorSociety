@@ -1,19 +1,21 @@
+const API = "http://127.0.0.1:8000/api";
+
 // Signup.js - updated for Django backend
 document.addEventListener("DOMContentLoaded", function () {
-  const form     = document.getElementById("signupForm");
+  const form = document.getElementById("signupForm");
   const errorMsg = document.getElementById("signupError");
 
   form.addEventListener("submit", async function (e) {
     e.preventDefault();
     errorMsg.textContent = "";
 
-    const firstName      = document.getElementById("first-name").value.trim();
-    const lastName       = document.getElementById("last-name").value.trim();
-    const username       = document.getElementById("username").value.trim();
-    const password       = document.getElementById("password").value;
+    const firstName = document.getElementById("first-name").value.trim();
+    const lastName = document.getElementById("last-name").value.trim();
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value;
     const confirmPassword = document.getElementById("confirm-password").value;
-    const email          = document.getElementById("email").value.trim();
-    const role           = document.querySelector('input[name="role"]:checked').value;
+    const email = document.getElementById("email").value.trim();
+    const role = document.querySelector('input[name="role"]:checked').value;
 
     // Client-side check first (fast feedback)
     if (password !== confirmPassword) {
@@ -58,7 +60,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
       alert("Account created successfully! Please log in.");
       window.location.href = "login.html";
-
     } catch (err) {
       errorMsg.textContent = "Something went wrong. Please try again.";
       console.error(err);

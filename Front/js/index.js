@@ -1,3 +1,5 @@
+const API = "http://127.0.0.1:8000/api";
+
 function renderBookCards(books, containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
@@ -36,17 +38,17 @@ function renderBookCards(books, containerId) {
   });
 }
 
-function getRecentBooks(count = 3) {
+function getRecentBooks(books,count = 3) {
   // last N books added (by id descending)
-  return getBooks()
+  return books
     .slice()
     .sort((a, b) => b.id - a.id)
     .slice(0, count);
 }
 
-function getPopularBooks(count = 3) {
+function getPopularBooks(books,count = 3) {
   // most borrowed = lowest availableCopies relative to totalCopies
-  return getBooks()
+  return books
     .slice()
     .sort((a, b) => {
       const ratioA = a.availableCopies / a.totalCopies;
@@ -56,8 +58,8 @@ function getPopularBooks(count = 3) {
     .slice(0, count);
 }
 
-function getRecommendedBooks(count = 3) {
-  const allBooks = getBooks();
+function getRecommendedBooks(books,count = 3) {
+  const allBooks = books;
   const user = getCurrentUser();
 
   if (user) {
@@ -77,7 +79,11 @@ function getRecommendedBooks(count = 3) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  renderBookCards(getRecentBooks(3), "recentBooks");
-  renderBookCards(getPopularBooks(3), "popularBooks");
-  renderBookCards(getRecommendedBooks(3), "recommendedBooks");
+  const res   = await fetch(`${API}/books/`, { credentials: "include" });
+  const books = await res.json();  // this is the full array from Django
+
+  // pass books directly instead of calling getBooks() internally
+  renderBookCards(getRecentBooks(books, 3),      "recentBooks");
+  renderBookCards(getPopularBooks(books, 3),     "popularBooks");
+  renderBookCards(getRecommendedBooks(books, 3), "recommendedBooks");
 });

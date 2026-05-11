@@ -1,6 +1,8 @@
 import requests
 
-from models import Book
+# ! something is wrong here 
+
+from All.models import Book
 # from .models import Book
 
 neededBooks = {"The Great Gatsby", "To kill a mockingbird", "1984", "Pride and Prejudice", "The Catcher in the Rye", "The Lord of the Rings", "The Hobbit", "Harry Potter and the Sorcerer's Stone", "The Chronicles of Narnia", "The Hunger Games"}
