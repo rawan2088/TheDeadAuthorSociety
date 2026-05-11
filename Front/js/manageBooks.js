@@ -1,32 +1,27 @@
 let booksContainer = document.getElementById("bookContainer");
 
-function handleDelete(id) {
+async function handleDelete(id) {
   if (confirm("Are you sure you want to delete this book?")) {
-    deleteBook(id);
+    await fetch(`http://127.0.0.1:8000/api/books/${id}/`, {method: "DELETE"})
     renderBooks();
   }
 }
 
-function handleAddCopy(id) {
-  const book = getBookById(id);
-  if (!book) return;
-  book.totalCopies += 1;
-  book.availableCopies += 1;
-  updateBook(book);
+async function handleAddCopy(id) {
+  await fetch(`http://127.0.0.1:8000/api/books/${id}/`, {method: "POST"})
   renderBooks();
 }
 
 function handleEdit(id) {
-  const book = getBookById(id);
-  if (!book) return;
-  sessionStorage.setItem("editBook", JSON.stringify(book));
+  sessionStorage.setItem("editBook", id);
   window.location.href = "Add_Book.html";
 }
 
-function renderBooks() {
+async function renderBooks() {
   booksContainer.innerHTML = "";
 
-  const books = getBooks();
+  const response = await fetch('http://127.0.0.1:8000/api/books/');
+  const books = await response.json();
 
   books.forEach((book) => {
     // it is better to make an invisible anchor over the div card element
@@ -70,14 +65,14 @@ function renderBooks() {
     });
 
     bookCard
-      .querySelector(".add-copy-btn")
-      .addEventListener("click", () => handleAddCopy(book.id));
+        .querySelector(".add-copy-btn")
+        .addEventListener("click", () => handleAddCopy(book.id));
     bookCard
-      .querySelector(".edit-btn")
-      .addEventListener("click", () => handleEdit(book.id));
+        .querySelector(".edit-btn")
+        .addEventListener("click", () => handleEdit(book.id));
     bookCard
-      .querySelector(".delete-btn")
-      .addEventListener("click", () => handleDelete(book.id));
+        .querySelector(".delete-btn")
+        .addEventListener("click", () => handleDelete(book.id));
     booksContainer.appendChild(bookCard);
   });
 }

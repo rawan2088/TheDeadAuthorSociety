@@ -1,151 +1,93 @@
 import json
+# Returns data formatted as json instead of returning an HTML page. This is what APIs use
 from django.http import JsonResponse
+# CSRF is protection that blocks certain requests
 from django.views.decorators.csrf import csrf_exempt
-from django.db.models import Q
-from .models import Book, BorrowedBooks
-
-
-def book_to_dict(book):
-    return {
-        "id":              book.id,
-        "title":           book.title,
-        "author":          book.author,
-        "published_date":  str(book.published_date),
-        "category":        book.category,
-        "description":     book.description,
-        "image":           book.image.url if book.image else None,
-        "totalCopies":     book.totalCopies,
-        "availableCopies": book.availableCopies,
-    }
-
-
-
-def book_detail(request, book_id):
-    if request.method != "GET":
-        return JsonResponse({"error": "Method not allowed"}, status=405)
-    try:
-        book = Book.objects.get(pk=book_id)
-    except Book.DoesNotExist:
-        return JsonResponse({"error": "Book not found"}, status=404)
-    return JsonResponse(book_to_dict(book))
-
-
-
-def book_search(request):
-    if request.method != "GET":
-        return JsonResponse({"error": "Method not allowed"}, status=405)
-
-    q = request.GET.get("q", "").strip()
-    if not q:
-        return JsonResponse({"error": "Query parameter 'q' is required"}, status=400)
-
-    books = Book.objects.filter(
-        Q(title__icontains=q) |
-        Q(author__icontains=q) |
-        Q(category__icontains=q)
-    )
-    return JsonResponse({"results": [book_to_dict(b) for b in books]})
-
-
-
-def book_by_category(request, category_name):
-    if request.method != "GET":
-        return JsonResponse({"error": "Method not allowed"}, status=405)
-
-    books = Book.objects.filter(category__iexact=category_name)
-    return JsonResponse({"results": [book_to_dict(b) for b in books]})
-
-
+# this is how we access the database table
+from .models import Book
 
 @csrf_exempt
-def borrow_book(request, book_id):
-    if request.method != "POST":
-        return JsonResponse({"error": "Method not allowed"}, status=405)
+def books_view (request): # recieve HTTP request
+    # GET retuens all books
+    if request.method == "GET":
+        # No Authorization needed. All user should view all books
+        books = Book.objects.all()
+        data = []
+        for book in books:
+            data.append({
+                'id': book.id,
+                'title': book.title,
+                'author': book.author,
+                'category': book.category,
+                'description': book.description,
+                'totalCopies': book.totalCopies,
+                'availableCopies': book.availableCopies,
+            })
+        return JsonResponse(data, safe=False)
+    elif request.method == 'POST':
+        # Authorization check
+        if not request.user.is_authenticated or not request.user.is_admin:
+            return JsonResponse({'error': 'Not authorized'}, status=403)  # 403 Forbidden
+        data = json.loads(request.body)
+        title = data.get('title', '')
+        author = data.get('author', '')
+        category = data.get('category', '')
+        description = data.get('description', '')
+        totalCopies = data.get('totalCopies', '')
+        published_date = data.get('published_date', '1900-01-01') # Default is obviously fake
+        image = data.get('image', '')
+        Book.objects.create(
+            title = title,
+            author= author,
+            category= category,
+            description= description,
+            totalCopies= totalCopies,
+            availableCopies= totalCopies, # Same as total Copies at creation
+            published_date= published_date,
+            image= image,
+        )
+        return JsonResponse({'message': 'Book created'}, status=201) # 201 means "created" in HTTP
 
-    if not request.user.is_authenticated:
-        return JsonResponse({"error": "Authentication required"}, status=401)
-
-    # Admins cannot borrow
-    if request.user.is_admin:
-        return JsonResponse({"error": "Admins cannot borrow books"}, status=403)
-
-    try:
-        book = Book.objects.get(pk=book_id)
-    except Book.DoesNotExist:
-        return JsonResponse({"error": "Book not found"}, status=404)
-
-    # Check availability
-    if book.availableCopies <= 0:
-        return JsonResponse({"error": "No copies available"}, status=400)
-
-    # Check if user already has this book borrowed (and not returned)
-    already = BorrowedBooks.objects.filter(
-        userId=request.user,
-        bookId=book,
-        return_date__isnull=True
-    ).exists()
-    if already:
-        return JsonResponse({"error": "You have already borrowed this book"}, status=400)
-
-    # Create borrow record and decrement available copies
-    BorrowedBooks.objects.create(userId=request.user, bookId=book)
-    book.availableCopies -= 1
-    book.save()
-
-    return JsonResponse({
-        "message": f'"{book.title}" borrowed successfully!',
-        "availableCopies": book.availableCopies,
-    }, status=201)
-
-
-
-def borrowed_books(request):
-    if request.method != "GET":
-        return JsonResponse({"error": "Method not allowed"}, status=405)
-
-    if not request.user.is_authenticated:
-        return JsonResponse({"error": "Authentication required"}, status=401)
-
-    records = BorrowedBooks.objects.filter(
-        userId=request.user
-    ).select_related("bookId")
-
-    data = []
-    for record in records:
-        data.append({
-            "borrowId":    record.id,
-            "borrowDate":  str(record.borrowed_date),
-            "returnDate":  str(record.return_date) if record.return_date else None,
-            "book":        book_to_dict(record.bookId),
-        })
-
-    return JsonResponse({"borrowed": data})
-
-
-
+# different function because PUT and DELETE have different URL
 @csrf_exempt
-def return_book(request, borrow_id):
-    if request.method != "POST":
-        return JsonResponse({"error": "Method not allowed"}, status=405)
-
-    if not request.user.is_authenticated:
-        return JsonResponse({"error": "Authentication required"}, status=401)
-
+def book_detail_view (request, id):
+    #Authorization check
+    if not request.user.is_authenticated or not request.user.is_admin:
+        return JsonResponse({'error': 'Not authorized'}, status=403)  # 403 Forbidden
     try:
-        record = BorrowedBooks.objects.get(pk=borrow_id, userId=request.user)
-    except BorrowedBooks.DoesNotExist:
-        return JsonResponse({"error": "Borrow record not found"}, status=404)
+        book = Book.objects.get(id=id)
+    except Book.DoesNotExist:
+        return JsonResponse({'error': 'Book not found'}, status=404) # 404 not found
+    # first id is the field name in the DB. second id is the variable from the URL
+    if request.method == 'PUT':
+        data = json.loads(request.body)
+        book.title = data.get('title', book.title)
+        book.author = data.get('author', book.author)
+        book.category = data.get('category', book.category)
+        book.description = data.get('description', book.description)
+        book.totalCopies = data.get('totalCopies', book.totalCopies)
+        book.availableCopies = data.get('availableCopies', book.availableCopies)
+        book.published_date = data.get('published_date', book.published_date)
+        book.image = data.get('image', book.image)
+        book.save()
+        return JsonResponse({'message': 'Book updated'}, status=200)
+    elif request.method == 'DELETE':
+        book.delete()
+        return JsonResponse({'message': 'Book deleted'}, status=200) #200 OK
 
-    if record.return_date is not None:
-        return JsonResponse({"error": "Book already returned"}, status=400)
+    # different function because this POST has different URL(adds copies)
+@csrf_exempt
+def add_copy_view (request, id):
+    #Authorization check
+    if not request.user.is_authenticated or not request.user.is_admin:
+        return JsonResponse({'error': 'Not authorized'}, status=403)  # 403 Forbidden
+    if request.method == 'POST':
+        try:
+            book = Book.objects.get(id=id)
+        except Book.DoesNotExist:
+            return JsonResponse({'error': 'Book not found'}, status=404)  # 404 not found
 
-    from django.utils import timezone
-    record.return_date = timezone.now().date()
-    record.save()
-
-    # Give back the copy
-    book = record.bookId
-    book.availableCopies += 1
-    book.save()
-
-    return JsonResponse({"message": f'"{book.title}" returned successfully!'})
+        book.totalCopies += 1
+        book.availableCopies += 1
+        book.save()
+        return  JsonResponse({'message': 'Copy added'}, status=200) #200 OK

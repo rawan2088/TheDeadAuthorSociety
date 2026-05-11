@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from .views import books_view, book_detail_view, add_copy_view,views
 
 urlpatterns = [
     # GET /api/books/search/?q=...
@@ -19,4 +19,8 @@ urlpatterns = [
 
     # POST /api/borrowed/<id>/return/
     path("borrowed/<int:borrow_id>/return/",     views.return_book,     name="return_book"),
+
+    path('', books_view),
+    path('<int:id>/', book_detail_view),
+    path('<int:id>/add-copy/', add_copy_view)
 ]
