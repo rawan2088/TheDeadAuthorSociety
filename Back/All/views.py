@@ -1,3 +1,93 @@
-from django.shortcuts import render
+import json
+# Returns data formatted as json instead of returning an HTML page. This is what APIs use
+from django.http import JsonResponse
+# CSRF is protection that blocks certain requests
+from django.views.decorators.csrf import csrf_exempt
+# this is how we access the database table
+from .models import Book
 
-# Create your views here.
+@csrf_exempt
+def books_view (request): # recieve HTTP request
+    # GET retuens all books
+    if request.method == "GET":
+        # No Authorization needed. All user should view all books
+        books = Book.objects.all()
+        data = []
+        for book in books:
+            data.append({
+                'id': book.id,
+                'title': book.title,
+                'author': book.author,
+                'category': book.category,
+                'description': book.description,
+                'totalCopies': book.totalCopies,
+                'availableCopies': book.availableCopies,
+            })
+        return JsonResponse(data, safe=False)
+    elif request.method == 'POST':
+        # Authorization check
+        if not request.user.is_authenticated or not request.user.is_admin:
+            return JsonResponse({'error': 'Not authorized'}, status=403)  # 403 Forbidden
+        data = json.loads(request.body)
+        title = data.get('title', '')
+        author = data.get('author', '')
+        category = data.get('category', '')
+        description = data.get('description', '')
+        totalCopies = data.get('totalCopies', '')
+        published_date = data.get('published_date', '1900-01-01') # Default is obviously fake
+        image = data.get('image', '')
+        Book.objects.create(
+            title = title,
+            author= author,
+            category= category,
+            description= description,
+            totalCopies= totalCopies,
+            availableCopies= totalCopies, # Same as total Copies at creation
+            published_date= published_date,
+            image= image,
+        )
+        return JsonResponse({'message': 'Book created'}, status=201) # 201 means "created" in HTTP
+
+# different function because PUT and DELETE have different URL
+@csrf_exempt
+def book_detail_view (request, id):
+    #Authorization check
+    if not request.user.is_authenticated or not request.user.is_admin:
+        return JsonResponse({'error': 'Not authorized'}, status=403)  # 403 Forbidden
+    try:
+        book = Book.objects.get(id=id)
+    except Book.DoesNotExist:
+        return JsonResponse({'error': 'Book not found'}, status=404) # 404 not found
+    # first id is the field name in the DB. second id is the variable from the URL
+    if request.method == 'PUT':
+        data = json.loads(request.body)
+        book.title = data.get('title', book.title)
+        book.author = data.get('author', book.author)
+        book.category = data.get('category', book.category)
+        book.description = data.get('description', book.description)
+        book.totalCopies = data.get('totalCopies', book.totalCopies)
+        book.availableCopies = data.get('availableCopies', book.availableCopies)
+        book.published_date = data.get('published_date', book.published_date)
+        book.image = data.get('image', book.image)
+        book.save()
+        return JsonResponse({'message': 'Book updated'}, status=200)
+    elif request.method == 'DELETE':
+        book.delete()
+        return JsonResponse({'message': 'Book deleted'}, status=200) #200 OK
+
+    # different function because this POST has different URL(adds copies)
+@csrf_exempt
+def add_copy_view (request, id):
+    #Authorization check
+    if not request.user.is_authenticated or not request.user.is_admin:
+        return JsonResponse({'error': 'Not authorized'}, status=403)  # 403 Forbidden
+    if request.method == 'POST':
+        try:
+            book = Book.objects.get(id=id)
+        except Book.DoesNotExist:
+            return JsonResponse({'error': 'Book not found'}, status=404)  # 404 not found
+
+        book.totalCopies += 1
+        book.availableCopies += 1
+        book.save()
+        return  JsonResponse({'message': 'Copy added'}, status=200) #200 OK
