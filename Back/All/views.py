@@ -4,7 +4,8 @@ from django.http import JsonResponse
 # CSRF is protection that blocks certain requests
 from django.views.decorators.csrf import csrf_exempt
 # this is how we access the database table
-from .models import Book
+from .models import Book, Comment, BorrowedBooks
+from django.db.models import Count
 
 def get_image_url(request, book):
     if book.image:
@@ -119,3 +120,72 @@ def add_copy_view (request, id):
         book.availableCopies += 1
         book.save()
         return  JsonResponse({'message': 'Copy added'}, status=200) #200 OK
+
+
+
+
+@csrf_exempt
+def book_comments_view(request, id):
+    try:
+        book = Book.objects.get(id=id)
+    except Book.DoesNotExist:
+        return JsonResponse({'error': 'Book not found'}, status=404)
+
+    if request.method == 'GET':
+        comments = Comment.objects.filter(bookId=book)
+        data = []
+        for comment in comments:
+            data.append({
+                'id':         comment.id,
+                'username':   comment.username,
+                'rating':     comment.rating,
+                'content':    comment.content,
+                'created_at': comment.created_at.strftime('%Y-%m-%d %H:%M'),
+            })
+        return JsonResponse(data, safe=False)
+
+    elif request.method == 'POST':
+        if not request.user.is_authenticated:
+            return JsonResponse({'error': 'Not authorized'}, status=403)
+        data = json.loads(request.body)
+        Comment.objects.create(
+            userId=request.user,
+            bookId=book,
+            username=request.user.username,
+            rating=data.get('rating', ''),
+            content=data.get('content', ''),
+        )
+        return JsonResponse({'message': 'Comment added'}, status=201)
+
+
+def recent_books_view(request):
+    if request.method == 'GET':
+        books = Book.objects.all().order_by('-id')[:10]
+        data = []
+        for book in books:
+            data.append({
+                'id':       book.id,
+                'title':    book.title,
+                'author':   book.author,
+                'category': book.category,
+                'image':    get_image_url(request, book),
+            })
+        return JsonResponse(data, safe=False)
+
+
+def popular_books_view(request):
+    if request.method == 'GET':
+        books = Book.objects.annotate(
+            borrow_count=Count('borrowedbooks')
+        ).order_by('-borrow_count')[:10]
+        data = []
+        for book in books:
+            data.append({
+                'id':           book.id,
+                'title':        book.title,
+                'author':       book.author,
+                'category':     book.category,
+                'image':        get_image_url(request, book),
+                'borrow_count': book.borrow_count,
+            })
+        return JsonResponse(data, safe=False)

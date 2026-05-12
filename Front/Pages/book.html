@@ -3,9 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
     <title>Book Details</title>
-
     <link rel="stylesheet" href="../CSS/main.css" />
   </head>
   <body>
@@ -27,7 +25,28 @@
       <strong>Description: </strong>
       <p id="bookDescription"></p>
       <button id="borrowBtn">Borrow</button>
+
+      <!-- ─── Comments Section ───────────────────────────── -->
+      <section id="commentsSection">
+        <h2>Comments</h2>
+
+        <div id="commentForm">
+          <select id="commentRating">
+            <option value="5">⭐⭐⭐⭐⭐</option>
+            <option value="4">⭐⭐⭐⭐</option>
+            <option value="3">⭐⭐⭐</option>
+            <option value="2">⭐⭐</option>
+            <option value="1">⭐</option>
+          </select>
+          <textarea id="commentContent" placeholder="Write your comment..."></textarea>
+          <button id="submitCommentBtn">Submit Comment</button>
+          <p id="commentMsg"></p>
+        </div>
+
+        <div id="commentsList"></div>
+      </section>
     </main>
+
     <footer>
       <a href="About.html">About Us</a> |
       <a href="Contact.html">Contact Us</a>
@@ -37,5 +56,65 @@
     <script src="../js/storage.js"></script>
     <script src="../js/navbar.js"></script>
     <script src="../js/BookDetails.js"></script>
+
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const bookId = params.get('id');
+
+      function loadComments() {
+        fetch(`/api/books/${bookId}/comments/`)
+          .then(res => res.json())
+          .then(data => {
+            const list = document.getElementById('commentsList');
+            list.innerHTML = '';
+
+            if (data.length === 0) {
+              list.innerHTML = '<p>No comments yet.</p>';
+              return;
+            }
+
+            data.forEach(comment => {
+              const div = document.createElement('div');
+              div.innerHTML = `
+                <strong>${comment.username}</strong>
+                ${'⭐'.repeat(comment.rating)}
+                <p>${comment.content}</p>
+                <small>${comment.created_at}</small>
+                <hr>
+              `;
+              list.appendChild(div);
+            });
+          });
+      }
+
+      document.getElementById('submitCommentBtn').addEventListener('click', () => {
+        const rating  = document.getElementById('commentRating').value;
+        const content = document.getElementById('commentContent').value.trim();
+        const msg     = document.getElementById('commentMsg');
+
+        if (!content) {
+          msg.textContent = 'Please write a comment first.';
+          return;
+        }
+
+        fetch(`/api/books/${bookId}/comments/`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ rating, content }),
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data.message) {
+              msg.textContent = 'Comment added!';
+              document.getElementById('commentContent').value = '';
+              loadComments();
+            } else {
+              msg.textContent = data.error || 'Something went wrong.';
+            }
+          });
+      });
+
+      if (bookId) loadComments();
+    </script>
   </body>
 </html>
