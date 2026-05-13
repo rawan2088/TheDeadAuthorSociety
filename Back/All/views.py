@@ -6,6 +6,9 @@ from django.views.decorators.csrf import csrf_exempt
 # this is how we access the database table
 from .models import Book, Comment, BorrowedBooks
 from django.db.models import Count
+from django.db import models, transaction
+from django.db.models import F
+from django.utils import timezone
 
 def get_image_url(request, book):
     if book.image:
@@ -189,3 +192,94 @@ def popular_books_view(request):
                 'borrow_count': book.borrow_count,
             })
         return JsonResponse(data, safe=False)
+    
+@csrf_exempt
+def borrow_book(request, id):
+    if request.method == 'POST':
+        if not request.user.is_authenticated:
+           return JsonResponse({'error': 'Authentication required'}, status=401)
+
+        try:
+            with transaction.atomic():
+                # Select_for_update prevents race conditions
+                book = Book.objects.select_for_update().get(id=id)
+
+                if book.availableCopies <= 0:
+                    return JsonResponse({'error': 'No copies available'}, status=400)
+
+                # Check if user already has an active borrow for this specific book
+                already_borrowed = BorrowedBooks.objects.filter(
+                    userId=request.user,
+                    bookId=book,
+                    return_date__isnull=True
+                ).exists()
+
+                if already_borrowed:
+                    return JsonResponse({'error': 'You already have this book'}, status=400)
+
+                # Create borrow record
+                BorrowedBooks.objects.create(
+                    userId=request.user,
+                    bookId=book
+                )
+
+                # Decrement available copies
+                book.availableCopies = F('availableCopies') - 1
+                book.save()
+
+            return JsonResponse({'message': 'Book borrowed successfully'}, status=201)
+
+        except Book.DoesNotExist:
+            return JsonResponse({'error': 'Book not found'}, status=404)
+
+def borrowed_books(request):
+    if request.method == 'GET':
+        if not request.user.is_authenticated:
+           return JsonResponse({'error': 'Authentication required'}, status=401)
+
+        # Get only active borrows (not yet returned)
+        borrowed_records = BorrowedBooks.objects.filter(
+            userId=request.user,
+            return_date__isnull=True
+        ).select_related('bookId')
+
+        data = []
+        for record in borrowed_records:
+            data.append({
+                'borrowId': record.id,
+                'borrowDate': record.borrowed_date.strftime('%Y-%m-%d'),
+                'book': {
+                    'id': record.bookId.id,
+                    'title': record.bookId.title,
+                    'author': record.bookId.author,
+                    'image': get_image_url(request, record.bookId),
+                }
+            })
+
+        return JsonResponse({'borrowed': data}, safe=False)
+
+@csrf_exempt
+def return_book(request, borrow_id):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    if not request.user.is_authenticated:
+       return JsonResponse({'error': 'Authentication required'}, status=401)
+
+    try:
+        with transaction.atomic():
+            borrow_record = BorrowedBooks.objects.get(
+                id=borrow_id,
+                userId=request.user,
+                return_date__isnull=True
+            )
+            borrow_record.return_date = timezone.now().date()
+            borrow_record.save()
+
+            book = borrow_record.bookId
+            book.availableCopies = F('availableCopies') + 1
+            book.save()
+
+        return JsonResponse({'message': 'Book returned successfully'}, status=200)
+
+    except BorrowedBooks.DoesNotExist:
+        return JsonResponse({'error': 'Active borrow record not found'}, status=404)
