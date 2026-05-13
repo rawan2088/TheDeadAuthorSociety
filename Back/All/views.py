@@ -5,9 +5,12 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 # this is how we access the database table
 from .models import Book, BorrowedBooks
-from django.db import models, transaction
+from django.db import transaction
 from django.db.models import F
 from django.utils import timezone
+from django.db.models import Q
+from django.shortcuts import render
+
 
 def get_image_url(request, book):
     if book.image:
@@ -27,7 +30,7 @@ def books_view (request): # recieve HTTP request
     'id': book.id,
     'title': book.title,
     'author': book.author,
-    'category': book.category,
+    'category': book.category.name if book.category else None,
     'description': book.description,
     'totalCopies': book.totalCopies,
     'availableCopies': book.availableCopies,
@@ -58,6 +61,7 @@ def books_view (request): # recieve HTTP request
             image= image,
         )
         return JsonResponse({'message': 'Book created'}, status=201) # 201 means "created" in HTTP
+    
 
 @csrf_exempt
 def book_detail_view (request, id):
@@ -75,7 +79,7 @@ def book_detail_view (request, id):
                 'id': book.id,
                 'title': book.title,
                 'author': book.author,
-                'category': book.category,
+                'category': book.category.name if book.category else None,
                 'description': book.description,
                 'totalCopies': book.totalCopies,
                 'availableCopies': book.availableCopies,
@@ -162,6 +166,116 @@ def borrow_book(request, id):
         except Book.DoesNotExist:
             return JsonResponse({'error': 'Book not found'}, status=404)
 
+
+def serialize_book(request, book):
+
+    return {
+
+        'id': book.id,
+        'title': book.title,
+        'author': book.author,
+
+        'category': (
+            book.category.name
+            if book.category else None
+        ),
+
+        'description': book.description,
+
+        'totalCopies': book.totalCopies,
+
+        'availableCopies': book.availableCopies,
+
+        'published_date': (
+            book.published_date.strftime('%Y-%m-%d')
+            if book.published_date else None
+        ),
+
+        'image': get_image_url(request, book),
+    }
+
+
+# ---------------------------------------------------
+# SEARCH BOOKS
+# ---------------------------------------------------
+
+@csrf_exempt
+def book_search(request):
+
+    if request.method != 'GET':
+        return JsonResponse(
+            {'error': 'GET method required'},
+            status=405
+        )
+
+    query = request.GET.get('q', '').strip()
+
+    if not query:
+        return JsonResponse({
+            'success': False,
+            'error': 'Search query is required'
+        }, status=400)
+
+    books = Book.objects.filter(
+        Q(title__icontains=query) |
+        Q(author__icontains=query) |
+        Q(category__name__icontains=query)
+    )
+
+    data = []
+
+    for book in books:
+        data.append({
+            'id': book.id,
+            'title': book.title,
+            'author': book.author,
+            'category': book.category.name if book.category else None,
+            'description': book.description,
+            'totalCopies': book.totalCopies,
+            'availableCopies': book.availableCopies,
+            'image': get_image_url(request, book),
+        })
+
+    return JsonResponse({
+        'success': True,
+        'count': len(data),
+        'results': data
+    })
+
+
+# ---------------------------------------------------
+# CATEGORY FILTER
+# ---------------------------------------------------
+
+@csrf_exempt
+def book_by_category(request, category_name):
+
+    if request.method != 'GET':
+
+        return JsonResponse({
+            'error': 'GET method required'
+        }, status=405)
+
+
+    books = Book.objects.filter(
+    category__name__iexact=category_name
+    )
+
+
+    data = [
+
+        serialize_book(request, book)
+
+        for book in books
+    ]
+
+
+    return JsonResponse({
+
+        'results': data
+
+    }, status=200)
+
 def borrowed_books(request):
     if request.method == 'GET':
         if not request.user.is_authenticated:
@@ -213,3 +327,43 @@ def return_book(request, borrow_id):
 
     except BorrowedBooks.DoesNotExist:
         return JsonResponse({'error': 'Active borrow record not found'}, status=404)
+    
+    # ---------------------------------------------------
+# FRONTEND PAGES
+# ---------------------------------------------------
+
+def book_page(request):
+
+    return render(
+        request,
+        'book.html'
+    )
+
+
+def borrowed_page(request):
+
+    return render(
+        request,
+        'Borrowed.html'
+    )
+
+
+def search_page(request):
+
+    return render(
+        request,
+        'SearchPage.html'
+    )
+
+
+def category_page(request):
+
+    return render(
+        request,
+        'CategoryPage.html'
+    )
+    
+
+   
+    
+    

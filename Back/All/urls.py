@@ -7,7 +7,7 @@ urlpatterns = [
     path('books/search/', views.book_search,     name="book_search"),
 
     # GET /api/books/category/<name>/
-    # path("books/category/<str:category_name>/",  views.book_by_category, name="book_by_category"),
+    path("books/category/<str:category_name>/",  views.book_by_category, name="book_by_category"),
 
     path('books/', books_view),
     path('books/<int:id>/', book_detail_view),

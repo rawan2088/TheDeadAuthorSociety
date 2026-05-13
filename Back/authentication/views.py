@@ -115,3 +115,5 @@ def update_profile_view(request):
 
     user.save()
     return JsonResponse({'message': 'Profile updated', 'user': user_to_dict(user)})
+
+

@@ -1,34 +1,139 @@
 from django.db import models
-# to import the default user model
 from django.contrib.auth.models import AbstractUser
 
-# id is default in django
+
+# ---------------------------------------------------
+# CUSTOM USER
+# ---------------------------------------------------
+
 class User(AbstractUser):
+
     is_admin = models.BooleanField(default=False)
-    
-    
+
+    def __str__(self):
+        return self.username
+
+
+# ---------------------------------------------------
+# CATEGORY
+# ---------------------------------------------------
+
+class Category(models.Model):
+
+    name = models.CharField(
+        max_length=100,
+        unique=True
+    )
+
+    def __str__(self):
+
+        return self.name
+
+
+# ---------------------------------------------------
+# BOOK
+# ---------------------------------------------------
+
 class Book(models.Model):
+
     title = models.CharField(max_length=255)
+
     author = models.CharField(max_length=255)
+
     published_date = models.DateField()
-    category = models.CharField(max_length=255)
+
     description = models.TextField()
-    # i want to deal with this in the future
-    image = models.ImageField(upload_to='book_covers/', blank=True, null=True)
-    totalCopies = models.IntegerField()
-    availableCopies = models.IntegerField()
-    
+
+    image = models.ImageField(
+        upload_to='book_covers/',
+        blank=True,
+        null=True
+    )
+
+    category = models.ForeignKey(
+
+        Category,
+
+        on_delete=models.SET_NULL,
+
+        null=True,
+
+        related_name='books'
+    )
+
+    totalCopies = models.PositiveIntegerField(
+        default=1
+    )
+
+    availableCopies = models.PositiveIntegerField(
+        default=1
+    )
+
+    def __str__(self):
+
+        return self.title
+
+
+# ---------------------------------------------------
+# BORROWED BOOKS
+# ---------------------------------------------------
 
 class BorrowedBooks(models.Model):
-    userId = models.ForeignKey(User, on_delete=models.CASCADE)
-    bookId = models.ForeignKey(Book, on_delete=models.CASCADE)
-    borrowed_date = models.DateField(auto_now_add=True)
-    return_date = models.DateField(null=True, blank=True)
-    
-class Comment (models.Model):
-    userId = models.ForeignKey(User, on_delete=models.CASCADE)
-    bookId = models.ForeignKey(Book, on_delete=models.CASCADE)
+
+    userId = models.ForeignKey(
+
+        User,
+
+        on_delete=models.CASCADE,
+
+        related_name='borrowed_books'
+    )
+
+    bookId = models.ForeignKey(
+
+        Book,
+
+        on_delete=models.CASCADE,
+
+        related_name='borrow_records'
+    )
+
+    borrowed_date = models.DateField(
+        auto_now_add=True
+    )
+
+    return_date = models.DateField(
+        null=True,
+        blank=True
+    )
+
+    def __str__(self):
+
+        return f"{self.userId.username} borrowed {self.bookId.title}"
+
+
+# ---------------------------------------------------
+# COMMENTS
+# ---------------------------------------------------
+
+class Comment(models.Model):
+
+    userId = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
+
+    bookId = models.ForeignKey(
+        Book,
+        on_delete=models.CASCADE
+    )
+
     username = models.CharField(max_length=255)
-    rating = models.IntegerField() # 1 to 5
+
+    rating = models.IntegerField()
+
     content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+
+        return f"{self.username} - {self.bookId.title}"
