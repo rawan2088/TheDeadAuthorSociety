@@ -14,7 +14,6 @@ document.addEventListener("DOMContentLoaded", function () {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        credentials: "include", // important: sends/receives session cookie
         body: JSON.stringify({ username, password }),
       });
 

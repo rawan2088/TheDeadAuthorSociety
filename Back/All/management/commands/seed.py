@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
-from All.models import Book, Comment, BorrowedBooks
+from All.models import Book, Comment, BorrowedBooks, Category
 from django.utils import timezone
 from datetime import datetime
 
@@ -106,7 +106,6 @@ SEED_BOOKS = [
     },
 ]
 
-
 SEED_COMMENTS = [
     {"book_title": "The Great Gatsby", "username": "Roaa", "rating": 5, "content": "An absolute masterpiece. Highly recommend to everyone!", "date": "2024-01-15"},
     {"book_title": "The Great Gatsby", "username": "Rawan", "rating": 4, "content": "A great read, kept me engaged from start to finish.", "date": "2024-02-20"},
@@ -134,6 +133,7 @@ class Command(BaseCommand):
             Comment.objects.all().delete()
             BorrowedBooks.objects.all().delete()
             Book.objects.all().delete()
+            Category.objects.all().delete()
             User.objects.filter(is_superuser=False).delete()
             self.stdout.write(self.style.WARNING('Cleared existing data.'))
 
@@ -155,10 +155,14 @@ class Command(BaseCommand):
 
         # 2. Seed Books
         for b_data in SEED_BOOKS:
+            # Create/Get the Category first
+            cat_name = b_data.pop('category')
+            category_obj, _ = Category.objects.get_or_create(name=cat_name)
+            
             book, created = Book.objects.get_or_create(
                 title=b_data['title'],
                 author=b_data['author'],
-                defaults=b_data
+                defaults={**b_data, 'category': category_obj}
             )
             if created:
                 self.stdout.write(f"Book created: {book.title}")
@@ -168,6 +172,9 @@ class Command(BaseCommand):
             try:
                 user = User.objects.get(username=c_data['username'])
                 book = Book.objects.get(title=c_data['book_title'])
+                
+                # Note: Comment model provided doesn't have created_at. 
+                # If you add it later, you can add it to the defaults below.
                 Comment.objects.get_or_create(
                     userId=user,
                     bookId=book,
@@ -175,7 +182,7 @@ class Command(BaseCommand):
                     defaults={
                         'username': user.username,
                         'rating': c_data['rating'],
-                        'created_at': datetime.strptime(c_data['date'], "%Y-%m-%d")                    }
+                    }
                 )
             except (User.DoesNotExist, Book.DoesNotExist):
                 continue
@@ -185,10 +192,16 @@ class Command(BaseCommand):
             try:
                 user = User.objects.get(username=br_data['username'])
                 book = Book.objects.get(title=br_data['book_title'])
+                
+                # Date parsing for the borrowed_date
+                b_date = datetime.strptime(br_data['date'], "%Y-%m-%d").date()
+                
                 BorrowedBooks.objects.get_or_create(
                     userId=user,
                     bookId=book,
-                    defaults={'borrowed_date': br_data['date']}
+                    # Note: models has auto_now_add=True, so manual dates 
+                    # might be ignored unless auto_now_add is removed.
+                    defaults={'borrowed_date': b_date}
                 )
             except (User.DoesNotExist, Book.DoesNotExist):
                 continue

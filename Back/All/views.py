@@ -189,6 +189,33 @@ def return_book(request, borrow_id):
         return JsonResponse({'message': 'Book returned successfully'}, status=200)
     except BorrowedBooks.DoesNotExist:
         return JsonResponse({'error': 'Record not found'}, status=404)
+    
+# Add to All/views.py:
+@csrf_exempt
+def book_comments_view(request, id):
+    try:
+        book = Book.objects.get(id=id)
+    except Book.DoesNotExist:
+        return JsonResponse({'error': 'Book not found'}, status=404)
+
+    if request.method == 'GET':
+        comments = Comment.objects.filter(bookId=book)
+        data = [{'username': c.username, 'rating': c.rating, 
+                 'content': c.content} for c in comments]
+        return JsonResponse(data, safe=False)
+
+    if request.method == 'POST':
+        if not request.user.is_authenticated:
+            return JsonResponse({'error': 'Login to post a comment.'}, status=401)
+        body = json.loads(request.body)
+        Comment.objects.create(
+            userId=request.user,
+            bookId=book,
+            username=request.user.username,
+            rating=body.get('rating', 5),
+            content=body.get('content', ''),
+        )
+        return JsonResponse({'message': 'Comment added'}, status=201)
 
 # --- PAGE RENDERING ---
 

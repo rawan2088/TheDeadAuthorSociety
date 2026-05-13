@@ -46,7 +46,7 @@
     noResults.style.display = "none";
 
     books.forEach((book) => {
-      const isAvailable = book.available_copies > 0;
+      const isAvailable = book.availableCopies > 0;
 
       const row = document.createElement("tr");
 
@@ -72,3 +72,14 @@
     });
   }
 })();
+
+document.addEventListener("DOMContentLoaded", async () => {
+  allBooks = await fetchBooks("a"); // load all on start
+  renderBooks(applyFilters(allBooks));
+  populateCategoryFilter(allBooks);
+
+  searchInput.addEventListener("input", handleSearch);
+  categorySelect.addEventListener("change", handleFilter);
+  availSelect.addEventListener("change", handleFilter);
+  clearBtn.addEventListener("click", clearFilters);
+});

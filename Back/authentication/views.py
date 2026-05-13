@@ -112,10 +112,12 @@ def update_profile_view(request):
     user.email      = data.get('email',     user.email)
 
     new_password = data.get('newPassword', '')
+    current_password = data.get('currentPassword', '')
     if new_password:
-        if len(new_password) < 6:
-            return JsonResponse({'error': 'New password must be at least 6 characters.'}, status=400)
+        if not user.check_password(current_password):
+            return JsonResponse({'error': 'Current password is incorrect.'}, status=400)
         user.set_password(new_password)
+        update_session_auth_hash(request, user) 
 
     user.save()
     return JsonResponse({'message': 'Profile updated', 'user': user_to_dict(user)})

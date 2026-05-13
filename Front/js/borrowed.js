@@ -7,7 +7,6 @@ async function handleReturn(borrowId, card) {
     const res = await fetch(`${API}/borrowed/${borrowId}/return/`, {
       method: "POST",
       credentials: "include",
-      credentials: "include",
       headers: { "X-CSRFToken": getCookie("csrftoken") },
     });
     const data = await res.json();
@@ -48,25 +47,23 @@ function renderRecords(records) {
 
     card.innerHTML = `
       <img
-        src="${book.image || "../Assets/default.jpg"}"
-        width="150"
-        height="200"
-        alt="${book.title}"
-      />
+          src="${book.image || "../Assets/default.jpg"}"
+          height="200"
+          width="150"
+          alt="${book.title}"
+        />
+        <h3>${book.title}</h3>
+        <p><strong>Author:</strong> ${book.author}</p>
+        <p><strong>Borrowed On:</strong> ${record.borrowDate || "N/A"}</p>
+        ${record.returnDate ? `<p><strong>Returned On:</strong> ${record.returnDate}</p>` : ""}
+        <div class="card-actions">
+          <button class="btn btn-primary return-btn">Return Book</button>
+        </div>
+      `;
 
-      <h3>${book.title}</h3>
-
-      <p><strong>Author:</strong> ${book.author}</p>
-
-      <p>
-        <strong>Borrowed At:</strong>
-        ${new Date(record.borrowed_at).toLocaleString()}
-      </p>
-
-      <a href="book.html?id=${book.id}" class="details-link">
-        View Details
-      </a>
-    `;
+    card.querySelector(".return-btn").addEventListener("click", () => {
+      handleReturn(record.borrowId, card);
+    });
 
     borrowedContainer.appendChild(card);
   });
@@ -80,13 +77,13 @@ async function loadBorrowedBooks() {
 
     const data = await response.json();
 
-    if (!data.success) {
+    if (!response.ok) {
       borrowedContainer.innerHTML = `<p>${data.error || "Could not load borrowed books."}</p>`;
 
       return;
     }
 
-    renderBorrowedBooks(data.borrowed_books);
+    renderRecords(data.borrowed);
   } catch (error) {
     console.error(error);
 

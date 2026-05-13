@@ -6,12 +6,15 @@ from .views import (
     add_copy_view, 
     book_comments_view, 
     recent_books_view, 
-    popular_books_view
+    popular_books_view, book_search
 )
 
 urlpatterns = [
     # General Book List & Search
     path('books/', books_view, name="books_list"),
+    
+    path('books/search/', book_search, name='book_search'),
+
 
     # Specialized Lists
     path('books/recent/', recent_books_view, name="recent_books"),

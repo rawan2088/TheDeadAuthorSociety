@@ -1,8 +1,6 @@
 (function () {
   "use strict";
 
-  // Use the unified API base path
-  const API = "http://127.0.0.1:8000/api/books";
   const container = document.getElementById("categoriesContainer");
   const filterBar = document.getElementById("filterBar");
 
@@ -29,7 +27,7 @@
   async function buildPage() {
     try {
       // Merged Fetch: Simple URL but kept error handling
-      const res = await fetch(`${API}/`, { credentials: "include" });
+      const res = await fetch(`${API}/books/`, { credentials: "include" });
 
       if (!res.ok) throw new Error("Failed to fetch books");
 
