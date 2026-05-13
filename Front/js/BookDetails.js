@@ -192,11 +192,6 @@ async function handleBorrow(book) {
 
     alert(`"${book.title}" borrowed successfully!`);
 
-<<<<<<< HEAD
-    const borrowBtn = document.getElementById("borrowBtn");borrowBtn.textContent = "Unavailable";
-    borrowBtn.disabled = true;
-    document.getElementById("bookStatus").textContent = "Not Available";
-=======
 
     const borrowBtn =
       document.getElementById("borrowBtn");
@@ -212,7 +207,6 @@ async function handleBorrow(book) {
         "Not Available";
     }
 
->>>>>>> 77b86d4 (add member4)
   } catch (err) {
 
     console.error(err);
