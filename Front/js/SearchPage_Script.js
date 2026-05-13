@@ -1,117 +1,76 @@
-const API = "http://127.0.0.1:8000/api";
-
 (function () {
   "use strict";
 
-  const API = "http://127.0.0.1:8000";
-  const state = { query: "", category: "all", availability: "all" };
+  const API = "http://127.0.0.1:8000/api";
 
   const searchInput = document.getElementById("searchInput");
   const categorySelect = document.getElementById("categoryFilter");
   const availSelect = document.getElementById("availFilter");
   const clearBtn = document.getElementById("clearBtn");
+  const tbody = document.getElementById("booksTableBody");
   const visibleCountEl = document.getElementById("visibleCount");
   const totalCountEl = document.getElementById("totalCount");
   const noResults = document.getElementById("noResults");
-  const tbody = document.getElementById("booksTableBody");
-  const tableWrap = document.querySelector(".books-table-wrap");
 
-  // ── Fetch books from API ──────────────────────────────────────────────────
-  async function fetchBooks(query) {
+  let allBooks = [];
+
+  async function fetchBooks(query = "") {
     try {
-      let url = `${API}/api/books/`; // Default URL
-      if (query && query.trim()) {
-        url = `${API}/books/search/?q=${encodeURIComponent(query.trim())}`;
+      let url = `${API}/books/search/?q=${encodeURIComponent(query)}`;
+
+      if (!query.trim()) {
+        url = `${API}/books/search/?q=a`;
       }
 
-      const res = await fetch(url, { credentials: "include" });
-      const data = await res.json();
+      const response = await fetch(url);
+      const data = await response.json();
 
-      // FIX: Your Django view returns a List directly, not an object with .results
-      return Array.isArray(data) ? data : data.results || [];
-    } catch (err) {
-      console.error("Failed to fetch books:", err);
+      return data.results || [];
+
+    } catch (error) {
+      console.error(error);
       return [];
     }
   }
 
-  // ── Build table rows ──────────────────────────────────────────────────────
-  function buildTable(books) {
-    if (!tbody) return;
+  function renderBooks(books) {
     tbody.innerHTML = "";
 
-    // Update Total Count
-    if (totalCountEl) totalCountEl.textContent = books.length;
+    totalCountEl.textContent = books.length;
+    visibleCountEl.textContent = books.length;
 
-    books.forEach((book, i) => {
-      const isAvailable = book.availableCopies > 0;
-      const availStatus = isAvailable ? "in stock" : "not available";
-      const tr = document.createElement("tr");
+    if (books.length === 0) {
+      noResults.style.display = "block";
+      return;
+    }
 
-      // Set datasets for local filtering
-      tr.dataset.category = (book.category || "").toLowerCase();
-      tr.dataset.availability = availStatus;
+    noResults.style.display = "none";
 
-      tr.innerHTML = `
-        <td class="book-title-cell">${book.title}</td>
-        <td class="book-author-cell">${book.author}</td>
-        <td class="book-year-cell">${book.published_date || "N/A"}</td>
-        <td class="book-category-cell">${book.category}</td>
-        <td class="book-desc-cell"><p>${book.description || ""}</p></td>
+    books.forEach((book) => {
+      const isAvailable = book.available_copies > 0;
+
+      const row = document.createElement("tr");
+
+      row.innerHTML = `
+        <td>${book.title}</td>
+        <td>${book.author}</td>
+        <td>${book.published_date || "N/A"}</td>
+        <td>${book.category || "Unknown"}</td>
+        <td>${book.description || "No description"}</td>
         <td>
           <span class="badge ${isAvailable ? "badge-available" : "badge-unavailable"}">
-            ${isAvailable ? "In Stock" : "Not Available"}
+            ${isAvailable ? "In Stock" : "Unavailable"}
           </span>
         </td>
-        <td><a href="book.html?id=${book.id}" class="details-link">Details</a></td>
+        <td>
+          <a href="book.html?id=${book.id}" class="details-link">
+            Details
+          </a>
+        </td>
       `;
-      tbody.appendChild(tr);
-    });
 
-    applyLocalFilters();
+      tbody.appendChild(row);
+    });
   }
 
-  // ── Local filtering logic ────────────────────────────────────────────────
-  function applyLocalFilters() {
-    const rows = Array.from(tbody.querySelectorAll("tr"));
-    const avail = state.availability;
-    let visible = 0;
-
-    rows.forEach((row) => {
-      const matchesAvail =
-        avail === "all" || row.dataset.availability === avail;
-      row.style.display = matchesAvail ? "" : "none";
-      if (matchesAvail) visible++;
-    });
-
-    if (visibleCountEl) visibleCountEl.textContent = visible;
-    const empty = visible === 0;
-    if (noResults) noResults.classList.toggle("visible", empty);
-    if (tableWrap) tableWrap.style.display = empty ? "none" : "";
-  }
-
-  // ── Search handler ────────────────────────────────────────────────────────
-  let debounceTimer;
-  async function handleSearch() {
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(async () => {
-      state.query = searchInput.value;
-      const books = await fetchBooks(state.query);
-      buildTable(books);
-    }, 300);
-  }
-
-  // Event Listeners
-  if (searchInput) searchInput.addEventListener("input", handleSearch);
-  if (availSelect)
-    availSelect.addEventListener("change", (e) => {
-      state.availability = e.target.value;
-      applyLocalFilters();
-    });
-
-  // Initial Load
-  document.addEventListener("DOMContentLoaded", async () => {
-    const books = await fetchBooks("");
-    buildTable(books);
-  });
 })();
