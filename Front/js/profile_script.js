@@ -66,11 +66,14 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // Update sessionStorage so the navbar reflect
+      // Update sessionStorage so the navbar reflects the changes
       sessionStorage.setItem("currentUser", JSON.stringify(data.user));
 
       alert("Changes saved successfully!");
       document.querySelector("form").reset();
+
+      document.getElementById("pass").value = "";
+      document.getElementById("Cpass").value = "";
 
       // Refresh displayed info
       if (usernameEl) usernameEl.textContent = data.user.username;
