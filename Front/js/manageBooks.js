@@ -33,7 +33,7 @@ function handleEdit(id) {
 async function renderBooks() {
   booksContainer.innerHTML = "";
 
-  const response = await fetch("${API}/books/", {
+  const response = await fetch(`${API}/books/`, {
     headers: {
       "Content-Type": "application/json",
       "X-CSRFToken": getCookie("csrftoken"),

@@ -65,12 +65,9 @@ async function handleBorrow(book) {
 
     alert(`"${book.title}" borrowed successfully!`);
 
-    const borrowBtn = document.getElementById("borrowBtn");
-    if (data.availableCopies <= 0) {
-      borrowBtn.textContent = "Unavailable";
-      borrowBtn.disabled = true;
-      document.getElementById("bookStatus").textContent = "Not Available";
-    }
+    const borrowBtn = document.getElementById("borrowBtn");borrowBtn.textContent = "Unavailable";
+    borrowBtn.disabled = true;
+    document.getElementById("bookStatus").textContent = "Not Available";
   } catch (err) {
     console.error(err);
     alert("Network error. Please try again.");
