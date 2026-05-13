@@ -1,9 +1,8 @@
 // navbar.js — updated for Django backend
-const API = "http://127.0.0.1:8000/api";
 
 async function fetchCurrentUser() {
   try {
-    const response = await fetch("/api/me/", {
+    const response = await fetch(`${API}/me/`, {
       credentials: "include", // sends the session cookie
     });
     if (!response.ok) return null; // 401 = not logged in
@@ -13,13 +12,14 @@ async function fetchCurrentUser() {
   }
 }
 
+// the include handles the cookies
 async function handleLogout() {
-  await fetch("/api/logout/", {
+  await fetch(`${API}/logout/`, {
     method: "POST",
     credentials: "include",
   });
   sessionStorage.removeItem("currentUser");
-  window.location.href = "/pages/index.html";
+  window.location.href = "/Front/pages/index.html";
 }
 
 async function renderNavbar() {
@@ -35,26 +35,26 @@ async function renderNavbar() {
   }
 
   let navLinks = `
-    <a href="/pages/index.html">Home</a>
+    <a href="/Front/pages/index.html">Home</a>
     <span class="nav-divider"></span>
   `;
 
   if (!user) {
     navLinks += `
-      <a href="/pages/login.html">Login</a>
-      <a href="/pages/signup.html">Sign Up</a>
+      <a href="/Front/pages/login.html">Login</a>
+      <a href="/Front/pages/signup.html">Sign Up</a>
     `;
   } else if (user.role === "admin") {
     navLinks += `
-      <a href="/pages/Manage.html">Manage Books</a>
-      <a href="/pages/Add_Book.html">Add Book</a>
-      <a href="/pages/Profile.html">My Profile</a>
+      <a href="/Front/pages/Manage.html">Manage Books</a>
+      <a href="/Front/pages/Add_Book.html">Add Book</a>
+      <a href="/Front/pages/Profile.html">My Profile</a>
       <a href="#" id="logoutBtn">Logout</a>
     `;
   } else {
     navLinks += `
-      <a href="/pages/borrowed.html">My Books</a>
-      <a href="/pages/Profile.html">My Profile</a>
+      <a href="/Front/pages/borrowed.html">My Books</a>
+      <a href="/Front/pages/Profile.html">My Profile</a>
       <a href="#" id="logoutBtn">Logout</a>
     `;
   }
@@ -63,7 +63,7 @@ async function renderNavbar() {
   navbarContainer.innerHTML = `
     <header>
       <div class="navbar-inner">
-        <h1 id="mainLogo" onclick="window.location.href='/pages/index.html'">
+        <h1 id="mainLogo" onclick="window.location.href='/Front/pages/index.html'">
           TheDeadAuthorSociety
         </h1>
 

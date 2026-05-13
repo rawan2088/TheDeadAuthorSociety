@@ -2,13 +2,16 @@
 import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth import authenticate, login, logout
+# to make the user still logged in after a password change  
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth import get_user_model
 
 User = get_user_model()  # this is All.User, which has is_admin
 
 # i put this in settings
 # ADMIN_SECRET_CODE = "DEADAUTHOR2024"
+
+from django.conf import settings
 
 # the biggest change that happend to this file is that instead of falling back to the profile mode
 # i made it fall back on the default one and then check if it is admin or normal user
@@ -46,7 +49,7 @@ def signup_view(request):
         return JsonResponse({'error': 'That username is already taken.'}, status=400)
     if User.objects.filter(email=email).exists():
         return JsonResponse({'error': 'That email is already registered.'}, status=400)
-    if role == 'admin' and admin_code != ADMIN_SECRET_CODE:
+    if role == 'admin' and admin_code != settings.ADMIN_SECRET_CODE:
         return JsonResponse({'error': 'Invalid admin code.'}, status=403)
 
     user = User.objects.create_user(
@@ -103,8 +106,9 @@ def update_profile_view(request):
     data = json.loads(request.body)
     user = request.user
 
-    user.first_name = data.get('firstName', user.first_name)
-    user.last_name  = data.get('lastName',  user.last_name)
+    # user.first_name = data.get('firstName', user.first_name)
+    # user.last_name  = data.get('lastName',  user.last_name)
+    user.username = data.get('username', user.username)
     user.email      = data.get('email',     user.email)
 
     new_password = data.get('newPassword', '')

@@ -384,12 +384,23 @@ function getCommentsByBook(bookId) {
 } // book details needs this
 
 // CURRENT USER (sessionStorage)
+function refreshCurrentUser(updatedUserData) {
+  // This merges new data into the existing session object
+  const current = getCurrentUser();
+  if (current) {
+    const newUser = { ...current, ...updatedUserData };
+    setCurrentUser(newUser);
+    return newUser;
+  }
+  return null;
+}
 function setCurrentUser(user) {
-  sessionStorage.setItem("currentUser", JSON.stringify(user)); // we save the whole
+  sessionStorage.setItem("currentUser", JSON.stringify(user));
 } // login needs this
 
 function getCurrentUser() {
-  return JSON.parse(sessionStorage.getItem("currentUser"));
+  const userJson = sessionStorage.getItem("currentUser");
+  return userJson ? JSON.parse(userJson) : null;
 } // every page needs this for the navbar
 
 function logoutUser() {

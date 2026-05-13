@@ -1,5 +1,3 @@
-const API = "http://127.0.0.1:8000/api";
-
 document.addEventListener("DOMContentLoaded", () => {
   const user = getCurrentUser();
 
@@ -17,15 +15,15 @@ document.addEventListener("DOMContentLoaded", () => {
   if (emailEl) emailEl.textContent = user.email || "—";
 
   // Form submit
-  document.querySelector("form").onsubmit = function (e) {
+  document.querySelector("form").onsubmit = async function (e) {
     e.preventDefault();
 
     const newUsername = document.getElementById("user").value.trim();
     const newEmail = document.getElementById("email").value.trim();
-    const currentPass = document.getElementById("Cpass").value.trim();
     const newPass = document.getElementById("pass").value.trim();
+    const currentPass = document.getElementById("Cpass").value.trim();
 
-    if (!newUsername && !newEmail && !currentPass && !newPass) {
+    if (!newUsername && !newEmail && !newPass) {
       alert("Please fill at least one field to make changes!");
       return;
     }
@@ -35,37 +33,54 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    if (currentPass && !newPass) {
-      alert("You must enter a new password to change it!");
-      return;
-    }
     if (newPass && !currentPass) {
       alert("You must enter your current password to change it!");
       return;
     }
-    if (currentPass && currentPass !== user.password) {
-      alert("Current password is incorrect!");
-      return;
-    }
+
     if (newPass && newPass.length < 6) {
       alert("New password must be at least 6 characters.");
       return;
     }
 
-    const updatedUser = { ...user };
+    try {
+      const res = await fetch(`${API}/me/update/`, {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCookie("csrftoken"),
+        },
+        body: JSON.stringify({
+          username: newUsername || undefined,
+          email: newEmail || undefined,
+          currentPassword: currentPass || undefined,
+          newPassword: newPass || undefined,
+        }),
+      });
 
-    if (newUsername) updatedUser.username = newUsername;
-    if (newEmail) updatedUser.email = newEmail;
-    if (newPass) updatedUser.password = newPass;
+      const data = await res.json();
 
-    updateUser(updatedUser);
-    setCurrentUser(updatedUser);
+      if (!res.ok) {
+        alert(data.error || "Something went wrong.");
+        return;
+      }
 
-    alert("Changes saved successfully!");
+      // Update sessionStorage so the navbar reflects the changes
+      sessionStorage.setItem("currentUser", JSON.stringify(data.user));
 
-    if (usernameEl) usernameEl.textContent = updatedUser.username;
-    if (emailEl) emailEl.textContent = updatedUser.email || "—";
+      alert("Changes saved successfully!");
+      document.querySelector("form").reset();
 
-    document.querySelector("form").reset();
+      document.getElementById("pass").value = "";
+      document.getElementById("Cpass").value = "";
+
+      // Refresh displayed info
+      if (usernameEl) usernameEl.textContent = data.user.username;
+      if (emailEl) emailEl.textContent = data.user.email || "—";
+    } catch (err) {
+      alert("Network error. Please try again.");
+      console.error(err);
+    }
   };
 });

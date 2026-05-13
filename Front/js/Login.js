@@ -1,6 +1,3 @@
-// Login.js - updated for Django backend
-const API = "http://127.0.0.1:8000/api";
-
 document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("loginForm");
   const errorMsg = document.getElementById("loginError");
@@ -13,8 +10,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const password = document.getElementById("password").value;
 
     try {
-      const response = await fetch("/api/login/", {
+      const response = await fetch(`${API}/login/`, {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         credentials: "include", // important: sends/receives session cookie
         body: JSON.stringify({ username, password }),

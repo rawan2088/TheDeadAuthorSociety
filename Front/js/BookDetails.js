@@ -1,255 +1,159 @@
 const params = new URLSearchParams(window.location.search);
-
 const bookId = params.get("id");
 
-const API = "http://127.0.0.1:8000/api/books";
-
-
-// ---------------------------------------------------
-// CHECK BOOK ID
-// ---------------------------------------------------
-
 if (!bookId) {
-  document.querySelector("main").innerHTML =
-    "<p>No book specified.</p>";
-
+  document.querySelector("main").innerHTML = "<p>No book specified.</p>";
   throw new Error("No book id in URL");
 }
 
-
-// ---------------------------------------------------
-// GET CURRENT USER
-// ---------------------------------------------------
-
-function getCurrentUser() {
-  const user = localStorage.getItem("currentUser");
-
-  return user ? JSON.parse(user) : null;
-}
-
-
-// ---------------------------------------------------
-// GET CSRF TOKEN
-// ---------------------------------------------------
-
-function getCookie(name) {
-  let cookieValue = null;
-
-  if (document.cookie && document.cookie !== "") {
-
-    const cookies = document.cookie.split(";");
-
-    for (let cookie of cookies) {
-
-      cookie = cookie.trim();
-
-      if (cookie.startsWith(name + "=")) {
-
-        cookieValue = decodeURIComponent(
-          cookie.substring(name.length + 1)
-        );
-
-        break;
-      }
-    }
-  }
-
-  return cookieValue;
-}
-
-
-// ---------------------------------------------------
-// RENDER BOOK
-// ---------------------------------------------------
-
+//  Render Book Details
 function renderBook(book) {
-
-  document.getElementById("bookTitle").textContent =
-    book.title;
-
-  document.getElementById("bookAuthor").textContent =
-    book.author;
-
+  document.getElementById("bookTitle").textContent = book.title;
+  document.getElementById("bookAuthor").textContent = book.author;
   document.getElementById("bookPublishedDate").textContent =
     book.published_date;
-
   document.getElementById("bookCategory").textContent =
-    book.category;
-
-  document.getElementById("bookDescription").textContent =
-    book.description;
-
+    book.category || "General";
+  document.getElementById("bookDescription").textContent = book.description;
   document.getElementById("bookImg").src =
     book.image || "../Assets/default.jpg";
 
-
   const borrowBtn = document.getElementById("borrowBtn");
-
   const statusEl = document.getElementById("bookStatus");
-
   const user = getCurrentUser();
 
-
-  // ---------------------------------------------------
-  // ADMIN VIEW
-  // ---------------------------------------------------
-
+  // Admin View
   if (user && user.role === "admin") {
-
-    statusEl.textContent =
-      `Available: ${book.availableCopies} / ${book.totalCopies}`;
-
+    statusEl.textContent = `Available: ${book.availableCopies} / ${book.totalCopies}`;
     borrowBtn.style.display = "none";
-
     return;
   }
 
-
-  // ---------------------------------------------------
-  // BOOK NOT AVAILABLE
-  // ---------------------------------------------------
-
+  // Availability Logic
   if (book.availableCopies <= 0) {
-
     statusEl.textContent = "Not Available";
-
     borrowBtn.textContent = "Unavailable";
-
     borrowBtn.disabled = true;
-  }
-
-  // ---------------------------------------------------
-  // BOOK AVAILABLE
-  // ---------------------------------------------------
-
-  else {
-
+  } else {
     statusEl.textContent = "Available";
-
     borrowBtn.textContent = "Borrow";
-
     borrowBtn.disabled = false;
+    // Remove old listeners to prevent double-firing
+    const newBtn = borrowBtn.cloneNode(true);
+    borrowBtn.parentNode.replaceChild(newBtn, borrowBtn);
+    newBtn.addEventListener("click", () => handleBorrow(book));
   }
-
-
-  // ---------------------------------------------------
-  // BORROW BUTTON
-  // ---------------------------------------------------
-
-  borrowBtn.addEventListener("click", () => {
-    handleBorrow(book);
-  });
 }
 
-
-// ---------------------------------------------------
-// BORROW BOOK
-// ---------------------------------------------------
-
+// Borrow Logic
 async function handleBorrow(book) {
-
   const user = getCurrentUser();
-
   if (!user) {
-
     window.location.href = "login.html";
-
-    return;
-  }
-
-  if (user.role === "admin") {
-
-    alert("Admins cannot borrow books.");
-
     return;
   }
 
   try {
-
-    const res = await fetch(
-      `${API}/${book.id}/borrow/`,
-      {
-        method: "POST",
-
-        credentials: "include",
-
-        headers: {
-          "X-CSRFToken": getCookie("csrftoken"),
-        },
-      }
-    );
-
+    const res = await fetch(`${API}/books/${book.id}/borrow/`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "X-CSRFToken": getCookie("csrftoken") },
+    });
     const data = await res.json();
 
-
-    if (!res.ok || !data.success) {
-
+    if (!res.ok) {
       alert(data.error || "Could not borrow this book.");
-
       return;
     }
 
-
     alert(`"${book.title}" borrowed successfully!`);
-
-
-    const borrowBtn =
-      document.getElementById("borrowBtn");
-
-
-    if (data.remaining_copies <= 0) {
-
-      borrowBtn.textContent = "Unavailable";
-
-      borrowBtn.disabled = true;
-
-      document.getElementById("bookStatus").textContent =
-        "Not Available";
-    }
-
+    window.location.reload(); // Simplest way to refresh UI
   } catch (err) {
-
     console.error(err);
-
     alert("Network error. Please try again.");
   }
 }
 
+// Comment System
+async function loadComments() {
+  const res = await fetch(`${API}/books/${bookId}/comments/`);
+  const data = await res.json();
+  const list = document.getElementById("commentsList");
+  if (!list) return;
 
-// ---------------------------------------------------
-// LOAD BOOK DETAILS
-// ---------------------------------------------------
+  list.innerHTML = "";
+  if (data.length === 0) {
+    list.innerHTML = "<p>No comments yet. Be the first!</p>";
+    return;
+  }
 
-document.addEventListener(
-  "DOMContentLoaded",
-  async () => {
+  data.forEach((comment) => {
+    const div = document.createElement("div");
+    div.className = "comment-item";
+    div.innerHTML = `
+      <strong>${comment.username}</strong>
+      <span class="stars">${"⭐".repeat(comment.rating)}</span>
+      <p>${comment.content}</p>
+      <small>${comment.created_at}</small>
+      <hr>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function setupCommentForm() {
+  const submitBtn = document.getElementById("submitCommentBtn");
+  if (!submitBtn) return;
+
+  submitBtn.addEventListener("click", async () => {
+    const rating = document.getElementById("commentRating").value;
+    const content = document.getElementById("commentContent").value.trim();
+    const msg = document.getElementById("commentMsg");
+
+    if (!content) {
+      msg.textContent = "Please write something first.";
+      return;
+    }
 
     try {
+      const res = await fetch(`${API}/books/${bookId}/comments/`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCookie("csrftoken"),
+        },
+        body: JSON.stringify({ rating, content }),
+      });
 
-      const res = await fetch(
-        `${API}/${bookId}/`
-      );
-
-      if (!res.ok) {
-        throw new Error("Book not found");
+      if (res.ok) {
+        msg.style.color = "green";
+        msg.textContent = "Comment added!";
+        document.getElementById("commentContent").value = "";
+        loadComments();
+      } else {
+        const data = await res.json();
+        msg.style.color = "red";
+        msg.textContent = data.error || "Login to post a comment.";
       }
-
-      const data = await res.json();
-
-      if (!data.success) {
-        throw new Error(
-          data.error || "Book not found"
-        );
-      }
-
-      renderBook(data.book);
-
     } catch (err) {
-
-      console.error(err);
-
-      document.querySelector("main").innerHTML =
-        `<p>${err.message}</p>`;
+      msg.textContent = "Network error.";
     }
+  });
+}
+
+// Initialization
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const res = await fetch(`${API}/books/${bookId}/`);
+    if (!res.ok) throw new Error("Book not found");
+    const book = await res.json();
+
+    renderBook(book);
+    loadComments();
+    setupCommentForm();
+  } catch (err) {
+    console.error(err);
+    document.querySelector("main").innerHTML = `<p>${err.message}</p>`;
   }
-);
+});

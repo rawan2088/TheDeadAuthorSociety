@@ -1,10 +1,17 @@
-# All/management/commands/seed.py
 from django.core.management.base import BaseCommand
-from All.models import Book
-        
-# guyys, run 
-# python manage.py seed
-# i made this to populate the backend
+from django.contrib.auth import get_user_model
+from All.models import Book, Comment, BorrowedBooks
+from django.utils import timezone
+from datetime import datetime
+
+User = get_user_model()
+
+SEED_USERS = [
+    {"firstName": "Admin", "lastName": "User", "username": "admin", "password": "admin123", "email": "admin@deadauthorsociety.com", "role": "admin"},
+    {"firstName": "Rawan", "lastName": "Ahmed", "username": "Rawan", "password": "123456", "email": "rawan@gmail.com", "role": "admin"},
+    {"firstName": "Roaa", "lastName": "AbdElFatah", "username": "Roaa", "password": "123456", "email": "roaa@gmail.com", "role": "user"},
+    {"firstName": "Maryam", "lastName": "Ahmed", "username": "Maryam", "password": "123456", "email": "maryam@gmail.com", "role": "user"},
+]
 
 SEED_BOOKS = [
     {
@@ -100,50 +107,90 @@ SEED_BOOKS = [
 ]
 
 
+SEED_COMMENTS = [
+    {"book_title": "The Great Gatsby", "username": "Roaa", "rating": 5, "content": "An absolute masterpiece. Highly recommend to everyone!", "date": "2024-01-15"},
+    {"book_title": "The Great Gatsby", "username": "Rawan", "rating": 4, "content": "A great read, kept me engaged from start to finish.", "date": "2024-02-20"},
+    {"book_title": "To Kill A Mockingbird", "username": "Roaa", "rating": 5, "content": "One of the most important books I have ever read.", "date": "2024-03-10"},
+    {"book_title": "A Good Girl's Guide To Murder", "username": "Rawan", "rating": 5, "content": "Could not put it down. Finished it in one sitting!", "date": "2024-04-05"},
+    {"book_title": "Pride and Prejudice", "username": "Roaa", "rating": 5, "content": "A timeless classic. Elizabeth Bennet is iconic.", "date": "2024-05-18"},
+    {"book_title": "The Silent Patient", "username": "Rawan", "rating": 5, "content": "The twist at the end blew my mind completely.", "date": "2024-06-22"},
+]
+
+SEED_BORROWED = [
+    {"username": "Rawan", "book_title": "Call It What You Want", "date": "2024-06-01"},
+    {"username": "Rawan", "book_title": "Betting on You", "date": "2024-06-15"},
+    {"username": "Roaa", "book_title": "Steal Like an Artist", "date": "2024-07-01"},
+    {"username": "Roaa", "book_title": "Little Women", "date": "2024-07-10"},
+]
+
 class Command(BaseCommand):
-    help = 'Seed the database with initial book data'
+    help = 'Seed the database with Users, Books, Comments, and Borrowed records'
 
     def add_arguments(self, parser):
-        # Optional flag: python manage.py seed --clear
-        # Deletes all books first before re-seeding
-        parser.add_argument(
-            '--clear',
-            action='store_true',
-            help='Delete all existing books before seeding',
-        )
+        parser.add_argument('--clear', action='store_true', help='Delete everything before seeding')
 
     def handle(self, *args, **options):
         if options['clear']:
-            count = Book.objects.count()
+            Comment.objects.all().delete()
+            BorrowedBooks.objects.all().delete()
             Book.objects.all().delete()
-            self.stdout.write(self.style.WARNING(f'Deleted {count} existing books.'))
+            User.objects.filter(is_superuser=False).delete()
+            self.stdout.write(self.style.WARNING('Cleared existing data.'))
 
-        created = 0
-        skipped = 0
-
-        for data in SEED_BOOKS:
-            # Won't create duplicates if you run it twice —
-            # checks by title + author before inserting
-            book, was_created = Book.objects.get_or_create(
-                title=data['title'],
-                author=data['author'],
+        # 1. Seed Users
+        for u_data in SEED_USERS:
+            user, created = User.objects.get_or_create(
+                username=u_data['username'],
                 defaults={
-                    'published_date':  data['published_date'],
-                    'category':        data['category'],
-                    'description':     data['description'],
-                    'image':           data['image'],
-                    'totalCopies':     data['totalCopies'],
-                    'availableCopies': data['availableCopies'],
+                    'first_name': u_data['firstName'],
+                    'last_name': u_data['lastName'],
+                    'email': u_data['email'],
+                    'is_admin': u_data['role'] == 'admin'
                 }
             )
-            if was_created:
-                created += 1
-                self.stdout.write(f'  Created: {book.title}')
-            else:
-                skipped += 1
-                self.stdout.write(f'  Skipped (already exists): {book.title}')
+            if created:
+                user.set_password(u_data['password'])
+                user.save()
+                self.stdout.write(f"User created: {user.username}")
 
-        self.stdout.write(self.style.SUCCESS(
-            f'\nDone. {created} books created, {skipped} skipped.'
-        ))
+        # 2. Seed Books
+        for b_data in SEED_BOOKS:
+            book, created = Book.objects.get_or_create(
+                title=b_data['title'],
+                author=b_data['author'],
+                defaults=b_data
+            )
+            if created:
+                self.stdout.write(f"Book created: {book.title}")
 
+        # 3. Seed Comments
+        for c_data in SEED_COMMENTS:
+            try:
+                user = User.objects.get(username=c_data['username'])
+                book = Book.objects.get(title=c_data['book_title'])
+                Comment.objects.get_or_create(
+                    userId=user,
+                    bookId=book,
+                    content=c_data['content'],
+                    defaults={
+                        'username': user.username,
+                        'rating': c_data['rating'],
+                        'created_at': datetime.strptime(c_data['date'], "%Y-%m-%d")                    }
+                )
+            except (User.DoesNotExist, Book.DoesNotExist):
+                continue
+
+        # 4. Seed Borrowed Records
+        for br_data in SEED_BORROWED:
+            try:
+                user = User.objects.get(username=br_data['username'])
+                book = Book.objects.get(title=br_data['book_title'])
+                BorrowedBooks.objects.get_or_create(
+                    userId=user,
+                    bookId=book,
+                    defaults={'borrowed_date': br_data['date']}
+                )
+            except (User.DoesNotExist, Book.DoesNotExist):
+                continue
+
+        self.stdout.write(self.style.SUCCESS('Successfully seeded all data!'))

@@ -1,5 +1,3 @@
-const API = "http://127.0.0.1:8000/api";
-
 function renderBookCards(books, containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
@@ -38,7 +36,7 @@ function renderBookCards(books, containerId) {
   });
 }
 
-function getRecentBooks(books,count = 3) {
+function getRecentBooks(books, count = 3) {
   // last N books added (by id descending)
   return books
     .slice()
@@ -46,7 +44,7 @@ function getRecentBooks(books,count = 3) {
     .slice(0, count);
 }
 
-function getPopularBooks(books,count = 3) {
+function getPopularBooks(books, count = 3) {
   // most borrowed = lowest availableCopies relative to totalCopies
   return books
     .slice()
@@ -58,32 +56,47 @@ function getPopularBooks(books,count = 3) {
     .slice(0, count);
 }
 
-function getRecommendedBooks(books,count = 3) {
+// helper to fetch borrowed books from Django
+async function fetchBorrowedBooks() {
+  try {
+    const response = await fetch(`${API}/borrowed/`, {
+      credentials: "include",
+    });
+    if (!response.ok) return [];
+    return await response.json();
+  } catch (err) {
+    console.error("Failed to fetch borrowed books", err);
+    return [];
+  }
+}
+
+async function getRecommendedBooks(books, count = 3) {
   const allBooks = books;
   const user = getCurrentUser();
+  let recBooks;
 
   if (user) {
-    // exclude books the user has already borrowed
-    const borrowed = getBorrowedByUser(user.id).map((b) => b.bookId);
-    const notBorrowed = allBooks.filter((b) => !borrowed.includes(b.id));
+    const borrowedData = await fetchBorrowedBooks();
+    if (borrowedData) {
+      const borrowedIds = borrowedData["borrowed"].map((b) => b.book_id);
+      recBooks = allBooks.filter((b) => !borrowedIds.includes(b.id));
+    }
 
-    // if user has borrowed everything somehow, just return all
-    const pool = notBorrowed.length > 0 ? notBorrowed : allBooks;
+    // if user has borrowed everything, return all
+    const pool = recBooks.length > 0 ? recBooks : allBooks;
 
-    // shuffle and pick
     return pool.sort(() => Math.random() - 0.5).slice(0, count);
   }
-
-  // guest — just random picks
+  // guest just random picks
   return allBooks.sort(() => Math.random() - 0.5).slice(0, count);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  const res   = await fetch(`${API}/books/`, { credentials: "include" });
-  const books = await res.json();  // this is the full array from Django
+document.addEventListener("DOMContentLoaded", async () => {
+  const res = await fetch(`${API}/books/`, { credentials: "include" });
+  const books = await res.json(); // this is the full array from Django
 
   // pass books directly instead of calling getBooks() internally
-  renderBookCards(getRecentBooks(books, 3),      "recentBooks");
-  renderBookCards(getPopularBooks(books, 3),     "popularBooks");
-  renderBookCards(getRecommendedBooks(books, 3), "recommendedBooks");
+  renderBookCards(getRecentBooks(books, 3), "recentBooks");
+  renderBookCards(getPopularBooks(books, 3), "popularBooks");
+  renderBookCards(await getRecommendedBooks(books, 3), "recommendedBooks");
 });

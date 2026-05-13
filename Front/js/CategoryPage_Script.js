@@ -1,476 +1,198 @@
 (function () {
   "use strict";
 
+  // Use the unified API base path
   const API = "http://127.0.0.1:8000/api/books";
+  const container = document.getElementById("categoriesContainer");
+  const filterBar = document.getElementById("filterBar");
 
-  const container =
-    document.getElementById("categoriesContainer");
-
-  const filterBar =
-    document.getElementById("filterBar");
-
-
-  // ---------------------------------------------------
   // CATEGORY ICONS
-  // ---------------------------------------------------
-
   const categoryIcons = {
     "classic fiction": "📖",
     "southern gothic": "🌿",
     "southern gothic / bildungsroman": "🌿",
-    "bildungsroman": "🌿",
+    bildungsroman: "🌿",
     "young adult": "✨",
     "mystery thriller": "🔍",
-    "romance": "🌹",
+    romance: "🌹",
     "classical romance": "🌹",
     "self help": "💡",
     "historical fiction": "🏛️",
+    other: "📚",
   };
 
-
-  // ---------------------------------------------------
-  // GET CATEGORY ICON
-  // ---------------------------------------------------
-
   function getIcon(category) {
-
-    return (
-      categoryIcons[category.toLowerCase()] 
-    );
+    return categoryIcons[category.toLowerCase()] || "📚";
   }
 
-
-  // ---------------------------------------------------
-  // FETCH BOOKS FROM API
-  // ---------------------------------------------------
-
-  async function fetchBooks() {
-
-    try {
-
-      const response = await fetch(API);
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch books");
-      }
-
-      const data = await response.json();
-
-      if (!data.success) {
-        throw new Error(
-          data.error || "Failed to load books"
-        );
-      }
-
-      return data.books;
-
-    } catch (error) {
-
-      console.error(error);
-
-      container.innerHTML = `
-        <p class="error-message">
-          Failed to load categories.
-        </p>
-      `;
-
-      return [];
-    }
-  }
-
-
-  // ---------------------------------------------------
   // BUILD PAGE
-  // ---------------------------------------------------
-
   async function buildPage() {
+    try {
+      // Merged Fetch: Simple URL but kept error handling
+      const res = await fetch(`${API}/`, { credentials: "include" });
 
-    const books = await fetchBooks();
+      if (!res.ok) throw new Error("Failed to fetch books");
 
-    const grouped = {};
+      const books = await res.json();
+      const grouped = {};
 
-    books.forEach((book) => {
+      // Group books by category
+      books.forEach((book) => {
+        const cat = book.category || "Other";
+        if (!grouped[cat]) grouped[cat] = [];
+        grouped[cat].push(book);
+      });
 
-      const cat = book.category || "Other";
+      const sortedCategories = Object.keys(grouped).sort();
 
-      if (!grouped[cat]) {
-        grouped[cat] = [];
-      }
+      // 1. Build Filter Tabs
+      filterBar
+        .querySelectorAll(".filter-tab:not([data-filter='all'])")
+        .forEach((t) => t.remove());
+      const expandBtn = document.getElementById("expandCollapseBtn");
 
-      grouped[cat].push(book);
-    });
+      sortedCategories.forEach((cat) => {
+        const tab = document.createElement("button");
+        tab.classList.add("filter-tab");
+        tab.dataset.filter = cat.toLowerCase();
+        tab.textContent = cat;
+        filterBar.insertBefore(tab, expandBtn);
+      });
 
-    const sortedCategories =
-      Object.keys(grouped).sort();
+      // 2. Build Category Sections
+      container.innerHTML = "";
 
+      sortedCategories.forEach((cat, idx) => {
+        const booksInCat = grouped[cat];
+        const section = document.createElement("div");
+        section.classList.add("category-section");
+        section.dataset.category = cat.toLowerCase();
+        section.style.animationDelay = `${(idx + 1) * 0.05}s`;
 
-    // ---------------------------------------------------
-    // BUILD FILTER TABS
-    // ---------------------------------------------------
-
-    filterBar
-      .querySelectorAll(
-        ".filter-tab:not([data-filter='all'])"
-      )
-      .forEach((t) => t.remove());
-
-    const expandBtn =
-      document.getElementById("expandCollapseBtn");
-
-
-    sortedCategories.forEach((cat) => {
-
-      const tab = document.createElement("button");
-
-      tab.classList.add("filter-tab");
-
-      tab.dataset.filter = cat.toLowerCase();
-
-      tab.textContent = cat;
-
-      filterBar.insertBefore(tab, expandBtn);
-    });
-
-
-    // ---------------------------------------------------
-    // BUILD CATEGORY SECTIONS
-    // ---------------------------------------------------
-
-    container.innerHTML = "";
-
-
-    sortedCategories.forEach((cat, idx) => {
-
-      const booksInCat = grouped[cat];
-
-      const section =
-        document.createElement("div");
-
-      section.classList.add("category-section");
-
-      section.dataset.category =
-        cat.toLowerCase();
-
-      section.style.animationDelay =
-        `${(idx + 1) * 0.05}s`;
-
-
-      // ---------------------------------------------------
-      // BUILD BOOK CARDS
-      // ---------------------------------------------------
-
-      const cardsHTML = booksInCat
-        .map((book) => {
-
-          const isAvailable =
-            book.availableCopies > 0;
-
-          return `
+        const cardsHTML = booksInCat
+          .map((book) => {
+            const isAvailable = book.availableCopies > 0;
+            return `
             <div class="book-card">
-
-              <div class="card-title">
-                ${book.title}
-              </div>
-
-              <div class="card-author">
-                ${book.author}
-              </div>
-
+              <div class="card-title">${book.title}</div>
+              <div class="card-author">${book.author}</div>
               <div class="card-meta">
-
-                <span class="card-year">
-                  ${book.published_date || "Unknown"}
+                <span class="card-year">${book.published_date || "Unknown"}</span>
+                <span class="badge ${isAvailable ? "badge-available" : "badge-unavailable"}">
+                  ${isAvailable ? "In Stock" : "Not Available"}
                 </span>
-
-                <span class="badge ${
-                  isAvailable
-                    ? "badge-available"
-                    : "badge-unavailable"
-                }">
-
-                  ${
-                    isAvailable
-                      ? "In Stock"
-                      : "Not Available"
-                  }
-
-                </span>
-
               </div>
-
-              <div class="card-desc">
-                ${book.description || ""}
-              </div>
-
+              <div class="card-desc">${book.description || ""}</div>
               <div class="card-footer">
-
-                <a
-                  href="book.html?id=${book.id}"
-                  class="card-details-link"
-                >
-                  View Details
-                </a>
-
+                <a href="book.html?id=${book.id}" class="card-details-link">View Details</a>
               </div>
-
             </div>
           `;
-        })
-        .join("");
+          })
+          .join("");
 
-
-      // ---------------------------------------------------
-      // CATEGORY HTML
-      // ---------------------------------------------------
-
-      section.innerHTML = `
-
-        <div class="category-header">
-
-          <div class="category-header-left">
-
-            <div class="category-icon">
-              ${getIcon(cat)}
-            </div>
-
-            <div>
-
-              <div class="category-name">
-                ${cat}
+        section.innerHTML = `
+          <div class="category-header">
+            <div class="category-header-left">
+              <div class="category-icon">${getIcon(cat)}</div>
+              <div>
+                <div class="category-name">${cat}</div>
+                <div class="category-count">${booksInCat.length} ${booksInCat.length === 1 ? "book" : "books"}</div>
               </div>
-
-              <div class="category-count">
-                ${booksInCat.length}
-                ${
-                  booksInCat.length === 1
-                    ? "book"
-                    : "books"
-                }
-              </div>
-
             </div>
-
+            <span class="category-chevron">▼</span>
           </div>
-
-          <span class="category-chevron">
-            ▼
-          </span>
-
-        </div>
-
-        <div class="category-body">
-
-          <div class="book-cards-grid">
-            ${cardsHTML}
+          <div class="category-body">
+            <div class="book-cards-grid">${cardsHTML}</div>
           </div>
+        `;
+        container.appendChild(section);
+      });
 
-        </div>
-      `;
+      // 3. Init UI Features
+      initAccordions();
+      initFilterTabs();
+      initExpandCollapse();
 
-      container.appendChild(section);
-    });
-
-
-    // ---------------------------------------------------
-    // INIT FEATURES
-    // ---------------------------------------------------
-
-    initAccordions();
-
-    initFilterTabs();
-
-    initExpandCollapse();
-
-
-    // ---------------------------------------------------
-    // OPEN FIRST CATEGORY
-    // ---------------------------------------------------
-
-    const firstHeader =
-      container.querySelector(".category-header");
-
-    const firstBody =
-      container.querySelector(".category-body");
-
-    if (firstHeader && firstBody) {
-
-      openSection(firstHeader, firstBody);
+      // Open first category by default
+      const firstHeader = container.querySelector(".category-header");
+      const firstBody = container.querySelector(".category-body");
+      if (firstHeader && firstBody) openSection(firstHeader, firstBody);
+    } catch (error) {
+      console.error(error);
+      container.innerHTML = `<p class="error-message">Failed to load categories.</p>`;
     }
   }
 
-
-  // ---------------------------------------------------
-  // OPEN SECTION
-  // ---------------------------------------------------
+  // --- UI HELPER FUNCTIONS ---
 
   function openSection(header, body) {
-
     header.classList.add("open");
-
     body.classList.add("open");
   }
 
-
-  // ---------------------------------------------------
-  // CLOSE SECTION
-  // ---------------------------------------------------
-
   function closeSection(header, body) {
-
     header.classList.remove("open");
-
     body.classList.remove("open");
   }
 
-
-  // ---------------------------------------------------
-  // ACCORDIONS
-  // ---------------------------------------------------
-
   function initAccordions() {
+    container.querySelectorAll(".category-section").forEach((section) => {
+      const header = section.querySelector(".category-header");
+      const body = section.querySelector(".category-body");
+      if (!header || !body) return;
 
-    container
-      .querySelectorAll(".category-section")
-      .forEach((section) => {
-
-        const header =
-          section.querySelector(
-            ".category-header"
-          );
-
-        const body =
-          section.querySelector(
-            ".category-body"
-          );
-
-        if (!header || !body) return;
-
-        header.addEventListener("click", () => {
-
-          if (body.classList.contains("open")) {
-
-            closeSection(header, body);
-
-          } else {
-
-            openSection(header, body);
-          }
-        });
+      header.addEventListener("click", () => {
+        body.classList.contains("open")
+          ? closeSection(header, body)
+          : openSection(header, body);
       });
-  }
-
-
-  // ---------------------------------------------------
-  // EXPAND / COLLAPSE
-  // ---------------------------------------------------
-
-  function initExpandCollapse() {
-
-    const btn =
-      document.getElementById(
-        "expandCollapseBtn"
-      );
-
-    if (!btn) return;
-
-    let allExpanded = false;
-
-    btn.addEventListener("click", () => {
-
-      allExpanded = !allExpanded;
-
-      container
-        .querySelectorAll(
-          ".category-section:not(.hidden)"
-        )
-        .forEach((section) => {
-
-          const header =
-            section.querySelector(
-              ".category-header"
-            );
-
-          const body =
-            section.querySelector(
-              ".category-body"
-            );
-
-          if (!header || !body) return;
-
-          if (allExpanded) {
-
-            openSection(header, body);
-
-          } else {
-
-            closeSection(header, body);
-          }
-        });
-
-      btn.textContent = allExpanded
-        ? "Collapse All"
-        : "Expand All";
     });
   }
 
+  function initExpandCollapse() {
+    const btn = document.getElementById("expandCollapseBtn");
+    if (!btn) return;
+    let allExpanded = false;
 
-  // ---------------------------------------------------
-  // FILTER TABS
-  // ---------------------------------------------------
+    btn.addEventListener("click", () => {
+      allExpanded = !allExpanded;
+      container
+        .querySelectorAll(".category-section:not(.hidden)")
+        .forEach((section) => {
+          const header = section.querySelector(".category-header");
+          const body = section.querySelector(".category-body");
+          if (header && body)
+            allExpanded
+              ? openSection(header, body)
+              : closeSection(header, body);
+        });
+      btn.textContent = allExpanded ? "Collapse All" : "Expand All";
+    });
+  }
 
   function initFilterTabs() {
-
     filterBar.addEventListener("click", (e) => {
-
-      const tab =
-        e.target.closest(".filter-tab");
-
+      const tab = e.target.closest(".filter-tab");
       if (!tab) return;
 
       filterBar
         .querySelectorAll(".filter-tab")
-        .forEach((t) =>
-          t.classList.remove("active")
-        );
-
+        .forEach((t) => t.classList.remove("active"));
       tab.classList.add("active");
 
-      const filter =
-        tab.dataset.filter;
-
-      container
-        .querySelectorAll(".category-section")
-        .forEach((section) => {
-
-          const matches =
-            filter === "all" ||
-            section.dataset.category === filter;
-
-          section.classList.toggle(
-            "hidden",
-            !matches
-          );
-
-          if (matches) {
-
-            section.style.animation = "none";
-
-            void section.offsetHeight;
-
-            section.style.animation = "";
-          }
-        });
+      const filter = tab.dataset.filter;
+      container.querySelectorAll(".category-section").forEach((section) => {
+        const matches = filter === "all" || section.dataset.category === filter;
+        section.classList.toggle("hidden", !matches);
+        if (matches) {
+          section.style.animation = "none";
+          void section.offsetHeight;
+          section.style.animation = "";
+        }
+      });
     });
   }
 
-
-  // ---------------------------------------------------
-  // PAGE LOAD
-  // ---------------------------------------------------
-
-  document.addEventListener(
-    "DOMContentLoaded",
-    buildPage
-  );
-
+  document.addEventListener("DOMContentLoaded", buildPage);
 })();

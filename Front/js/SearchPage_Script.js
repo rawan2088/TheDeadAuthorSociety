@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const API = "http://127.0.0.1:8000/api";
+  const state = { query: "", category: "all", availability: "all" };
 
   const searchInput = document.getElementById("searchInput");
   const categorySelect = document.getElementById("categoryFilter");
@@ -26,7 +26,6 @@
       const data = await response.json();
 
       return data.results || [];
-
     } catch (error) {
       console.error(error);
       return [];
@@ -72,5 +71,4 @@
       tbody.appendChild(row);
     });
   }
-
 })();

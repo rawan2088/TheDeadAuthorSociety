@@ -1,12 +1,41 @@
-const API = "http://127.0.0.1:8000/api";
-const borrowedContainer = document.getElementById("borrowedBooksContainer");
+const borrowedContainer = document.getElementById("bookContainer");
 
-function renderBorrowedBooks(records) {
+async function handleReturn(borrowId, card) {
+  if (!confirm("Are you sure you want to return this book?")) return;
+
+  try {
+    const res = await fetch(`${API}/borrowed/${borrowId}/return/`, {
+      method: "POST",
+      credentials: "include",
+      credentials: "include",
+      headers: { "X-CSRFToken": getCookie("csrftoken") },
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.error || "Could not return the book.");
+      return;
+    }
+
+    // Remove the card from the DOM immediately
+    card.remove();
+
+    // If no cards left, show empty message
+    if (!borrowedContainer.querySelector(".bookCard")) {
+      borrowedContainer.innerHTML =
+        "<p>You have no borrowed books at the moment.</p>";
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Network error. Please try again.");
+  }
+}
+
+function renderRecords(records) {
   borrowedContainer.innerHTML = "";
 
   if (!records.length) {
-    borrowedContainer.innerHTML =
-      "<p>You have not borrowed any books yet.</p>";
+    borrowedContainer.innerHTML = "<p>You have not borrowed any books yet.</p>";
 
     return;
   }
@@ -52,14 +81,12 @@ async function loadBorrowedBooks() {
     const data = await response.json();
 
     if (!data.success) {
-      borrowedContainer.innerHTML =
-        `<p>${data.error || "Could not load borrowed books."}</p>`;
+      borrowedContainer.innerHTML = `<p>${data.error || "Could not load borrowed books."}</p>`;
 
       return;
     }
 
     renderBorrowedBooks(data.borrowed_books);
-
   } catch (error) {
     console.error(error);
 
