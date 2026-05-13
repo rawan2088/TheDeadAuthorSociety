@@ -179,7 +179,7 @@ def recent_books_view(request):
 def popular_books_view(request):
     if request.method == 'GET':
         books = Book.objects.annotate(
-            borrow_count=Count('borrowedbooks')
+            borrow_count=Count('borrows')
         ).order_by('-borrow_count')[:10]
         data = []
         for book in books:

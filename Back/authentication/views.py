@@ -10,6 +10,8 @@ User = get_user_model()  # this is All.User, which has is_admin
 # i put this in settings
 # ADMIN_SECRET_CODE = "DEADAUTHOR2024"
 
+from django.conf import settings
+
 # the biggest change that happend to this file is that instead of falling back to the profile mode
 # i made it fall back on the default one and then check if it is admin or normal user
 def user_to_dict(user):
@@ -46,7 +48,7 @@ def signup_view(request):
         return JsonResponse({'error': 'That username is already taken.'}, status=400)
     if User.objects.filter(email=email).exists():
         return JsonResponse({'error': 'That email is already registered.'}, status=400)
-    if role == 'admin' and admin_code != ADMIN_SECRET_CODE:
+    if role == 'admin' and admin_code != settings.ADMIN_SECRET_CODE:
         return JsonResponse({'error': 'Invalid admin code.'}, status=403)
 
     user = User.objects.create_user(

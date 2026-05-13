@@ -1,5 +1,4 @@
 const borrowedContainer = document.getElementById("bookContainer");
-const API = "http://127.0.0.1:8000/api";
 
 async function handleReturn(borrowId, card) {
   if (!confirm("Are you sure you want to return this book?")) return;
@@ -7,6 +6,7 @@ async function handleReturn(borrowId, card) {
   try {
     const res = await fetch(`${API}/borrowed/${borrowId}/return/`, {
       method: "POST",
+      credentials: "include",
       credentials: "include",
       headers: { "X-CSRFToken": getCookie("csrftoken") },
     });

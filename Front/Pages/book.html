@@ -38,7 +38,10 @@
             <option value="2">⭐⭐</option>
             <option value="1">⭐</option>
           </select>
-          <textarea id="commentContent" placeholder="Write your comment..."></textarea>
+          <textarea
+            id="commentContent"
+            placeholder="Write your comment..."
+          ></textarea>
           <button id="submitCommentBtn">Submit Comment</button>
           <p id="commentMsg"></p>
         </div>
@@ -57,64 +60,37 @@
     <script src="../js/navbar.js"></script>
     <script src="../js/BookDetails.js"></script>
 
-    <script>
-      const params = new URLSearchParams(window.location.search);
-      const bookId = params.get('id');
+    <!-- <script>
+      document
+        .getElementById("submitCommentBtn")
+        .addEventListener("click", () => {
+          const rating = document.getElementById("commentRating").value;
+          const content = document
+            .getElementById("commentContent")
+            .value.trim();
+          const msg = document.getElementById("commentMsg");
 
-      function loadComments() {
-        fetch(`/api/books/${bookId}/comments/`)
-          .then(res => res.json())
-          .then(data => {
-            const list = document.getElementById('commentsList');
-            list.innerHTML = '';
+          if (!content) {
+            msg.textContent = "Please write a comment first.";
+            return;
+          }
 
-            if (data.length === 0) {
-              list.innerHTML = '<p>No comments yet.</p>';
-              return;
-            }
-
-            data.forEach(comment => {
-              const div = document.createElement('div');
-              div.innerHTML = `
-                <strong>${comment.username}</strong>
-                ${'⭐'.repeat(comment.rating)}
-                <p>${comment.content}</p>
-                <small>${comment.created_at}</small>
-                <hr>
-              `;
-              list.appendChild(div);
+          fetch(`${API}/books/${bookId}/comments/`, {
+            method: "POST", credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ rating, content }),
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.message) {
+                msg.textContent = "Comment added!";
+                document.getElementById("commentContent").value = "";
+                loadComments();
+              } else {
+                msg.textContent = data.error || "Something went wrong.";
+              }
             });
-          });
-      }
-
-      document.getElementById('submitCommentBtn').addEventListener('click', () => {
-        const rating  = document.getElementById('commentRating').value;
-        const content = document.getElementById('commentContent').value.trim();
-        const msg     = document.getElementById('commentMsg');
-
-        if (!content) {
-          msg.textContent = 'Please write a comment first.';
-          return;
-        }
-
-        fetch(`/api/books/${bookId}/comments/`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ rating, content }),
-        })
-          .then(res => res.json())
-          .then(data => {
-            if (data.message) {
-              msg.textContent = 'Comment added!';
-              document.getElementById('commentContent').value = '';
-              loadComments();
-            } else {
-              msg.textContent = data.error || 'Something went wrong.';
-            }
-          });
-      });
-
-      if (bookId) loadComments();
-    </script>
+        });
+    </script> -->
   </body>
 </html>

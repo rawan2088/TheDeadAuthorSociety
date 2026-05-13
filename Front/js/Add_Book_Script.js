@@ -1,92 +1,89 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const editBookId = sessionStorage.getItem("editBookId");
   const isEditMode = !!editBookId;
-  const numInput = document.getElementById("num");
+
+  // Input fields
   const nameInput = document.getElementById("name");
   const authInput = document.getElementById("auth");
   const catInput = document.getElementById("cat");
   const descInput = document.getElementById("desc");
   const heading = document.querySelector("h1");
   const submitBtn = document.querySelector("input[type='submit']");
-  const API = "http://127.0.0.1:8000/api";
 
-  // reserved until we edit
-  let editBook = null;
+  // If we are in Edit Mode, fetch the existing data
   if (isEditMode) {
-    const response = await fetch(`${API}/books/${editBookId}/`, {
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": getCookie("csrftoken"),
-      },
-    });
-    editBook = await response.json();
+    try {
+      const response = await fetch(`${API}/books/${editBookId}/`, {
+        credentials: "include", // Always include for auth-checked views
+        headers: { "Content-Type": "application/json" },
+      });
 
-    numInput.value = editBook.id;
-    nameInput.value = editBook.title;
-    authInput.value = editBook.author;
-    catInput.value = editBook.category;
-    descInput.value = editBook.description;
+      if (response.ok) {
+        const editBook = await response.json();
+        nameInput.value = editBook.title;
+        authInput.value = editBook.author;
+        catInput.value = editBook.category;
+        descInput.value = editBook.description;
 
-    numInput.disabled = true;
-    if (heading) heading.textContent = "Edit Book";
-    if (submitBtn) submitBtn.value = "Save Changes";
-  } else {
-    numInput.disabled = true;
+        if (heading) heading.textContent = "Edit Book";
+        if (submitBtn) submitBtn.value = "Save Changes";
+      }
+    } catch (err) {
+      console.error("Error fetching book for edit:", err);
+    }
   }
 
+  // Handle Form
   document.querySelector("form").onsubmit = async function (e) {
     e.preventDefault();
 
-    const bookName = nameInput.value.trim();
-    const author = authInput.value.trim();
-    const category = catInput.value.trim();
-    const desc = descInput.value.trim();
+    const payload = {
+      title: nameInput.value.trim(),
+      author: authInput.value.trim(),
+      category: catInput.value.trim(),
+      description: descInput.value.trim() || "No description provided.",
+    };
 
-    if (!bookName || !author || !category) {
-      alert("Please fill all required fields before saving!");
+    if (!payload.title || !payload.author || !payload.category) {
+      alert("Please fill all required fields!");
       return;
     }
 
+    let url = `${API}/books/`;
+    let method = "POST";
+
+    // If editing, change the URL to the specific book and use PUT
     if (isEditMode) {
-      await fetch(`${API}/books/${editBookId}/`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": getCookie("csrftoken"),
-        },
-        body: JSON.stringify({
-          title: bookName,
-          author: author,
-          category: category,
-          description: desc,
-        }),
-      });
-
-      sessionStorage.removeItem("editBookId");
-      alert(`"${bookName}" has been updated successfully!`);
-      window.location.href = "Manage.html";
+      url = `${API}/books/${editBookId}/`;
+      method = "PUT";
     } else {
-      await fetch(`${API}/books/`, {
-        method: "POST",
+      // If adding new, add default values that the model requires
+      payload.published_date = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+      payload.totalCopies = 1;
+      payload.availableCopies = 1;
+    }
+
+    try {
+      const response = await fetch(url, {
+        method: method,
+        credentials: "include",
         headers: {
-          // tells Django we are sending JSON
           "Content-Type": "application/json",
           "X-CSRFToken": getCookie("csrftoken"),
         },
-        body: JSON.stringify({
-          title: bookName,
-          author: author,
-          category: category,
-          description: desc || "No description provided.",
-          published_date: new Date().getFullYear() + "-01-01",
-          image: "",
-          totalCopies: 1,
-          availableCopies: 1,
-        }),
+        body: JSON.stringify(payload),
       });
 
-      alert(`"${bookName}" has been added successfully!`);
-      document.querySelector("form").reset();
+      if (response.ok) {
+        alert(isEditMode ? "Book updated!" : "Book added!");
+        sessionStorage.removeItem("editBookId"); // Clean up
+        window.location.href = "Manage.html";
+      } else {
+        const errorData = await response.json();
+        alert("Error: " + (errorData.error || "Failed to save book."));
+      }
+    } catch (err) {
+      alert("Network error. Please try again.");
     }
   };
 });

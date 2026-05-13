@@ -1,9 +1,6 @@
-const API = "http://127.0.0.1:8000/api";
-
 (function () {
   "use strict";
 
-  const API = "http://127.0.0.1:8000";
   const state = { query: "", category: "all", availability: "all" };
 
   const searchInput = document.getElementById("searchInput");
@@ -19,7 +16,7 @@ const API = "http://127.0.0.1:8000/api";
   // ── Fetch books from API ──────────────────────────────────────────────────
   async function fetchBooks(query) {
     try {
-      let url = `${API}/api/books/`; // Default URL
+      let url = `${API}/books/`; // Default URL
       if (query && query.trim()) {
         url = `${API}/books/search/?q=${encodeURIComponent(query.trim())}`;
       }

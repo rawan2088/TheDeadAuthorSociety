@@ -20,7 +20,9 @@
             classic, and join a society that never stops reading.
           </p>
           <div class="hero-actions">
-            <a href="SearchPage.html" class="btn btn-primary">Browse All Books</a>
+            <a href="SearchPage.html" class="btn btn-primary"
+              >Browse All Books</a
+            >
             <a href="signup.html" class="btn btn-secondary">Join the Society</a>
           </div>
         </div>
@@ -35,7 +37,7 @@
       <section class="book-section">
         <div class="section-header">
           <h2>Recently Added</h2>
-          <a href="SearchPage.html" class="section-link">View all →</a>
+          <a href="CategoryPage.html" class="section-link">View all →</a>
         </div>
         <div class="bookContainer" id="recentBooks"></div>
       </section>
@@ -45,7 +47,7 @@
       <section class="book-section">
         <div class="section-header">
           <h2>Popular Books</h2>
-          <a href="SearchPage.html" class="section-link">View all →</a>
+          <a href="CategoryPage.html" class="section-link">View all →</a>
         </div>
         <div class="bookContainer" id="popularBooks"></div>
       </section>
@@ -55,7 +57,7 @@
       <section class="book-section">
         <div class="section-header">
           <h2>Recommended for You</h2>
-          <a href="SearchPage.html" class="section-link">View all →</a>
+          <a href="CategoryPage.html" class="section-link">View all →</a>
         </div>
         <div class="bookContainer" id="recommendedBooks"></div>
       </section>
@@ -71,13 +73,13 @@
     <script src="../js/navbar.js"></script>
     <script src="../js/index.js"></script>
 
-    <script>
+    <!-- <script>
       function createBookCard(book) {
-        const card = document.createElement('div');
-        card.className = 'bookCard';
+        const card = document.createElement("div");
+        card.className = "bookCard";
         card.innerHTML = `
           <a href="book.html?id=${book.id}">
-            <img src="${book.image || '../images/default.jpg'}" alt="${book.title}" />
+            <img src="${book.image || "../images/default.jpg"}" alt="${book.title}" />
             <h3>${book.title}</h3>
             <p>${book.author}</p>
           </a>
@@ -85,19 +87,19 @@
         return card;
       }
 
-      fetch('/api/books/recent/')
-        .then(res => res.json())
-        .then(books => {
-          const container = document.getElementById('recentBooks');
-          books.forEach(book => container.appendChild(createBookCard(book)));
+      fetch("/api/books/recent/")
+        .then((res) => res.json())
+        .then((books) => {
+          const container = document.getElementById("recentBooks");
+          books.forEach((book) => container.appendChild(createBookCard(book)));
         });
 
-      fetch('/api/books/popular/')
-        .then(res => res.json())
-        .then(books => {
-          const container = document.getElementById('popularBooks');
-          books.forEach(book => container.appendChild(createBookCard(book)));
+      fetch("/api/books/popular/")
+        .then((res) => res.json())
+        .then((books) => {
+          const container = document.getElementById("popularBooks");
+          books.forEach((book) => container.appendChild(createBookCard(book)));
         });
-    </script>
+    </script> -->
   </body>
 </html>

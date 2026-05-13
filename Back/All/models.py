@@ -3,6 +3,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 # id is default in django
+# an error here i made, which is making the postfix Id, 
+# django's standard naming conviction is to make it without id, because django adds _id to any fk
 class User(AbstractUser):
     is_admin = models.BooleanField(default=False)
     
@@ -14,14 +16,14 @@ class Book(models.Model):
     category = models.CharField(max_length=255)
     description = models.TextField()
     # i want to deal with this in the future
-    image = models.ImageField(upload_to='book_covers/', blank=True, null=True)
+    image = models.ImageField(upload_to='book_covers/', default= 'book_covers/default.jpg',blank=True, null=True)
     totalCopies = models.IntegerField()
     availableCopies = models.IntegerField()
     
 
 class BorrowedBooks(models.Model):
     userId = models.ForeignKey(User, on_delete=models.CASCADE)
-    bookId = models.ForeignKey(Book, on_delete=models.CASCADE)
+    bookId = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='borrows')
     borrowed_date = models.DateField(auto_now_add=True)
     return_date = models.DateField(null=True, blank=True)
     

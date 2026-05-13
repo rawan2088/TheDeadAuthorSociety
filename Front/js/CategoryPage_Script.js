@@ -21,9 +21,9 @@
     return categoryIcons[category.toLowerCase()] || "📚";
   }
 
-  function buildPage() {
-    const books = getBooks();
-
+  async function buildPage() {
+    const res = await fetch(`${API}/books/`, { credentials: "include" });
+    const books = await res.json();
     const grouped = {};
     books.forEach((book) => {
       const cat = book.category;

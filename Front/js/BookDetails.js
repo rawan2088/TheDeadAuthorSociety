@@ -1,6 +1,5 @@
 const params = new URLSearchParams(window.location.search);
 const bookId = params.get("id");
-const API = "http://127.0.0.1:8000/api";
 
 if (!bookId) {
   document.querySelector("main").innerHTML = "<p>No book specified.</p>";
@@ -53,6 +52,7 @@ async function handleBorrow(book) {
   try {
     const res = await fetch(`${API}/books/${book.id}/borrow/`, {
       method: "POST",
+      credentials: "include",
       credentials: "include", // send session cookie
       headers: { "X-CSRFToken": getCookie("csrftoken") },
     });
@@ -65,7 +65,8 @@ async function handleBorrow(book) {
 
     alert(`"${book.title}" borrowed successfully!`);
 
-    const borrowBtn = document.getElementById("borrowBtn");borrowBtn.textContent = "Unavailable";
+    const borrowBtn = document.getElementById("borrowBtn");
+    borrowBtn.textContent = "Unavailable";
     borrowBtn.disabled = true;
     document.getElementById("bookStatus").textContent = "Not Available";
   } catch (err) {
@@ -79,7 +80,71 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!res.ok) throw new Error("Book not found");
     const book = await res.json();
     renderBook(book);
+    loadComments();
+    setupCommentForm();
   } catch (err) {
     document.querySelector("main").innerHTML = `<p>${err.message}</p>`;
   }
 });
+
+async function loadComments() {
+  const res = await fetch(`${API}/books/${bookId}/comments/`);
+  const data = await res.json();
+  const list = document.getElementById("commentsList");
+  list.innerHTML = "";
+
+  if (data.length === 0) {
+    list.innerHTML = "<p>No comments yet.</p>";
+    return;
+  }
+
+  data.forEach((comment) => {
+    const div = document.createElement("div");
+    div.innerHTML = `
+      <strong>${comment.username}</strong>
+      ${"⭐".repeat(comment.rating)}
+      <p>${comment.content}</p>
+      <small>${comment.created_at}</small>
+      <hr>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function setupCommentForm() {
+  const submitBtn = document.getElementById("submitCommentBtn");
+  submitBtn.addEventListener("click", async () => {
+    const rating = document.getElementById("commentRating").value;
+    const content = document.getElementById("commentContent").value.trim();
+    const msg = document.getElementById("commentMsg");
+
+    if (!content) {
+      msg.textContent = "Please write a comment first.";
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API}/books/${bookId}/comments/`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCookie("csrftoken"), // Required for Django
+        },
+        credentials: "include", // Required to send the user session
+        body: JSON.stringify({ rating, content }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        msg.textContent = "Comment added!";
+        document.getElementById("commentContent").value = "";
+        loadComments(); // Refresh list
+      } else {
+        msg.textContent = data.error || "Login to post a comment.";
+      }
+    } catch (err) {
+      msg.textContent = "Network error.";
+    }
+  });
+}

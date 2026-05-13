@@ -1,6 +1,3 @@
-const API = "http://127.0.0.1:8000/api";
-
-// Signup.js - updated for Django backend
 document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("signupForm");
   const errorMsg = document.getElementById("signupError");
@@ -35,8 +32,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     try {
-      const response = await fetch("/api/signup/", {
+      const response = await fetch(`${API}/signup/`, {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           firstName,

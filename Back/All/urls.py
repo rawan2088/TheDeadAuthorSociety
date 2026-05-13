@@ -6,7 +6,7 @@ from .views import book_comments_view, recent_books_view, popular_books_view
 urlpatterns = [
     # GET /api/books/search/?q=...
 
-    path('books/search/', views.book_search,     name="book_search"),
+    # path('books/search/', views.book_search,     name="book_search"),
 
     # GET /api/books/category/<name>/
     # path("books/category/<str:category_name>/", views.book_by_category, name="book_by_category"),

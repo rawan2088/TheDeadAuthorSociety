@@ -1,10 +1,10 @@
 let booksContainer = document.getElementById("bookContainer");
-const API = "http://127.0.0.1:8000/api";
 
 async function handleDelete(id) {
   if (confirm("Are you sure you want to delete this book?")) {
     await fetch(`${API}/books/${id}/`, {
       method: "DELETE",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         "X-CSRFToken": getCookie("csrftoken"),
@@ -17,6 +17,7 @@ async function handleDelete(id) {
 async function handleAddCopy(id) {
   await fetch(`${API}/books/${id}/add-copy/`, {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
       "X-CSRFToken": getCookie("csrftoken"),
@@ -26,7 +27,7 @@ async function handleAddCopy(id) {
 }
 
 function handleEdit(id) {
-  sessionStorage.setItem("editBook", id);
+  sessionStorage.setItem("editBookId", id);
   window.location.href = "Add_Book.html";
 }
 
