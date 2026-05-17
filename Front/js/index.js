@@ -36,24 +36,38 @@ function renderBookCards(books, containerId) {
   });
 }
 
-function getRecentBooks(books, count = 3) {
+async function getRecentBooks(count = 3) {
   // last N books added (by id descending)
-  return books
-    .slice()
-    .sort((a, b) => b.id - a.id)
-    .slice(0, count);
+
+  const res = await fetch(`${API}/books/recent`, { credentials: "include" });
+
+  if (!res.ok) throw new Error("Failed to fetch books");
+
+  const rec = await res.json();
+  return rec;
+  // return books
+  //   .slice()
+  //   .sort((a, b) => b.id - a.id)
+  //   .slice(0, count);
 }
 
-function getPopularBooks(books, count = 3) {
+async function getPopularBooks(count = 3) {
+  const res = await fetch(`${API}/books/popular`, { credentials: "include" });
+
+  if (!res.ok) throw new Error("Failed to fetch books");
+
+  const pop = await res.json();
+  return pop;
+
   // most borrowed = lowest availableCopies relative to totalCopies
-  return books
-    .slice()
-    .sort((a, b) => {
-      const ratioA = a.availableCopies / a.totalCopies;
-      const ratioB = b.availableCopies / b.totalCopies;
-      return ratioA - ratioB;
-    })
-    .slice(0, count);
+  // return books
+  //   .slice()
+  //   .sort((a, b) => {
+  //     const ratioA = a.availableCopies / a.totalCopies;
+  //     const ratioB = b.availableCopies / b.totalCopies;
+  //     return ratioA - ratioB;
+  //   })
+  //   .slice(0, count);
 }
 
 // helper to fetch borrowed books from Django
@@ -78,7 +92,7 @@ async function getRecommendedBooks(books, count = 3) {
   if (user) {
     const borrowedData = await fetchBorrowedBooks();
     if (borrowedData) {
-      const borrowedIds = borrowedData["borrowed"].map((b) => b.book_id);
+      const borrowedIds = borrowedData["borrowed"].map((b) => b.book.id);
       recBooks = allBooks.filter((b) => !borrowedIds.includes(b.id));
     }
 
@@ -96,7 +110,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const books = await res.json(); // this is the full array from Django
 
   // pass books directly instead of calling getBooks() internally
-  renderBookCards(getRecentBooks(books, 3), "recentBooks");
-  renderBookCards(getPopularBooks(books, 3), "popularBooks");
+  renderBookCards(await getRecentBooks(3), "recentBooks");
+  renderBookCards(await getPopularBooks(3), "popularBooks");
   renderBookCards(await getRecommendedBooks(books, 3), "recommendedBooks");
 });

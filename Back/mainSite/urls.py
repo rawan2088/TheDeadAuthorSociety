@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import include, path
 from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -8,7 +9,7 @@ urlpatterns = [
     # path('api/books/', include('All.urls')),
     # path('api/', include('authentication.urls')),
     path("api/",    include("All.urls")),  
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 # This makes Django serve files at http://127.0.0.1:8000/media/book_covers/book1.webp.
 
 # in django we use this path
