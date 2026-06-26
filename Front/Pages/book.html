@@ -5,46 +5,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Book Details</title>
     <link rel="stylesheet" href="../CSS/main.css" />
+    <link rel="stylesheet" href="../CSS/pages/book.css" />
   </head>
   <body>
     <div id="navbar"></div>
 
     <main>
-      <h1>Book Details</h1>
-      <img id="bookImg" src="" height="500" width="400" alt="" />
-      <strong>Title: </strong>
-      <p id="bookTitle"></p>
-      <strong>Author: </strong>
-      <p id="bookAuthor"></p>
-      <strong>Published: </strong>
-      <p id="bookPublishedDate"></p>
-      <strong>Category: </strong>
-      <p id="bookCategory"></p>
-      <strong>Status: </strong>
-      <p id="bookStatus"></p>
-      <strong>Description: </strong>
-      <p id="bookDescription"></p>
-      <button id="borrowBtn">Borrow</button>
+      <!-- ── Book details ── -->
+      <section class="book-details" aria-label="Book details">
+        <img id="bookImg" src="" alt="" />
 
-      <!-- ─── Comments Section ───────────────────────────── -->
-      <section id="commentsSection">
+        <div class="book-info">
+          <h1 id="bookTitle"></h1>
+
+          <dl class="book-meta">
+            <dt>Author</dt>
+            <dd id="bookAuthor"></dd>
+
+            <dt>Published</dt>
+            <dd id="bookPublishedDate"></dd>
+
+            <dt>Category</dt>
+            <dd id="bookCategory"></dd>
+
+            <dt>Status</dt>
+            <dd><span id="bookStatus"></span></dd>
+
+            <dt>Description</dt>
+            <dd id="bookDescription"></dd>
+          </dl>
+
+          <button id="borrowBtn" type="button">Borrow</button>
+        </div>
+      </section>
+
+      <!-- ── Comments ── -->
+      <section id="commentsSection" aria-label="Comments">
         <h2>Comments</h2>
 
-        <div id="commentForm">
-          <select id="commentRating">
+        <form id="commentForm" novalidate>
+          <label for="commentRating">Rating</label>
+          <select id="commentRating" name="rating">
             <option value="5">⭐⭐⭐⭐⭐</option>
             <option value="4">⭐⭐⭐⭐</option>
             <option value="3">⭐⭐⭐</option>
             <option value="2">⭐⭐</option>
             <option value="1">⭐</option>
           </select>
+
+          <label for="commentContent">Comment</label>
           <textarea
             id="commentContent"
-            placeholder="Write your comment..."
+            name="content"
+            placeholder="Write your comment…"
           ></textarea>
-          <button id="submitCommentBtn">Submit Comment</button>
-          <p id="commentMsg"></p>
-        </div>
+
+          <button id="submitCommentBtn" type="button">Submit Comment</button>
+          <p id="commentMsg" role="status" aria-live="polite"></p>
+        </form>
 
         <div id="commentsList"></div>
       </section>
@@ -59,38 +77,5 @@
     <script src="../js/storage.js"></script>
     <script src="../js/navbar.js"></script>
     <script src="../js/BookDetails.js"></script>
-
-    <!-- <script>
-      document
-        .getElementById("submitCommentBtn")
-        .addEventListener("click", () => {
-          const rating = document.getElementById("commentRating").value;
-          const content = document
-            .getElementById("commentContent")
-            .value.trim();
-          const msg = document.getElementById("commentMsg");
-
-          if (!content) {
-            msg.textContent = "Please write a comment first.";
-            return;
-          }
-
-          fetch(`${API}/books/${bookId}/comments/`, {
-            method: "POST", credentials: "include",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ rating, content }),
-          })
-            .then((res) => res.json())
-            .then((data) => {
-              if (data.message) {
-                msg.textContent = "Comment added!";
-                document.getElementById("commentContent").value = "";
-                loadComments();
-              } else {
-                msg.textContent = data.error || "Something went wrong.";
-              }
-            });
-        });
-    </script> -->
   </body>
 </html>

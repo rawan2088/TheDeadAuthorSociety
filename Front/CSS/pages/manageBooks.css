@@ -1,4 +1,7 @@
-/* BOOK CARDS */
+/* Manage Books page.
+   Book card styles here extend — not replace — the base .bookCard
+   in main.css, so only delta rules are defined. */
+
 #bookContainer {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -6,49 +9,10 @@
   margin-top: 1.5rem;
 }
 
-.bookCard {
-  position: relative;
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: 1.25rem;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  gap: 0.5rem;
-  transition:
-    transform var(--transition),
-    box-shadow var(--transition),
-    border-color var(--transition);
-  position: relative;
-  overflow: hidden;
-  z-index: 0;
-}
-
-.bookCard:hover {
-  box-shadow: var(--shadow-md);
-  border-color: var(--color-gold);
-}
-
+/* height override for manage page cards */
 .bookCard img {
-  width: 100%;
   height: 220px;
-  object-fit: cover;
-  border-radius: var(--radius-sm);
   margin-bottom: 0.5rem;
-}
-
-.bookCard h3 {
-  font-size: 1rem;
-  color: var(--color-cream);
-  margin-bottom: 0.25rem;
-}
-
-.bookCard p {
-  font-size: 0.82rem;
-  color: var(--color-text-muted);
-  margin: 0;
-  line-height: 1.4;
 }
 
 .bookCard p strong {
@@ -56,42 +20,11 @@
 }
 
 .bookCard .card-actions {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  margin-top: auto;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--color-border);
   align-items: center;
   justify-content: center;
-  position: relative;
-  z-index: 2;
 }
 
-/* Availability badge */
-.badge {
-  display: inline-block;
-  font-size: 0.72rem;
-  font-family: var(--font-body);
-  letter-spacing: 0.05em;
-  padding: 0.2rem 0.6rem;
-  border-radius: 99px;
-  font-weight: 500;
-}
-
-.badge-available {
-  background-color: rgba(46, 94, 62, 0.25);
-  color: #6dbf8a;
-  border: 1px solid var(--color-green);
-}
-
-.badge-unavailable {
-  background-color: rgba(139, 46, 46, 0.2);
-  color: #e07070;
-  border: 1px solid var(--color-red);
-}
-
-/* STAR RATING DISPLAY */
+/* Star rating display */
 .stars {
   color: var(--color-gold);
   font-size: 1.1rem;
@@ -108,12 +41,4 @@
   gap: 0.5rem;
   font-size: 0.9rem;
   color: var(--color-text-muted);
-}
-
-.invisible-link {
-  position: absolute;
-  /* makes the element fit the nearest relative parent */
-  inset: 0;
-  z-index: 1;
-  border-radius: var(--radius-md);
 }

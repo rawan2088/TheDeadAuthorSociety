@@ -6,6 +6,22 @@
   position: relative;
   overflow: hidden;
   gap: 2rem;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(20, 8, 6, 0.65) 0%,
+      rgba(20, 8, 6, 0.55) 40%,
+      rgba(35, 10, 8, 0.85) 100%
+    ),
+    url("https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=1600&q=80");
+  height: 90vh;
+}
+
+.hero .inner {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0rem 1.5rem 4rem;
 }
 
 .hero-text {

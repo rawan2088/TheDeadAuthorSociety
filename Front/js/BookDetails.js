@@ -127,13 +127,13 @@ function setupCommentForm() {
       });
 
       if (res.ok) {
-        msg.style.color = "green";
+        msg.style.color = "var(--color-green-light)";
         msg.textContent = "Comment added!";
         document.getElementById("commentContent").value = "";
         loadComments();
       } else {
         const data = await res.json();
-        msg.style.color = "red";
+        msg.style.color = "var(--color-red-light)";
         msg.textContent = data.error || "Login to post a comment.";
       }
     } catch (err) {

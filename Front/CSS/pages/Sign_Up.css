@@ -1,120 +1,28 @@
-@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Lora:wght@400;500;600&display=swap");
+@import url("./Login.css");
 
 body {
-  min-height: 100vh;
-  font-family: var(--font-body);
-  color: var(--color-text);
-  background: linear-gradient(135deg, #24100d 0%, #351b14 45%, #2b120e 100%);
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  overflow-x: hidden;
-}
-
-body > br {
-  display: none;
-}
-
-/* full-screen image behind navbar with no gap */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
   background:
     linear-gradient(
       90deg,
-      rgba(20, 8, 6, 0.6) 0%,
-      rgba(20, 8, 6, 0.5) 38%,
-      rgba(35, 10, 8, 0.7) 60%,
-      rgba(35, 10, 8, 0.88) 100%
+      rgba(20, 8, 6, 0.65) 0%,
+      rgba(20, 8, 6, 0.55) 40%,
+      rgba(35, 10, 8, 0.85) 100%
     ),
-    url("https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=1600&q=80");
+    url("https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=1600&q=80");
   background-size: cover;
   background-position: center;
-  z-index: 0;
-}
-
-body::after {
-  content: "Join the Library\A and Begin Your Story\A\A Discover timeless books,\A build your collection,\A and read in elegance.";
-  white-space: pre-line;
-  position: fixed;
-  top: 24%;
-  left: 3.5%;
-  width: 38%;
-  text-align: left;
-  font-family: var(--font-display);
-  font-size: clamp(1.35rem, 2.15vw, 2.05rem);
-  line-height: 1.7;
-  color: #f3e8d3;
-  text-shadow: 0 4px 22px rgba(0, 0, 0, 0.5);
-  z-index: 2;
-  pointer-events: none;
-}
-
-#signupError,
-#signupForm,
-body > p:last-of-type {
-  position: relative;
-  z-index: 3;
-  width: min(100%, 520px);
-  margin-left: 54%;
-  margin-right: 4%;
-}
-
-#signupError {
-  display: none;
-  margin-bottom: 1rem;
-  padding: 0.75rem 0.95rem;
-  border: 1px solid var(--color-red);
-  border-radius: 10px;
-  background: rgba(139, 46, 46, 0.16);
-  color: #ef9d9d;
-  font-size: 0.86rem;
-}
-
-#signupError:not(:empty) {
-  display: block;
+  background-attachment: fixed;
 }
 
 #signupForm {
   display: flex;
   flex-direction: column;
-  gap: 0;
-  margin-top: 6.2rem;
-  background: linear-gradient(
-    180deg,
-    rgba(75, 10, 10, 0.84) 0%,
-    rgba(43, 8, 8, 0.88) 100%
-  );
-  border: 1px solid rgba(201, 168, 76, 0.16);
-  border-radius: 18px;
-  padding: 1.85rem;
-  box-shadow:
-    0 20px 50px rgba(0, 0, 0, 0.34),
-    inset 0 1px 0 rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(8px);
-}
-
-#signupForm::before {
-  content: "Create Account";
-  display: block;
-  margin-bottom: 1rem;
-  font-family: var(--font-display);
-  font-size: clamp(2.25rem, 3vw, 3.2rem);
-  line-height: 1.05;
-  color: var(--color-cream);
-}
-
-#signupForm::after {
-  display: none !important;
-  content: none !important;
 }
 
 #signupForm label {
-  display: block;
-  margin-top: 0.8rem;
+  margin-top: 0.75rem;
   margin-bottom: 0.35rem;
-  font-size: 0.76rem;
+  font-size: 0.75rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-cream-dim);
@@ -124,171 +32,96 @@ body > p:last-of-type {
 #signupForm input[type="password"],
 #signupForm input[type="email"] {
   width: 100%;
-  border: 1px solid rgba(201, 168, 76, 0.1);
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--color-border);
   border-radius: 10px;
-  padding: 0.9rem 1rem;
-  background: rgba(56, 46, 33, 0.92);
+  background: rgba(56, 46, 33, 0.9);
   color: var(--color-text);
   font-family: var(--font-body);
-  font-size: 0.98rem;
+  font-size: 0.96rem;
   outline: none;
   transition:
     border-color var(--transition),
-    box-shadow var(--transition);
+    box-shadow var(--transition),
+    background var(--transition);
 }
 
 #signupForm input:focus {
   border-color: var(--color-gold);
-  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.13);
+  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.15);
+  background: var(--color-surface-2);
 }
 
-#signupForm label[for="role-user"],
-#signupForm label[for="role-admin"] {
+.roleOptions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.roleOptions label {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  margin-top: 1rem;
-  margin-right: 1.2rem;
-  margin-bottom: 0;
+  margin: 0;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
   text-transform: none;
   letter-spacing: 0;
   font-size: 0.95rem;
-  color: var(--color-cream-dim);
   cursor: pointer;
+  transition: border-color var(--transition);
 }
 
-#signupForm input[type="radio"]#role-user,
-#signupForm input[type="radio"]#role-admin {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  margin-right: 0.35rem;
+.roleOptions label:hover {
+  border-color: var(--color-gold);
+}
+
+.roleOptions input[type="radio"] {
   accent-color: var(--color-gold);
-  vertical-align: middle;
-  cursor: pointer;
+  width: auto;
 }
 
 #signupForm button[type="submit"] {
   width: 100%;
-  margin-top: 1.3rem;
+  margin-top: 1.4rem;
   padding: 0.95rem 1.4rem;
   border: 1px solid var(--color-gold);
   border-radius: 10px;
-  background: linear-gradient(180deg, #dbbb64 0%, #c9a84c 100%);
-  color: #2e170e;
+  background: linear-gradient(
+    180deg,
+    var(--color-gold-light),
+    var(--color-gold)
+  );
+  color: var(--color-bg);
   font-family: var(--font-body);
-  font-size: 0.92rem;
   font-weight: 700;
   letter-spacing: 0.09em;
   text-transform: uppercase;
   cursor: pointer;
   transition:
-    transform 0.12s ease,
     box-shadow var(--transition),
     filter var(--transition);
 }
 
 #signupForm button[type="submit"]:hover {
+  box-shadow: 0 0 22px rgba(201, 168, 76, 0.28);
   filter: brightness(1.05);
-  box-shadow: 0 0 22px rgba(201, 168, 76, 0.24);
 }
 
-#signupForm button[type="submit"]:active {
-  transform: scale(0.985);
+#signupError {
+  display: none;
+  margin-bottom: 0.75rem;
+  padding: 0.75rem 0.95rem;
+  border: 1px solid var(--color-red);
+  border-radius: 10px;
+  background: rgba(139, 46, 46, 0.15);
+  color: var(--color-red-light);
+  font-size: 0.9rem;
 }
 
-body > p:last-of-type {
-  margin-top: 1.1rem;
-  color: var(--color-text-muted);
-  font-size: 0.94rem;
-}
-
-body > p:last-of-type a {
-  color: var(--color-gold);
-  text-decoration: none;
-}
-
-body > p:last-of-type a:hover {
-  color: var(--color-gold-light);
-}
-
-footer {
-  margin-top: auto;
-  position: relative;
-  z-index: 10;
-  background: rgba(32, 12, 12, 0.92);
-  border-top: 1px solid rgba(201, 168, 76, 0.12);
-  padding: 1rem 1.5rem;
-  text-align: center;
-  color: var(--color-text-muted);
-  font-size: 0.82rem;
-}
-
-footer a {
-  color: var(--color-text-muted);
-  text-decoration: none;
-}
-
-footer a:hover {
-  color: var(--color-gold);
-}
-
-footer p {
-  margin-top: 0.45rem;
-  margin-bottom: 0;
-  font-size: 0.78rem;
-}
-
-@media (max-width: 980px) {
-  body::before {
-    background:
-      linear-gradient(
-        180deg,
-        rgba(20, 8, 6, 0.56) 0%,
-        rgba(20, 8, 6, 0.78) 52%,
-        rgba(35, 10, 8, 0.88) 100%
-      ),
-      url("https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=1600&q=80");
-    background-size: cover;
-    background-position: center;
-  }
-
-  body::after {
-    top: 14%;
-    left: 5%;
-    width: 90%;
-    font-size: 1.08rem;
-  }
-
-  #signupError,
-  #signupForm,
-  body > p:last-of-type {
-    width: min(100% - 2rem, 580px);
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  #signupForm {
-    margin-top: 20rem;
-  }
-}
-
-@media (max-width: 768px) {
-  body::after {
-    top: 13%;
-    font-size: 1rem;
-  }
-
-  #signupForm {
-    padding: 1.25rem;
-    margin-top: 18rem;
-  }
-
-  #signupForm::before {
-    font-size: 2rem;
-  }
-
-  body > p:last-of-type {
-    text-align: center;
-  }
+#signupError:not(:empty) {
+  display: block;
 }

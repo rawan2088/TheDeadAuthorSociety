@@ -61,7 +61,11 @@
   align-items: center;
   justify-content: space-between;
   padding: 18px 24px;
-  background: linear-gradient(135deg, #26211b 0%, var(--color-surface) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-surface-2) 0%,
+    var(--color-surface) 100%
+  );
   cursor: pointer;
   user-select: none;
   border-bottom: 1px solid var(--color-border);
@@ -70,7 +74,11 @@
 }
 
 .category-header:hover {
-  background: linear-gradient(135deg, #2e2820 0%, #312c27 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-border) 0%,
+    var(--color-surface-2) 100%
+  );
 }
 
 .category-header-left {
@@ -121,7 +129,7 @@
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  background: var(--color-surface);
+  background: rgba(44, 18, 16, 0.6);
 }
 
 .category-body.open {
@@ -136,7 +144,11 @@
 }
 
 .book-card {
-  background: var(--color-surface-2);
+  background: linear-gradient(
+    180deg,
+    rgba(75, 10, 10, 0.5) 0%,
+    rgba(44, 18, 16, 0.7) 100%
+  );
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: 20px;

@@ -8,46 +8,77 @@
     <link rel="stylesheet" href="../css/pages/Sign_Up.css" />
   </head>
   <body>
-  <div id="navbar"></div>
-    <br />
-    <p id="signupError" style="color: red;"></p>
-    <form id="signupForm">
-      <label for="First Name">First Name</label>
-      <input type="text" id="first-name" name="first-name" required />
-      <label for="Last Name">Last Name</label>
-      <input type="text" id="last-name" name="last-name" required />
-      <label for="username">Username</label>
-      <input type="text" id="username" name="username" required />
+    <div id="navbar"></div>
 
-      <label for="password">Password</label>
-      <input type="password" id="password" name="password" required />
+    <main>
+      <div class="leftText">
+        <h1>Create Account</h1>
+        <h2>join The Dead Author Society</h2>
+        <p>
+          Discover timeless books, build your collection, and read in elegance.
+        </p>
+      </div>
 
-      <label for="confirm-password">Confirm Password</label>
-      <input
-        type="password"
-        id="confirm-password"
-        name="confirm-password"
-        required
-      />
+      <div class="rightForm">
+        <h2>Sign Up</h2>
 
-      <label for="email">Email</label>
-      <input type="email" id="email" name="email" required />
+        <p id="signupError"></p>
 
-      <label for="role-user">User</label>
-      <input type="radio" id="role-user" name="role" value="user" checked />
+        <form id="signupForm">
+          <label for="first-name">First Name</label>
+          <input type="text" id="first-name" name="first-name" required />
 
-      <label for="role-admin">Admin</label>
-      <input type="radio" id="role-admin" name="role" value="admin" />
+          <label for="last-name">Last Name</label>
+          <input type="text" id="last-name" name="last-name" required />
 
-      <button type="submit">Create Account</button>
-    </form>
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" required />
 
-    <p>Already have an account? <a href="login.html">Login here</a></p>
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required />
+
+          <label for="confirm-password">Confirm Password</label>
+          <input
+            type="password"
+            id="confirm-password"
+            name="confirm-password"
+            required
+          />
+
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required />
+
+          <div class="roleOptions">
+            <label for="role-user">
+              <input
+                type="radio"
+                id="role-user"
+                name="role"
+                value="user"
+                checked
+              />
+              User
+            </label>
+
+            <label for="role-admin">
+              <input type="radio" id="role-admin" name="role" value="admin" />
+              Admin
+            </label>
+          </div>
+
+          <button type="submit">Create Account</button>
+        </form>
+
+        <p>Already have an account? <a href="login.html">Login here</a></p>
+      </div>
+    </main>
+
     <footer>
       <a href="About.html">About Us</a> |
       <a href="Contact.html">Contact Us</a>
       <p>&copy; Library Management System. All rights reserved.</p>
     </footer>
+
     <script src="../js/storage.js"></script>
     <script src="../js/navbar.js"></script>
     <script src="../js/Signup.js"></script>

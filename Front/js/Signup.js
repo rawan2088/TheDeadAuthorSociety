@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       alert("Account created successfully! Please log in.");
-      window.location.href = "login.html";
+      window.location.href = window.location.origin + "/login.html";
     } catch (err) {
       errorMsg.textContent = "Something went wrong. Please try again.";
       console.error(err);

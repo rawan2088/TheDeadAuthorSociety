@@ -1,5 +1,9 @@
 .search-controls {
-  background: var(--color-surface);
+  background: linear-gradient(
+    180deg,
+    rgba(75, 10, 10, 0.7) 0%,
+    rgba(44, 18, 16, 0.8) 100%
+  );
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: 24px 28px;
@@ -140,7 +144,11 @@
 }
 
 .books-table thead {
-  background: linear-gradient(180deg, #26211b 0%, var(--color-surface) 100%);
+  background: linear-gradient(
+    180deg,
+    var(--color-surface-2) 0%,
+    var(--color-surface) 100%
+  );
 }
 
 .books-table thead th {
