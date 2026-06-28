@@ -7,19 +7,14 @@
   overflow: hidden;
   gap: 2rem;
   background:
-    /* linear-gradient(
-      90deg,
-      rgba(20, 8, 6, 0.65) 0%,
-      rgba(20, 8, 6, 0.55) 40%,
-      rgba(35, 10, 8, 0.85) 100%
-    ), */
     linear-gradient(
       180deg,
-      rgba(20, 8, 6, 0.65) 0%,
-      rgba(var(--rgb-surface-2), 0.8) 60%,
-      rgba(var(--rgb-surface)) 100%
+      rgba(var(--rgb-burgundy-deep), 0.78) 0%,
+      rgba(var(--rgb-bg), 0.96) 100%
     ),
     url("https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=1600&q=80");
+  background-size: cover;
+  background-position: center;
   height: 90vh;
 }
 
@@ -51,13 +46,13 @@
   color: var(--color-cream);
   line-height: 1.05;
   margin-bottom: 1.25rem;
-  /* gold underline on last word */
+  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
   position: relative;
 }
 
 .hero-subtitle {
   font-size: 1.05rem;
-  color: var(--color-text-muted);
+  color: var(--color-cream-dim);
   line-height: 1.8;
   margin-bottom: 2rem;
   max-width: 480px;
@@ -69,7 +64,6 @@
   flex-wrap: wrap;
 }
 
-/* decorative background element */
 .hero-decoration {
   position: absolute;
   right: -60px;
@@ -83,9 +77,10 @@
   width: 380px;
   height: 380px;
   border-radius: 50%;
-  border: 1px solid var(--color-border);
-  opacity: 0.4;
+  border: 1px solid var(--color-burgundy-glow);
+  opacity: 0.55;
   position: relative;
+  box-shadow: var(--glow-burgundy);
 }
 
 .deco-circle::before {
@@ -94,7 +89,7 @@
   inset: 30px;
   border-radius: 50%;
   border: 1px solid var(--color-gold);
-  opacity: 0.2;
+  opacity: 0.35;
 }
 
 .deco-line {
@@ -102,7 +97,7 @@
   height: 1px;
   background: linear-gradient(90deg, var(--color-gold), transparent);
   margin: 1rem auto 0;
-  opacity: 0.3;
+  opacity: 0.5;
 }
 
 .book-section {
@@ -118,18 +113,21 @@
 
 .section-header h2 {
   position: relative;
-  padding-bottom: 0.4rem;
+  padding-bottom: 0.5rem;
 }
 
-/* gold underline accent on section titles */
 .section-header h2::after {
   content: "";
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 40px;
+  width: 56px;
   height: 2px;
-  background: var(--color-gold);
+  background: linear-gradient(
+    90deg,
+    var(--color-gold) 0%,
+    var(--color-burgundy-glow) 100%
+  );
   border-radius: 2px;
 }
 
@@ -157,7 +155,6 @@
   height: 180px;
 }
 
-/* hide description on home page cards to keep them compact */
 #recentBooks .bookCard .card-desc,
 #popularBooks .bookCard .card-desc,
 #recommendedBooks .bookCard .card-desc {

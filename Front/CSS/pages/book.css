@@ -11,14 +11,16 @@
   max-height: 560px;
   object-fit: contain;
   border-radius: var(--radius-md);
+  box-shadow:
+    var(--shadow-lg),
+    0 0 0 1px rgba(var(--rgb-gold), 0.18);
 }
 
-/* ── Right-hand info column ── */
 .book-info {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  min-width: 0; /* prevent overflow in flex */
+  min-width: 0;
 }
 
 #bookTitle {
@@ -28,7 +30,6 @@
   line-height: 1.15;
 }
 
-/* ── Description list for metadata ── */
 .book-meta {
   display: grid;
   grid-template-columns: max-content 1fr;
@@ -61,13 +62,12 @@
   width: fit-content;
   padding: 0.25rem 0.7rem;
   border-radius: 99px;
-  background: rgba(46, 94, 62, 0.18);
+  background: rgba(var(--rgb-green), 0.2);
   border: 1px solid var(--color-green);
   color: var(--color-green-light);
   font-size: 0.85rem;
 }
 
-/* ── Buttons ── */
 #borrowBtn,
 #submitCommentBtn {
   background: var(--color-gold);
@@ -81,6 +81,7 @@
 #submitCommentBtn:hover {
   background: var(--color-gold-light);
   border-color: var(--color-gold-light);
+  box-shadow: var(--glow-gold);
 }
 
 #borrowBtn:disabled {
@@ -91,7 +92,6 @@
   opacity: 0.75;
 }
 
-/* ── Comments section ── */
 #commentsSection {
   margin-top: 2.5rem;
   padding-top: 2rem;
@@ -103,7 +103,11 @@
   padding: 1.25rem;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  background: rgba(44, 18, 16, 0.72);
+  background: linear-gradient(
+    180deg,
+    rgba(var(--rgb-burgundy), 0.28) 0%,
+    rgba(var(--rgb-surface), 0.82) 100%
+  );
   box-shadow: var(--shadow-sm);
 }
 
@@ -122,7 +126,6 @@
   color: var(--color-text-muted);
 }
 
-/* ── Responsive ── */
 @media (max-width: 800px) {
   .book-details {
     flex-direction: column;

@@ -125,3 +125,8 @@ body {
 #signupError:not(:empty) {
   display: block;
 }
+
+main .leftText h2 span {
+  color: var(--color-gold);
+  font-style: italic;
+}
