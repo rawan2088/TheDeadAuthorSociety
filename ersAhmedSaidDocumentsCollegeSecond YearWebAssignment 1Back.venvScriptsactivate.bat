@@ -1,0 +1,220 @@
+[33mcommit 0cb58b442e1b7bb18866249a011268b07a3ee98c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: Roo <rawan.ahmed.2006.10@gmail.com>
+Date:   Fri Jun 26 23:24:09 2026 +0300
+
+    made the blurry effect in hero
+
+[33mcommit cea27d896bcfc389fd7d8edc7a184b926ccefdc0[m
+Author: Roo <rawan.ahmed.2006.10@gmail.com>
+Date:   Fri Jun 26 23:08:19 2026 +0300
+
+    Edited the css
+
+[33mcommit 00a01de49ae24d1a71ff9be4f08ea09395836161[m
+Author: Roo <rawan.ahmed.2006.10@gmail.com>
+Date:   Sun May 17 07:28:45 2026 +0300
+
+    Fixes
+
+[33mcommit f5337bf109c26bfba978b32b81e363b1767dbc92[m[33m ([m[1;32mlojyy[m[33m)[m
+Author: Roo <rawan.ahmed.2006.10@gmail.com>
+Date:   Wed May 13 23:21:28 2026 +0300
+
+    tell me why, ain't nothing but a heart ache
+
+[33mcommit 94de6b6e8a48cfcacec30c0bbfc49a1bb5e3c0cd[m
+Merge: 4015cd4 0ab4b3e
+Author: Roo <rawan.ahmed.2006.10@gmail.com>
+Date:   Wed May 13 22:35:04 2026 +0300
+
+    maybe
+
+[33mcommit 0ab4b3e1a05daac25bcc4e045a6485a427f7a1b3[m[33m ([m[1;32madham-branch[m[33m)[m
+Author: Roo <rawan.ahmed.2006.10@gmail.com>
+Date:   Wed May 13 22:12:01 2026 +0300
+
+    solved the update crime
+
+[33mcommit 4015cd428298416db7c783056191d63c403578ef[m[33m ([m[1;31morigin/lojyy[m[33m)[m
+Author: lojyn <lhmar2007@gmail.com>
+Date:   Wed May 13 22:01:01 2026 +0300
+
+    fix errors
+
+[33mcommit 5d3cea537beb825182624d09b6614c48008e117a[m
+Author: lojyn <lhmar2007@gmail.com>
+Date:   Wed May 13 21:59:26 2026 +0300
+
+    fix errors
+
+[33mcommit 4e3585da82f5c0ca206d8696b807d47a95d0f315[m
+Author: Roo <rawan.ahmed.2006.10@gmail.com>
+Date:   Wed May 13 21:58:08 2026 +0300
+
+    fixed alot, alot, alot
+
+[33mcommit 9773c6c1167f4e4ffbb0e9212bd2582b0397d39f[m
+Author: lojyn <lhmar2007@gmail.com>
+Date:   Wed May 13 20:17:45 2026 +0300
+
+    add member4
+
+[33mcommit dcb87b6bf721655d32c61d080b045c2ad8d45504[m
+Merge: ec5255a ffa78e4
+Author: lojynhussien <lhmar2007@gmail.com>
+Date:   Wed May 13 20:13:23 2026 +0300
+
+    Merge pull request #7 from rawan2088/main
+    
+    Add Borrow feature in Backend
+
+[33mcommit 1e1828d74da8837ec8d79d93e6b1be0ed27245a0[m
+Merge: 5b5e612 ffa78e4
+Author: Roo <rawan.ahmed.2006.10@gmail.com>
+Date:   Wed May 13 19:48:09 2026 +0300
+
+    merging
+
+[33mcommit ffa78e483cae3969f996dbddcbf62f1ed1e72933[m
+Author: relk7 <rahma.elkholy07@gmail.com>
+Date:   Wed May 13 19:30:10 2026 +0300
+
+    Add Borrow feature in Backend
+
+[33mcommit 5b5e61249ef76f60f3fa7fcb318c856ff96391a9[m[33m ([m[1;31morigin/adham-branch[m[33m)[m
+Author: Adhamzein <20240071@stud.fci-cu.edu.eg>
+Date:   Wed May 13 02:47:14 2026 +0300
+
+    Back and front last
+
+[33mcommit ec5255a4ecaed27db41fd529e6299799ba137f04[m[33m ([m[1;32mRawan[m[33m)[m
+Merge: b09a1ec 950ab19
+Author: Roo <rawan.ahmed.2006.10@gmail.com>
+Date:   Mon May 11 19:29:43 2026 +0300
+
+    fixed alot of issues
+
+[33mcommit 950ab19b0324c54f88f2cad2c5093c588b94fd44[m
+Author: lojyn <lhmar2007@gmail.com>
+Date:   Mon May 11 16:54:20 2026 +0300
+
+    something wrong
+
+[33mcommit 9878a473673e063302e3a241ccf36eab1ec7af62[m
+Merge: 1f9ea8a 34b9141
+Author: lojyn <lhmar2007@gmail.com>
+Date:   Mon May 11 16:51:49 2026 +0300
+
+    merge conflict
+
+[33mcommit 34b9141c15628acd1892cbf72fd4e589f8fc33e4[m
+Merge: a03374e b0d2889
+Author: relk7 <rahma.elkholy07@gmail.com>
+Date:   Mon May 11 15:50:23 2026 +0300
+
+    Merge branch 'Rahma'
+    **/.idea/
+    **/.idea/
+    **/.idea/
+    **/.idea/
+     the commit.
+
+[33mcommit b0d2889f6114427635c91c7acbcb72c4297685d3[m[33m ([m[1;31morigin/Rahma[m[33m)[m
+Author: relk7 <rahma.elkholy07@gmail.com>
+Date:   Mon May 11 15:48:33 2026 +0300
+
+    Edited the previous commit
+
+[33mcommit 237a72287e270755e7ea730aca9bbe9e0c51f798[m
+Author: relk7 <rahma.elkholy07@gmail.com>
+Date:   Mon May 11 14:58:30 2026 +0300
+
+    Book APIs - Admin Side
+
+[33mcommit 1f9ea8aaf66e527e539ddf8e489e1cd54614e2a5[m
+Author: lojyn <lhmar2007@gmail.com>
+Date:   Mon May 11 15:14:39 2026 +0300
+
+    member 4
+
+[33mcommit a03374e8a41711fea4d64efe8a50c22272ac596b[m
+Author: relk7 <rahma.elkholy07@gmail.com>
+Date:   Mon May 11 14:58:30 2026 +0300
+
+    Book APIs - Admin Side
+
+[33mcommit b02ba3761a870c720c27a33fedda02ffc7112b1c[m
+Author: relk7 <rahma.elkholy07@gmail.com>
+Date:   Mon May 11 14:47:49 2026 +0300
+
+    Book APIs - Admin Side
+
+[33mcommit b09a1ecfeb1e2f1c3cf073d6047f3439c9fcfa19[m
+Author: Roo <rawan.ahmed.2006.10@gmail.com>
+Date:   Thu May 7 02:04:39 2026 +0300
+
+    what
+
+[33mcommit 9a5e5b70398261d5a768b5de8b8b8b83715c7698[m
+Merge: 04de656 7a4e8cb
+Author: Roo <rawan.ahmed.2006.10@gmail.com>
+Date:   Thu May 7 00:19:41 2026 +0300
+
+    something
+
+[33mcommit 04de656667f7861b18e4bc3997dd907bb9e14ef5[m
+Author: Roo <rawan.ahmed.2006.10@gmail.com>
+Date:   Wed May 6 23:46:33 2026 +0300
+
+    things
+
+[33mcommit 7a4e8cbbd9ecc4481b894205fffc521cd37d941c[m
+Merge: f26079e 0a777a6
+Author: Maryam Ahmed Adel <maryamahmedadel365@gmail.com>
+Date:   Wed May 6 00:11:26 2026 +0300
+
+    Merge pull request #5 from rawan2088/authentication-pages
+    
+    Authentication pages
+
+[33mcommit 0a777a6a0cf0637056c7517c5c1ff9bf7ab7d5ac[m[33m ([m[1;31morigin/authentication-pages[m[33m, [m[1;32mauthentication-pages[m[33m)[m
+Author: MARYAM AHMED <maryamahmedadel365-bit@users.noreply.github.com>
+Date:   Wed May 6 00:09:22 2026 +0300
+
+    requirements
+
+[33mcommit ef2da2f6c6c2966df0118e2c219d5e3e20ef5a1b[m
+Author: MARYAM AHMED <maryamahmedadel365-bit@users.noreply.github.com>
+Date:   Wed May 6 00:04:31 2026 +0300
+
+    authentication part
+
+[33mcommit b54404478aa1ab72c1924c0baa68467f16da995e[m
+Author: MARYAM AHMED <maryamahmedadel365-bit@users.noreply.github.com>
+Date:   Wed May 6 00:03:28 2026 +0300
+
+    authentication part
+
+[33mcommit 2c7e084769fac6ccfbdfcfa94b09a85451653316[m
+Author: MARYAM AHMED <maryamahmedadel365-bit@users.noreply.github.com>
+Date:   Tue May 5 23:52:44 2026 +0300
+
+    authentication part
+
+[33mcommit f26079e4a85a05471b6ea2b119a941da7c210bf7[m
+Author: Roo~ <rawan.ahmed.2006.10@gmail.com>
+Date:   Tue Apr 28 01:47:51 2026 +0300
+
+    Added the main models
+
+[33mcommit f2f5373909e5472175f168d38eec1217cd4b718f[m
+Author: Roo~ <rawan.ahmed.2006.10@gmail.com>
+Date:   Mon Apr 27 23:36:57 2026 +0300
+
+    new organization
+
+[33mcommit 1624f69b38eaa269ddaa86d7d67de475795d4396[m
+Author: John Doe <johndoe@example.com>
+Date:   Fri Apr 17 16:42:16 2026 +0200
+
+    new stuff

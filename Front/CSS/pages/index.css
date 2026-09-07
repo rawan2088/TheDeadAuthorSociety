@@ -1,28 +1,27 @@
+/* ============================================================
+   HERO
+   ============================================================ */
 .hero {
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 4rem 0 3rem;
-  position: relative;
+  height: 90vh;
   overflow: hidden;
-  gap: 2rem;
   background:
     linear-gradient(
       180deg,
-      rgba(var(--rgb-burgundy-deep), 0.78) 0%,
-      rgba(var(--rgb-bg), 0.96) 100%
+      rgba(44, 24, 16, 0.82) 0%,
+      rgba(44, 24, 16, 0.55) 100%
     ),
-    url("https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=1600&q=80");
-  background-size: cover;
-  background-position: center;
-  height: 90vh;
+    url("https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=1600&q=80")
+      center / cover no-repeat;
 }
 
 .hero .inner {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0rem 1.5rem 4rem;
+  padding: 0 1.5rem 4rem;
 }
 
 .hero-text {
@@ -31,23 +30,22 @@
 }
 
 .hero-eyebrow {
+  font-family: var(--font-body);
   font-size: 0.85rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--color-gold);
+  color: var(--color-copper);
   margin-bottom: 0.5rem;
-  font-family: var(--font-body);
 }
 
 .hero-title {
-  font-size: clamp(2.5rem, 6vw, 4.5rem);
   font-family: var(--font-display);
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
   font-style: italic;
   color: var(--color-cream);
   line-height: 1.05;
   margin-bottom: 1.25rem;
-  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
-  position: relative;
+  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
 }
 
 .hero-subtitle {
@@ -64,12 +62,12 @@
   flex-wrap: wrap;
 }
 
+/* Decorative circles — right side of hero */
 .hero-decoration {
   position: absolute;
   right: -60px;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 0;
   pointer-events: none;
 }
 
@@ -77,10 +75,8 @@
   width: 380px;
   height: 380px;
   border-radius: 50%;
-  border: 1px solid var(--color-burgundy-glow);
-  opacity: 0.55;
+  border: 1px solid rgba(196, 134, 90, 0.4);
   position: relative;
-  box-shadow: var(--glow-burgundy);
 }
 
 .deco-circle::before {
@@ -88,18 +84,20 @@
   position: absolute;
   inset: 30px;
   border-radius: 50%;
-  border: 1px solid var(--color-gold);
-  opacity: 0.35;
+  border: 1px solid rgba(196, 134, 90, 0.2);
 }
 
 .deco-line {
   width: 200px;
   height: 1px;
-  background: linear-gradient(90deg, var(--color-gold), transparent);
+  background: linear-gradient(90deg, var(--color-copper), transparent);
   margin: 1rem auto 0;
-  opacity: 0.5;
+  opacity: 0.4;
 }
 
+/* ============================================================
+   BOOK SECTIONS
+   ============================================================ */
 .book-section {
   padding: 1.5rem 0;
 }
@@ -112,6 +110,8 @@
 }
 
 .section-header h2 {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  color: var(--color-surface);
   position: relative;
   padding-bottom: 0.5rem;
 }
@@ -125,8 +125,8 @@
   height: 2px;
   background: linear-gradient(
     90deg,
-    var(--color-gold) 0%,
-    var(--color-burgundy-glow) 100%
+    var(--color-copper),
+    var(--color-terracotta)
   );
   border-radius: 2px;
 }
@@ -135,30 +135,12 @@
   font-size: 0.82rem;
   color: var(--color-text-muted);
   letter-spacing: 0.05em;
-  transition: color var(--transition);
   white-space: nowrap;
+  transition: color var(--transition);
 }
 
 .section-link:hover {
-  color: var(--color-gold);
-}
-
-#recentBooks .bookCard,
-#popularBooks .bookCard,
-#recommendedBooks .bookCard {
-  padding: 1rem;
-}
-
-#recentBooks .bookCard img,
-#popularBooks .bookCard img,
-#recommendedBooks .bookCard img {
-  height: 180px;
-}
-
-#recentBooks .bookCard .card-desc,
-#popularBooks .bookCard .card-desc,
-#recommendedBooks .bookCard .card-desc {
-  display: none;
+  color: var(--color-copper);
 }
 
 .empty-state {
@@ -169,10 +151,13 @@
   font-style: italic;
 }
 
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
 @media (max-width: 768px) {
   .hero {
-    padding: 2.5rem 0 2rem;
-    flex-direction: column;
+    height: auto;
+    padding: 3rem 0 2rem;
   }
 
   .hero-decoration {

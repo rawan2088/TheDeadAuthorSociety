@@ -17,13 +17,15 @@ function renderBookCards(books, containerId) {
 
     card.innerHTML = `
       <img src="${book.image}" alt="${book.title}" />
-      <h3>${book.title}</h3>
-      <p><strong>Author:</strong> ${book.author}</p>
-      <p><strong>Category:</strong> ${book.category}</p>
-      <p class="card-desc">${book.description}</p>
-      <span class="badge ${isAvailable ? "badge-available" : "badge-unavailable"}">
+      <div class="card-content">
+        <h3>${book.title}</h3>
+        <p><strong>Author:</strong> ${book.author}</p>
+        <p><strong>Category:</strong> ${book.category}</p>
+        <p class="card-desc">${book.description}</p>
+        <span class="badge ${isAvailable ? "badge-available" : "badge-unavailable"}">
         ${isAvailable ? "Available" : "Unavailable"}
-      </span>
+        </span>
+        </div>
     `;
 
     // invisible anchor — covers the whole card

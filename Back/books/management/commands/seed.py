@@ -1,6 +1,8 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
-from All.models import Book, Comment, BorrowedBooks, Category
+from books.models import Book, Comment, Category
+from borrowed.models import BorrowedBook
+from django.conf import settings
 from django.utils import timezone
 from datetime import datetime
 
@@ -131,7 +133,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         if options['clear']:
             Comment.objects.all().delete()
-            BorrowedBooks.objects.all().delete()
+            BorrowedBook.objects.all().delete()
             Book.objects.all().delete()
             Category.objects.all().delete()
             User.objects.filter(is_superuser=False).delete()
@@ -196,7 +198,7 @@ class Command(BaseCommand):
                 # Date parsing for the borrowed_date
                 b_date = datetime.strptime(br_data['date'], "%Y-%m-%d").date()
                 
-                BorrowedBooks.objects.get_or_create(
+                BorrowedBook.objects.get_or_create(
                     userId=user,
                     bookId=book,
                     # Note: models has auto_now_add=True, so manual dates 
