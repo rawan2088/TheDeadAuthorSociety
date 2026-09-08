@@ -1,5 +1,7 @@
 from django.db import models
 from django.conf import settings
+# we use them to ensure the rating is between 1 and 5, we can use the validators for that
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 # from users.models import User
 # don't import users, but import settings and use
@@ -70,7 +72,8 @@ class Comment(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='comments')
     # username = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
-    rating = models.IntegerField()
+    # there are validators that we can use to validate the rating, we can use min and max validators
+    rating = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(5)])
     content = models.TextField()
 
     def __str__(self):
