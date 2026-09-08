@@ -2,8 +2,6 @@ from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
 from books.models import Book, Comment, Category
 from borrowed.models import BorrowedBook
-from django.conf import settings
-from django.utils import timezone
 from datetime import datetime
 
 User = get_user_model()
@@ -23,8 +21,7 @@ SEED_BOOKS = [
         "category": "Classic Fiction",
         "description": "Published in 1925, The Great Gatsby is a classic piece of American fiction told from the perspective of Nick Carraway about the eponymous Jay Gatsby, set over a few months in 1922.",
         "image": "book_covers/book1.webp",
-        "totalCopies": 5,
-        "availableCopies": 5,
+        "total_copies": 5,
     },
     {
         "title": "To Kill A Mockingbird",
@@ -33,8 +30,7 @@ SEED_BOOKS = [
         "category": "Southern Gothic",
         "description": "Set in small-town Alabama, the novel chronicles the childhood of Scout and Jem Finch as their father Atticus defends a Black man falsely accused of rape.",
         "image": "book_covers/book2.jpg",
-        "totalCopies": 4,
-        "availableCopies": 4,
+        "total_copies": 4,
     },
     {
         "title": "Call It What You Want",
@@ -43,8 +39,7 @@ SEED_BOOKS = [
         "category": "Young Adult",
         "description": "When his dad is caught embezzling funds from half the town, Rob goes from popular lacrosse player to social pariah, while Maegan hides secrets of her own.",
         "image": "book_covers/book3.jpg",
-        "totalCopies": 3,
-        "availableCopies": 0,
+        "total_copies": 3,
     },
     {
         "title": "A Good Girl's Guide To Murder",
@@ -53,8 +48,7 @@ SEED_BOOKS = [
         "category": "Mystery Thriller",
         "description": "Five years ago, schoolgirl Andie Bell was murdered by Sal Singh — or so everyone believes. Pippa Fitz-Amobi isn't convinced and starts digging for the truth.",
         "image": "book_covers/book4.jpg",
-        "totalCopies": 6,
-        "availableCopies": 6,
+        "total_copies": 6,
     },
     {
         "title": "Betting on You",
@@ -63,8 +57,7 @@ SEED_BOOKS = [
         "category": "Romance",
         "description": "When seventeen-year-old Bailey starts a new job at a hotel waterpark, she runs into Charlie — an old acquaintance whose cynicism clashes with her careful temperament.",
         "image": "book_covers/book5.jpg",
-        "totalCopies": 3,
-        "availableCopies": 0,
+        "total_copies": 3,
     },
     {
         "title": "Pride and Prejudice",
@@ -73,8 +66,7 @@ SEED_BOOKS = [
         "category": "Classical Romance",
         "description": "Jane Austen's much-adapted novel is famed for its witty, spirited heroine and sensational romances, with deft remarks on the triumphs and pitfalls of social convention.",
         "image": "book_covers/book6.jpg",
-        "totalCopies": 5,
-        "availableCopies": 5,
+        "total_copies": 5,
     },
     {
         "title": "Steal Like an Artist",
@@ -83,8 +75,7 @@ SEED_BOOKS = [
         "category": "Self Help",
         "description": "A manifesto for the digital age — a guide with positive messages, illustrations, and exercises that puts readers directly in touch with their artistic side.",
         "image": "book_covers/book7.jpg",
-        "totalCopies": 4,
-        "availableCopies": 0,
+        "total_copies": 4,
     },
     {
         "title": "The Silent Patient",
@@ -93,8 +84,7 @@ SEED_BOOKS = [
         "category": "Mystery Thriller",
         "description": "Alicia Berenson's life seems perfect until she shoots her husband five times in the face — and then never speaks another word.",
         "image": "book_covers/book8.jpg",
-        "totalCopies": 5,
-        "availableCopies": 5,
+        "total_copies": 5,
     },
     {
         "title": "Little Women",
@@ -103,18 +93,17 @@ SEED_BOOKS = [
         "category": "Historical Fiction",
         "description": "Generations of readers have fallen in love with the March sisters — Jo, Beth, Meg, and Amy — united in devotion to each other during the Civil War era.",
         "image": "book_covers/book9.jpg",
-        "totalCopies": 4,
-        "availableCopies": 0,
+        "total_copies": 4,
     },
 ]
 
 SEED_COMMENTS = [
-    {"book_title": "The Great Gatsby", "username": "Roaa", "rating": 5, "content": "An absolute masterpiece. Highly recommend to everyone!", "date": "2024-01-15"},
-    {"book_title": "The Great Gatsby", "username": "Rawan", "rating": 4, "content": "A great read, kept me engaged from start to finish.", "date": "2024-02-20"},
-    {"book_title": "To Kill A Mockingbird", "username": "Roaa", "rating": 5, "content": "One of the most important books I have ever read.", "date": "2024-03-10"},
-    {"book_title": "A Good Girl's Guide To Murder", "username": "Rawan", "rating": 5, "content": "Could not put it down. Finished it in one sitting!", "date": "2024-04-05"},
-    {"book_title": "Pride and Prejudice", "username": "Roaa", "rating": 5, "content": "A timeless classic. Elizabeth Bennet is iconic.", "date": "2024-05-18"},
-    {"book_title": "The Silent Patient", "username": "Rawan", "rating": 5, "content": "The twist at the end blew my mind completely.", "date": "2024-06-22"},
+    {"book_title": "The Great Gatsby", "username": "Roaa", "rating": 5, "content": "An absolute masterpiece. Highly recommend to everyone!"},
+    {"book_title": "The Great Gatsby", "username": "Rawan", "rating": 4, "content": "A great read, kept me engaged from start to finish."},
+    {"book_title": "To Kill A Mockingbird", "username": "Roaa", "rating": 5, "content": "One of the most important books I have ever read."},
+    {"book_title": "A Good Girl's Guide To Murder", "username": "Rawan", "rating": 5, "content": "Could not put it down. Finished it in one sitting!"},
+    {"book_title": "Pride and Prejudice", "username": "Roaa", "rating": 5, "content": "A timeless classic. Elizabeth Bennet is iconic."},
+    {"book_title": "The Silent Patient", "username": "Rawan", "rating": 5, "content": "The twist at the end blew my mind completely."},
 ]
 
 SEED_BORROWED = [
@@ -124,8 +113,9 @@ SEED_BORROWED = [
     {"username": "Roaa", "book_title": "Little Women", "date": "2024-07-10"},
 ]
 
+
 class Command(BaseCommand):
-    help = 'Seed the database with Users, Books, Comments, and Borrowed records'
+    help = 'Seed the database with Users, Books, Categories, Comments, and Borrowed records'
 
     def add_arguments(self, parser):
         parser.add_argument('--clear', action='store_true', help='Delete everything before seeding')
@@ -147,7 +137,7 @@ class Command(BaseCommand):
                     'first_name': u_data['firstName'],
                     'last_name': u_data['lastName'],
                     'email': u_data['email'],
-                    'is_admin': u_data['role'] == 'admin'
+                    'is_admin': u_data['role'] == 'admin',
                 }
             )
             if created:
@@ -155,56 +145,54 @@ class Command(BaseCommand):
                 user.save()
                 self.stdout.write(f"User created: {user.username}")
 
-        # 2. Seed Books
+        # 2. Seed Books (categories is a ManyToMany, so it's set after creation, not passed to defaults)
         for b_data in SEED_BOOKS:
-            # Create/Get the Category first
+            b_data = b_data.copy()
             cat_name = b_data.pop('category')
             category_obj, _ = Category.objects.get_or_create(name=cat_name)
-            
+
             book, created = Book.objects.get_or_create(
                 title=b_data['title'],
                 author=b_data['author'],
-                defaults={**b_data, 'category': category_obj}
+                defaults=b_data,
             )
+            # .set() is idempotent, safe to call whether or not the book was just created
+            book.categories.set([category_obj])
             if created:
                 self.stdout.write(f"Book created: {book.title}")
 
-        # 3. Seed Comments
+        # 3. Seed Comments (model fields are `user` and `book`, no `username` field —
+        # __str__ derives the display name from user.username)
         for c_data in SEED_COMMENTS:
             try:
                 user = User.objects.get(username=c_data['username'])
                 book = Book.objects.get(title=c_data['book_title'])
-                
-                # Note: Comment model provided doesn't have created_at. 
-                # If you add it later, you can add it to the defaults below.
+
                 Comment.objects.get_or_create(
-                    userId=user,
-                    bookId=book,
+                    user=user,
+                    book=book,
                     content=c_data['content'],
-                    defaults={
-                        'username': user.username,
-                        'rating': c_data['rating'],
-                    }
+                    defaults={'rating': c_data['rating']},
                 )
             except (User.DoesNotExist, Book.DoesNotExist):
                 continue
 
-        # 4. Seed Borrowed Records
+        # 4. Seed Borrowed Records (model fields are `user` and `book`; borrowed_date
+        # has auto_now_add=True so it's always stamped as "now" on creation — we
+        # backfill the seed date with a queryset .update(), which bypasses save()
+        # and therefore skips auto_now_add)
         for br_data in SEED_BORROWED:
             try:
                 user = User.objects.get(username=br_data['username'])
                 book = Book.objects.get(title=br_data['book_title'])
-                
-                # Date parsing for the borrowed_date
-                b_date = datetime.strptime(br_data['date'], "%Y-%m-%d").date()
-                
-                BorrowedBook.objects.get_or_create(
-                    userId=user,
-                    bookId=book,
-                    # Note: models has auto_now_add=True, so manual dates 
-                    # might be ignored unless auto_now_add is removed.
-                    defaults={'borrowed_date': b_date}
+
+                borrow, created = BorrowedBook.objects.get_or_create(
+                    user=user,
+                    book=book,
                 )
+                if created:
+                    b_date = datetime.strptime(br_data['date'], "%Y-%m-%d").date()
+                    BorrowedBook.objects.filter(pk=borrow.pk).update(borrowed_date=b_date)
             except (User.DoesNotExist, Book.DoesNotExist):
                 continue
 

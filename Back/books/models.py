@@ -54,8 +54,19 @@ class Book(models.Model):
     def available_copies (self):
         # ! you cannot use a property in filter, because filter is calculated at the database level while the property is python level
         # return self.total_copies - self.borrowers.filter(is_returned = False).count() 
-        return self.total_copies - self.borrowers.filter(returned_at__isnull = False).count() 
+        return self.total_copies - self.borrow_records.filter(return_date__isnull = True).count() 
     #again get away from duplicated entries
+    
+    @property
+    def is_available(self):
+        return self.available_copies > 0
+    
+    @property 
+    def avg_rating(self):
+        comments = self.comments.all()
+        if not comments:
+            return None
+        return sum(comment.rating for comment in comments) / len(comments)
 
 
     # # adds a property that shouldn't be violated

@@ -7,7 +7,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("api/", include('users.urls')),
     # path('api/books/', include('books.urls')),
-    # path('api/', include('users.urls')),
+    path('api/', include('borrowed.urls')),
     path("api/", include("books.urls")),  
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 # This makes Django serve files at http://127.0.0.1:8000/media/book_covers/book1.webp.

@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'books',
     'borrowed',
     'users',
+    'django_extensions',  # for shell_plus
+    'rest_framework',  # for API
 ]
 
 MIDDLEWARE = [

@@ -13,11 +13,11 @@ class User(AbstractUser):
     #* related_name is the name Django gives you for accessing the related objects from the other side of a relationship.
     # for any many to many relationship, django do an intermediate table for you automatically
     # if you already have one that you want to use, you use the through argument to specify the model that should be used as the intermediate table.
-    books = models.ManyToManyField(
-        'books.Book',
-        through='borrowed.BorrowedBook',
-        related_name='borrowers'
-    )
+    # borrowed_books = models.ManyToManyField(
+    #     'books.Book',
+    #     through='borrowed.BorrowedBook',
+    #     related_name='borrowers'
+    # )
 
     def __str__(self):
         return self.username

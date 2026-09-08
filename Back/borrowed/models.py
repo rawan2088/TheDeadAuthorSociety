@@ -11,10 +11,10 @@ class BorrowedBook(models.Model):
     class StatusChoices(models.TextChoices):
         BORROWED = 'borrowed', 'Borrowed'
         RETURNED = 'returned', 'Returned'
-    
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='borrowed_books')
+    # if a user is deleted, we would keep the borrowing in history
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='borrowed_books')
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='borrow_records')
-    borrowed_date = models.DateField(auto_now_add=True)
+    borrow_date = models.DateField(auto_now_add=True)
     return_date = models.DateField(null=True, blank=True)
     
     
@@ -41,7 +41,7 @@ class BorrowedBook(models.Model):
             # a logical constraint, where the return date can never preceed the actual borrowing date
             models.CheckConstraint(
                 # the q here preservses the order of the constraint, so it checks if the return date is null or if it is greater than or equal to the borrowed date
-                condition=models.Q(return_date__isnull=True) | models.Q(return_date__gte=models.F('borrowed_date')),
+                condition=models.Q(return_date__isnull=True) | models.Q(return_date__gte=models.F('borrow_date')),
                 name='chk_return_after_borrow'
             )
         ]

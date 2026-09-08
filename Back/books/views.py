@@ -1,14 +1,21 @@
-# import json
-# # Returns data formatted as json instead of returning an HTML page. This is what APIs use
-# from django.http import JsonResponse
-# # CSRF is protection that blocks certain requests
-# from django.views.decorators.csrf import csrf_exempt
-# # this is how we access the database table
-# from django.db import transaction
-# from django.db.models import F, Q, Count
-# from django.utils import timezone
-# from django.shortcuts import render
-# from .models import Book, BorrowedBook, Comment, Category
+import json
+# Returns data formatted as json instead of returning an HTML page. This is what APIs use
+from django.http import JsonResponse
+# CSRF is protection that blocks certain requests
+from django.views.decorators.csrf import csrf_exempt
+# this is how we access the database table
+from django.db import transaction
+from django.db.models import F, Q, Count
+from django.utils import timezone
+from django.shortcuts import render
+from .models import Book, Comment, Category
+
+from django.http import JsonResponse
+from .serializers import BookSerializer, AdminBookSerializer, CommentSerializer, CategorySerializer
+from .models import Book, Comment, Category
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 # # helper funcitons
 # def get_image_url(request, book):
@@ -16,59 +23,66 @@
 #         return request.build_absolute_uri(book.image.url)
 #     return ''
 
-# def serialize_book(request, book):
-#     return {
-#         'id': book.id,
-#         'title': book.title,
-#         'author': book.author,
-#         'category': book.category.name if book.category else None,
-#         'description': book.description,
-#         'totalCopies': book.totalCopies,
-#         'availableCopies': book.availableCopies,
-#         'published_date': book.published_date.strftime('%Y-%m-%d') if book.published_date else None,
-#         'image': get_image_url(request, book),
-#     }
 
-# # --- BOOK VIEWS ---
+# --- BOOK VIEWS ---
 
-# @csrf_exempt
-# def books_view(request):
-#     if request.method == "GET":
-#         books = Book.objects.all()
-#         data = [serialize_book(request, b) for b in books]
-#         return JsonResponse(data, safe=False)
-    
-#     elif request.method == 'POST':
-#         if not request.user.is_authenticated or not request.user.is_admin:
-#             return JsonResponse({'error': 'Not authorized'}, status=403)
-#         data = json.loads(request.body)
+@csrf_exempt
+@api_view(['GET', 'POST'])
+def books_view(request):
+    if request.method == "GET":
+        books = Book.objects.all()
+        # serializer = BookSerializer(books, many=True)
+        serializer = AdminBookSerializer(books, many=True)
         
-#         # Resolve category object if provided
-#         cat_name = data.get('category')
-#         category_obj = None
-#         if cat_name:
-#             category_obj, _ = Category.objects.get_or_create(name=cat_name)
-
-#         Book.objects.create(
-#             title=data.get('title', ''),
-#             author=data.get('author', ''),
-#             category=category_obj,
-#             description=data.get('description', ''),
-#             totalCopies=data.get('totalCopies', 1),
-#             availableCopies=data.get('totalCopies', 1),
-#             published_date=data.get('published_date', '1900-01-01'),
-#         )
-#         return JsonResponse({'message': 'Book created'}, status=201)
-
-# @csrf_exempt
-# def book_detail_view(request, id):
-#     try:
-#         book = Book.objects.get(id=id)
-#     except Book.DoesNotExist:
-#         return JsonResponse({'error': 'Book not found'}, status=404)
+        return Response(serializer.data)
+        
+        # ! instead of this we can use api_view, which is neater to see
+        # return JsonResponse(
+        #     {  'data':
+        #         serializer.data
+        #         }, safe=False)
     
-#     if request.method == 'GET':
-#         return JsonResponse(serialize_book(request, book))
+        # ! the old way of doing it, which is more manual and less neat
+        # data = [serialize_book(request, b) for b in books]
+        # return JsonResponse(data, safe=False)
+    
+    # elif request.method == 'POST':
+    #     if not request.user.is_authenticated or not request.user.is_admin:
+    #         return JsonResponse({'error': 'Not authorized'}, status=403)
+    #     data = json.loads(request.body)
+        
+    #     # Resolve category object if provided
+    #     cat_name = data.get('category')
+    #     category_obj = None
+    #     if cat_name:
+    #         category_obj, _ = Category.objects.get_or_create(name=cat_name)
+
+    #     Book.objects.create(
+    #         title=data.get('title', ''),
+    #         author=data.get('author', ''),
+    #         category=category_obj,
+    #         description=data.get('description', ''),
+    #         totalCopies=data.get('totalCopies', 1),
+    #         availableCopies=data.get('totalCopies', 1),
+    #         published_date=data.get('published_date', '1900-01-01'),
+    #     )
+    #     return JsonResponse({'message': 'Book created'}, status=201)
+
+@csrf_exempt
+def book_detail_view(request, id):
+    #// try:
+        #// book = Book.objects.get(id=id)
+    #// except Book.DoesNotExist:
+        #// return JsonResponse({'error': 'Book not found'}, status=404)
+        
+    #* the better way
+    book = get_object_or_404(Book, id=id)
+    serializer = BookSerializer(book)
+    
+    if request.method == 'GET':
+        return Response(serializer.data)
+        #// return JsonResponse(serialize_book(request, book))
+    
     
 #     if not request.user.is_authenticated or not request.user.is_admin:
 #         return JsonResponse({'error': 'Not authorized'}, status=403)
@@ -168,7 +182,7 @@
 #     for r in records:
 #         data.append({
 #             'borrowId': r.id,
-#             'borrowDate': r.borrowed_date.strftime('%Y-%m-%d'),
+#             'borrowDate': r.borrow_date.strftime('%Y-%m-%d'),
 #             'book': serialize_book(request, r.bookId)
 #         })
 #     return JsonResponse({'borrowed': data}, safe=False)
