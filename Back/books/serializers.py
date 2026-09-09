@@ -3,12 +3,22 @@ from .models import Book, Comment, Category
 
 from borrowed.serializers import BorrowedBookSerializer
 
-# * serializers would be used like views for us 
+# * ----- Serializers ------
+# would be used like views for us 
 # where you could have more than one serializer for a model, and you can use them in different views, or even in the same view, depending on what you want to do with the data
 # you make serializers depending on the needed output data
 
 # model serializers are inherted from normal seriazliazers, they assign serializer friendly fields to each of the model fields, and they also provide create and update methods for you, so you don't have to write them yourself
 # . Reverse relationships are not included by default unless explicitly included as specified in the serializer relations documentation.
+
+
+#  * ------ MethodSerializers --------
+# there are serializerMethodField, which is a read-only field that gets its value by calling a method on the serializer class it is attached to. The method should be named get_<field_name> and should take the object being serialized as its only argument. This is useful for adding custom data to your serialized output that isn't directly tied to a model field.
+# The value depends on something outside the model instance — the request (e.g. request.user), query params, serializer context, or view logic.
+# It's serialization-specific and doesn't belong on the model (the model shouldn't know about HTTP requests).
+# You need per-serializer variation — e.g. one serializer wants "active borrows only," another wants "all borrows," so the same underlying data needs different shaping depending on which serializer you're in.
+
+
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
@@ -18,6 +28,10 @@ class CategorySerializer(serializers.ModelSerializer):
 # we don't have to make a serializer for book list, in the view, we would use each single book serialzier and return a list of them
 class BookSerializer(serializers.ModelSerializer):
     categories = CategorySerializer(many=True, read_only=True)
+    is_available = serializers.SerializerMethodField()
+    
+    def get_is_available(self, obj):
+        return obj.available_copies > 0
 
     class Meta:
         model = Book
@@ -32,10 +46,22 @@ class BookSerializer(serializers.ModelSerializer):
 class AdminBookSerializer(serializers.ModelSerializer):
     # we can use a primary key related field, where it would only provide us with the primary keys of the categories
     categories = CategorySerializer(many=True)
-    available_copies = serializers.ReadOnlyField()
-    is_available = serializers.ReadOnlyField()
     avg_rating = serializers.ReadOnlyField()
     borrow_records = BorrowedBookSerializer(many=True, read_only=True)
+    
+    available_copies = serializers.IntegerField(read_only=True)
+    # def get_available_copies(self, obj):
+    #     # obj.active_borrow_count comes from the .annotate() in the view —
+    #     # falls back to a live count only if the queryset wasn't annotated
+    #     active = getattr(obj, 'active_borrow_count', None)
+    #     if active is None:
+    #         active = obj.borrow_records.filter(return_date__isnull=True).count()
+    #     return obj.total_copies - active
+
+    is_available = serializers.SerializerMethodField()
+    def get_is_available(self, obj):
+        return getattr(obj, 'available_copies', None) > 0
+    
     
     class Meta:
         model = Book

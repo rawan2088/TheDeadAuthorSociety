@@ -7,7 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db import transaction
 from django.db.models import F, Q, Count
 from django.utils import timezone
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from .models import Book, Comment, Category
 
 from django.http import JsonResponse
@@ -16,6 +16,7 @@ from .models import Book, Comment, Category
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework import generics
 
 # # helper funcitons
 # def get_image_url(request, book):
@@ -24,17 +25,55 @@ from rest_framework.response import Response
 #     return ''
 
 
+
+# ------- Class based Views --------
+
+# -- Book views --
+class BookListView(generics.ListAPIView ):
+    queryset = Book.objects.all().annotate(available_copies=F('total_copies') - Count('borrow_records', filter=Q(borrow_records__return_date__isnull=True))).prefetch_related('categories', 'comments', 'borrow_records')
+    serializer_class = AdminBookSerializer
+    
+    
+# start learning permissions here, there are three different views for a book details page
+# -- Guest--
+# would  view the basic book details and comments of other people only
+
+# -- User --
+# I should keep the borrowing btn available but with a warning sign if the user is not authenticated
+
+# -- Admin --
+# added info of available books, and total
+# and can edit or delete a book
+
+# there are two layers for this, first in the frontend we wouldn't show these data at all
+# but here, even if the request happens we would not allow it
+
+# retrieve a book, edit a book, delete a book
+
+# annotation happens in the query set and it is far more efficint than property
+# AnnotatedBook = Book.objects.annotate(available_copies blablabla=Count('borrow_records', filter=Q(borrow_records__return_date__isnull=True))).prefetch_related('categories', 'comments', 'borrow_records')
+class BookDetailView(generics.RetrieveAPIView):
+    # queryset = get_object_or_404(Book, id=pk) dont need to do it, takes the object auto
+    queryset = Book.objects.all().annotate(available_copies=F('total_copies') - Count('borrow_records', filter=Q(borrow_records__return_date__isnull=True))).prefetch_related('categories', 'comments', 'borrow_records')
+    serializer_class = AdminBookSerializer
+    
+
 # --- BOOK VIEWS ---
 
-@csrf_exempt
-@api_view(['GET', 'POST'])
-def books_view(request):
-    if request.method == "GET":
-        books = Book.objects.all()
-        # serializer = BookSerializer(books, many=True)
-        serializer = AdminBookSerializer(books, many=True)
+
+# @csrf_exempt
+# @api_view(['GET', 'POST'])
+# def books_view(request):
+#     if request.method == "GET":
+#         # here we should do the optimization
+#         # since it make database lever queries here
+#         # more optimization here, it is better to get the active_borrows here only then calculate the available copies, since it is more efficent to do it in the database level
+#         # books = AnnotatedBook.annotate(active_borrows=Count('borrow_records', filter=Q(borrow_records__return_date__isnull=True))).prefetch_related('categories', 'comments', 'borrow_records')
+#         books = Book.objects.all().annotate(active_borrows=Count('borrow_records', filter=Q(borrow_records__return_date__isnull=True))).prefetch_related('categories', 'comments', 'borrow_records')
+#         # serializer = BookSerializer(books, many=True)
+#         serializer = AdminBookSerializer(books, many=True)
         
-        return Response(serializer.data)
+#         return Response(serializer.data)
         
         # ! instead of this we can use api_view, which is neater to see
         # return JsonResponse(
@@ -68,20 +107,20 @@ def books_view(request):
     #     )
     #     return JsonResponse({'message': 'Book created'}, status=201)
 
-@csrf_exempt
-def book_detail_view(request, id):
+# @csrf_exempt
+# def book_detail_view(request, id):
     #// try:
         #// book = Book.objects.get(id=id)
     #// except Book.DoesNotExist:
         #// return JsonResponse({'error': 'Book not found'}, status=404)
         
     #* the better way
-    book = get_object_or_404(Book, id=id)
-    serializer = BookSerializer(book)
+    # book = get_object_or_404(Book, id=id)
+    # serializer = BookSerializer(book)
     
-    if request.method == 'GET':
-        return Response(serializer.data)
-        #// return JsonResponse(serialize_book(request, book))
+    # if request.method == 'GET':
+        # return Response(serializer.data)
+        # // return JsonResponse(serialize_book(request, book))
     
     
 #     if not request.user.is_authenticated or not request.user.is_admin:
@@ -115,7 +154,7 @@ def book_detail_view(request, id):
 #         except Book.DoesNotExist:
 #             return JsonResponse({'error': 'Book not found'}, status=404)
 
-# # RECENT & POPULAR 
+# #-------- RECENT & POPULAR 
 
 # def recent_books_view(request):
 #     books = Book.objects.all().order_by('-id')[:10]
@@ -131,7 +170,7 @@ def book_detail_view(request, id):
 #         data.append(item)
 #     return JsonResponse(data, safe=False)
 
-# # SEARCH & CATEGORY
+# #--------------- SEARCH & CATEGORY
 
 # @csrf_exempt
 # def book_search(request):
@@ -151,7 +190,7 @@ def book_detail_view(request, id):
 #     data = [serialize_book(request, b) for b in books]
 #     return JsonResponse({'results': data}, status=200)
 
-# # BORROW & RETURN
+# #--------------- BORROW & RETURN
 
 # @csrf_exempt
 # def borrow_book(request, id):

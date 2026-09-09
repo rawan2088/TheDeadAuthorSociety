@@ -1,199 +1,294 @@
+"""
+Management command to seed the database with randomized test data.
+
+Place this file at: books/management/commands/seed_data.py
+(create the management/ and commands/ folders with empty __init__.py files
+if they don't exist yet)
+
+Usage:
+    python manage.py seed_data
+    python manage.py seed_data --books 1000 --users 200
+    python manage.py seed_data --flush   # wipes seeded data first
+"""
+import random
+from datetime import timedelta
+
 from django.core.management.base import BaseCommand
-from django.contrib.auth import get_user_model
-from books.models import Book, Comment, Category
+from django.db import transaction
+from django.utils import timezone
+
+from books.models import Book, Category, Comment
 from borrowed.models import BorrowedBook
-from datetime import datetime
+
+from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-SEED_USERS = [
-    {"firstName": "Admin", "lastName": "User", "username": "admin", "password": "admin123", "email": "admin@deadauthorsociety.com", "role": "admin"},
-    {"firstName": "Rawan", "lastName": "Ahmed", "username": "Rawan", "password": "123456", "email": "rawan@gmail.com", "role": "admin"},
-    {"firstName": "Roaa", "lastName": "AbdElFatah", "username": "Roaa", "password": "123456", "email": "roaa@gmail.com", "role": "user"},
-    {"firstName": "Maryam", "lastName": "Ahmed", "username": "Maryam", "password": "123456", "email": "maryam@gmail.com", "role": "user"},
+# ---- small local word banks, no external deps (no Faker needed) ----
+
+FIRST_NAMES = [
+    "James", "Mary", "Robert", "Patricia", "John", "Jennifer", "Michael",
+    "Linda", "David", "Elizabeth", "Ahmed", "Fatima", "Omar", "Layla",
+    "Youssef", "Mariam", "Karim", "Nour", "Hana", "Sami", "Liam", "Olivia",
+    "Noah", "Emma", "Ava", "Sophia", "Lucas", "Mia", "Ethan", "Zainab",
 ]
 
-SEED_BOOKS = [
-    {
-        "title": "The Great Gatsby",
-        "author": "F. Scott Fitzgerald",
-        "published_date": "1925-01-01",
-        "category": "Classic Fiction",
-        "description": "Published in 1925, The Great Gatsby is a classic piece of American fiction told from the perspective of Nick Carraway about the eponymous Jay Gatsby, set over a few months in 1922.",
-        "image": "book_covers/book1.webp",
-        "total_copies": 5,
-    },
-    {
-        "title": "To Kill A Mockingbird",
-        "author": "Harper Lee",
-        "published_date": "1960-01-01",
-        "category": "Southern Gothic",
-        "description": "Set in small-town Alabama, the novel chronicles the childhood of Scout and Jem Finch as their father Atticus defends a Black man falsely accused of rape.",
-        "image": "book_covers/book2.jpg",
-        "total_copies": 4,
-    },
-    {
-        "title": "Call It What You Want",
-        "author": "Brigid Kemmerer",
-        "published_date": "2023-01-01",
-        "category": "Young Adult",
-        "description": "When his dad is caught embezzling funds from half the town, Rob goes from popular lacrosse player to social pariah, while Maegan hides secrets of her own.",
-        "image": "book_covers/book3.jpg",
-        "total_copies": 3,
-    },
-    {
-        "title": "A Good Girl's Guide To Murder",
-        "author": "Holly Jackson",
-        "published_date": "2019-01-01",
-        "category": "Mystery Thriller",
-        "description": "Five years ago, schoolgirl Andie Bell was murdered by Sal Singh — or so everyone believes. Pippa Fitz-Amobi isn't convinced and starts digging for the truth.",
-        "image": "book_covers/book4.jpg",
-        "total_copies": 6,
-    },
-    {
-        "title": "Betting on You",
-        "author": "Lynn Painter",
-        "published_date": "2023-01-01",
-        "category": "Romance",
-        "description": "When seventeen-year-old Bailey starts a new job at a hotel waterpark, she runs into Charlie — an old acquaintance whose cynicism clashes with her careful temperament.",
-        "image": "book_covers/book5.jpg",
-        "total_copies": 3,
-    },
-    {
-        "title": "Pride and Prejudice",
-        "author": "Jane Austen",
-        "published_date": "1813-01-01",
-        "category": "Classical Romance",
-        "description": "Jane Austen's much-adapted novel is famed for its witty, spirited heroine and sensational romances, with deft remarks on the triumphs and pitfalls of social convention.",
-        "image": "book_covers/book6.jpg",
-        "total_copies": 5,
-    },
-    {
-        "title": "Steal Like an Artist",
-        "author": "Austin Kleon",
-        "published_date": "2012-01-01",
-        "category": "Self Help",
-        "description": "A manifesto for the digital age — a guide with positive messages, illustrations, and exercises that puts readers directly in touch with their artistic side.",
-        "image": "book_covers/book7.jpg",
-        "total_copies": 4,
-    },
-    {
-        "title": "The Silent Patient",
-        "author": "Alex Michaelides",
-        "published_date": "2019-01-01",
-        "category": "Mystery Thriller",
-        "description": "Alicia Berenson's life seems perfect until she shoots her husband five times in the face — and then never speaks another word.",
-        "image": "book_covers/book8.jpg",
-        "total_copies": 5,
-    },
-    {
-        "title": "Little Women",
-        "author": "Louisa May Alcott",
-        "published_date": "1868-01-01",
-        "category": "Historical Fiction",
-        "description": "Generations of readers have fallen in love with the March sisters — Jo, Beth, Meg, and Amy — united in devotion to each other during the Civil War era.",
-        "image": "book_covers/book9.jpg",
-        "total_copies": 4,
-    },
+LAST_NAMES = [
+    "Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller",
+    "Davis", "Rodriguez", "Martinez", "Hassan", "Ibrahim", "Mansour",
+    "Farouk", "Adel", "Salem", "Khalil", "Nasser", "Aziz", "Rashid",
 ]
 
-SEED_COMMENTS = [
-    {"book_title": "The Great Gatsby", "username": "Roaa", "rating": 5, "content": "An absolute masterpiece. Highly recommend to everyone!"},
-    {"book_title": "The Great Gatsby", "username": "Rawan", "rating": 4, "content": "A great read, kept me engaged from start to finish."},
-    {"book_title": "To Kill A Mockingbird", "username": "Roaa", "rating": 5, "content": "One of the most important books I have ever read."},
-    {"book_title": "A Good Girl's Guide To Murder", "username": "Rawan", "rating": 5, "content": "Could not put it down. Finished it in one sitting!"},
-    {"book_title": "Pride and Prejudice", "username": "Roaa", "rating": 5, "content": "A timeless classic. Elizabeth Bennet is iconic."},
-    {"book_title": "The Silent Patient", "username": "Rawan", "rating": 5, "content": "The twist at the end blew my mind completely."},
+TITLE_WORDS_A = [
+    "The Silent", "Shadows of", "Beyond the", "Whispers in", "The Last",
+    "Echoes of", "The Hidden", "A Song of", "The Broken", "Rise of",
+    "The Forgotten", "Journey to", "The Secret", "Tales of", "The Lost",
 ]
 
-SEED_BORROWED = [
-    {"username": "Rawan", "book_title": "Call It What You Want", "date": "2024-06-01"},
-    {"username": "Rawan", "book_title": "Betting on You", "date": "2024-06-15"},
-    {"username": "Roaa", "book_title": "Steal Like an Artist", "date": "2024-07-01"},
-    {"username": "Roaa", "book_title": "Little Women", "date": "2024-07-10"},
+TITLE_WORDS_B = [
+    "Kingdom", "Storm", "River", "Empire", "Garden", "Ocean", "Mountain",
+    "City", "Star", "Forest", "Desert", "Winter", "Flame", "Horizon",
+    "Void", "Legacy", "Dawn", "Path", "Prophecy", "Realm",
 ]
+
+CATEGORY_NAMES = [
+    "Fiction", "Non-Fiction", "Science Fiction", "Fantasy", "Mystery",
+    "Thriller", "Romance", "Horror", "Biography", "History", "Poetry",
+    "Self-Help", "Science", "Technology", "Philosophy", "Psychology",
+    "Business", "Travel", "Cooking", "Art", "Religion", "Politics",
+    "Children", "Young Adult", "Classic Literature", "Drama", "Comics",
+    "Economics", "Health", "Education",
+]
+
+COMMENT_SNIPPETS = [
+    "Really enjoyed this one, couldn't put it down.",
+    "Decent read but the pacing felt off in the middle.",
+    "One of the best books I've read this year.",
+    "Not really my genre, but the writing was solid.",
+    "The ending felt rushed compared to the setup.",
+    "A classic for a reason. Highly recommend.",
+    "Interesting premise, mediocre execution.",
+    "Loved the characters, hated the plot twists.",
+    "Would read again. Great for a weekend.",
+    "Overhyped in my opinion, but still worth a read.",
+]
+
+
+FAR_FUTURE_PLACEHOLDER = timezone.datetime(9999, 1, 1).date()
+
+
+def random_date(start_year=1950, end_year=2023):
+    year = random.randint(start_year, end_year)
+    month = random.randint(1, 12)
+    day = random.randint(1, 28)
+    return timezone.datetime(year, month, day).date()
 
 
 class Command(BaseCommand):
-    help = 'Seed the database with Users, Books, Categories, Comments, and Borrowed records'
+    help = "Seed the database with randomized books/users/comments/borrow records for load testing."
 
     def add_arguments(self, parser):
-        parser.add_argument('--clear', action='store_true', help='Delete everything before seeding')
+        parser.add_argument("--books", type=int, default=1000)
+        parser.add_argument("--users", type=int, default=150)
+        parser.add_argument("--comments-per-book", type=int, default=3)
+        parser.add_argument("--borrow-records", type=int, default=1500)
+        parser.add_argument(
+            "--flush",
+            action="store_true",
+            help="Delete previously seeded data (matching by username/title prefix) before seeding.",
+        )
 
     def handle(self, *args, **options):
-        if options['clear']:
-            Comment.objects.all().delete()
-            BorrowedBook.objects.all().delete()
-            Book.objects.all().delete()
-            Category.objects.all().delete()
-            User.objects.filter(is_superuser=False).delete()
-            self.stdout.write(self.style.WARNING('Cleared existing data.'))
+        n_books = options["books"]
+        n_users = options["users"]
+        comments_per_book = options["comments_per_book"]
+        n_borrow_records = options["borrow_records"]
 
-        # 1. Seed Users
-        for u_data in SEED_USERS:
-            user, created = User.objects.get_or_create(
-                username=u_data['username'],
-                defaults={
-                    'first_name': u_data['firstName'],
-                    'last_name': u_data['lastName'],
-                    'email': u_data['email'],
-                    'is_admin': u_data['role'] == 'admin',
-                }
+        if options["flush"]:
+            self.stdout.write("Flushing previously seeded data...")
+            Comment.objects.filter(user__username__startswith="seeduser_").delete()
+            BorrowedBook.objects.filter(user__username__startswith="seeduser_").delete()
+            Book.objects.filter(title__startswith="[seed]").delete()
+            User.objects.filter(username__startswith="seeduser_").delete()
+            Category.objects.filter(name__startswith="[seed] ").delete()
+
+        with transaction.atomic():
+            categories = self._seed_categories()
+            users = self._seed_users(n_users)
+            books = self._seed_books(n_books, categories)
+            self._seed_comments(books, users, comments_per_book)
+            self._seed_borrow_records(books, users, n_borrow_records)
+
+        self.stdout.write(self.style.SUCCESS(
+            f"Done. {len(users)} users, {len(categories)} categories, "
+            f"{len(books)} books, ~{len(books) * comments_per_book} comments, "
+            f"{n_borrow_records} borrow records."
+        ))
+
+    # ---- individual seeders ----
+
+    def _seed_categories(self):
+        self.stdout.write("Seeding categories...")
+        existing = {c.name for c in Category.objects.all()}
+        to_create = [
+            Category(name=name) for name in CATEGORY_NAMES if name not in existing
+        ]
+        Category.objects.bulk_create(to_create)
+        return list(Category.objects.all())
+
+    def _seed_users(self, n_users):
+        self.stdout.write(f"Seeding {n_users} users...")
+        existing_usernames = set(
+            User.objects.filter(username__startswith="seeduser_").values_list(
+                "username", flat=True
             )
-            if created:
-                user.set_password(u_data['password'])
-                user.save()
-                self.stdout.write(f"User created: {user.username}")
-
-        # 2. Seed Books (categories is a ManyToMany, so it's set after creation, not passed to defaults)
-        for b_data in SEED_BOOKS:
-            b_data = b_data.copy()
-            cat_name = b_data.pop('category')
-            category_obj, _ = Category.objects.get_or_create(name=cat_name)
-
-            book, created = Book.objects.get_or_create(
-                title=b_data['title'],
-                author=b_data['author'],
-                defaults=b_data,
+        )
+        to_create = []
+        for i in range(n_users):
+            username = f"seeduser_{i}"
+            if username in existing_usernames:
+                continue
+            first = random.choice(FIRST_NAMES)
+            last = random.choice(LAST_NAMES)
+            user = User(
+                username=username,
+                first_name=first,
+                last_name=last,
+                email=f"{username}@example.test",
+                is_admin=(i == 0),  # first seeded user is an admin, handy for testing
             )
-            # .set() is idempotent, safe to call whether or not the book was just created
-            book.categories.set([category_obj])
-            if created:
-                self.stdout.write(f"Book created: {book.title}")
+            user.set_password("testpass123")
+            to_create.append(user)
+        User.objects.bulk_create(to_create)
+        return list(User.objects.filter(username__startswith="seeduser_"))
 
-        # 3. Seed Comments (model fields are `user` and `book`, no `username` field —
-        # __str__ derives the display name from user.username)
-        for c_data in SEED_COMMENTS:
-            try:
-                user = User.objects.get(username=c_data['username'])
-                book = Book.objects.get(title=c_data['book_title'])
+    def _seed_books(self, n_books, categories):
+        self.stdout.write(f"Seeding {n_books} books...")
+        to_create = []
+        for i in range(n_books):
+            title = f"[seed] {random.choice(TITLE_WORDS_A)} {random.choice(TITLE_WORDS_B)} #{i}"
+            author = f"{random.choice(FIRST_NAMES)} {random.choice(LAST_NAMES)}"
+            book = Book(
+                title=title,
+                author=author,
+                published_date=random_date(),
+                description=(
+                    f"A {random.choice(['gripping', 'thoughtful', 'sweeping', 'quiet', 'daring'])} "
+                    f"story about {random.choice(['love', 'war', 'discovery', 'loss', 'ambition', 'family'])}."
+                ),
+                total_copies=random.randint(1, 10),
+            )
+            to_create.append(book)
+        Book.objects.bulk_create(to_create, batch_size=500)
 
-                Comment.objects.get_or_create(
-                    user=user,
-                    book=book,
-                    content=c_data['content'],
-                    defaults={'rating': c_data['rating']},
+        books = list(Book.objects.filter(title__startswith="[seed]"))
+
+        # M2M has to be set after the books exist in the DB
+        self.stdout.write("Assigning categories to books...")
+        through_model = Book.categories.through
+        through_rows = []
+        for book in books:
+            for cat in random.sample(categories, k=random.randint(1, 3)):
+                through_rows.append(through_model(book_id=book.id, category_id=cat.id))
+        through_model.objects.bulk_create(through_rows, batch_size=1000, ignore_conflicts=True)
+
+        return books
+
+    def _seed_comments(self, books, users, comments_per_book):
+        if not users:
+            self.stdout.write(self.style.WARNING("No users to attach comments to, skipping comments."))
+            return
+        self.stdout.write("Seeding comments...")
+        to_create = []
+        for book in books:
+            for _ in range(comments_per_book):
+                to_create.append(
+                    Comment(
+                        user=random.choice(users),
+                        book=book,
+                        rating=random.randint(1, 5),
+                        content=random.choice(COMMENT_SNIPPETS),
+                    )
                 )
-            except (User.DoesNotExist, Book.DoesNotExist):
-                continue
+        Comment.objects.bulk_create(to_create, batch_size=1000)
 
-        # 4. Seed Borrowed Records (model fields are `user` and `book`; borrowed_date
-        # has auto_now_add=True so it's always stamped as "now" on creation — we
-        # backfill the seed date with a queryset .update(), which bypasses save()
-        # and therefore skips auto_now_add)
-        for br_data in SEED_BORROWED:
-            try:
-                user = User.objects.get(username=br_data['username'])
-                book = Book.objects.get(title=br_data['book_title'])
+    def _seed_borrow_records(self, books, users, n_records):
+        if not users:
+            self.stdout.write(self.style.WARNING("No users to attach borrow records to, skipping."))
+            return
+        self.stdout.write(f"Seeding {n_records} borrow records...")
 
-                borrow, created = BorrowedBook.objects.get_or_create(
-                    user=user,
-                    book=book,
-                )
-                if created:
-                    b_date = datetime.strptime(br_data['date'], "%Y-%m-%d").date()
-                    BorrowedBook.objects.filter(pk=borrow.pk).update(borrowed_date=b_date)
-            except (User.DoesNotExist, Book.DoesNotExist):
-                continue
+        # avoid violating the "one active borrowing per user/book" constraint
+        # by tracking which (user, book) pairs are already active
+        active_pairs = set()
+        to_create = []       # BorrowedBook instances, ready for bulk_create
+        planned_dates = []   # (borrow_date, return_date) pairs, same order as to_create
+        attempts = 0
+        max_attempts = n_records * 5
 
-        self.stdout.write(self.style.SUCCESS('Successfully seeded all data!'))
+        while len(to_create) < n_records and attempts < max_attempts:
+            attempts += 1
+            user = random.choice(users)
+            book = random.choice(books)
+
+            is_returned = random.random() < 0.7  # 70% historical/returned, 30% active
+            pair_key = (user.id, book.id)
+
+            if not is_returned:
+                if pair_key in active_pairs:
+                    continue  # would violate unique-active-borrow constraint
+                active_pairs.add(pair_key)
+
+            borrow_date = random_date(2022, 2026)
+            return_date = None
+            if is_returned:
+                # return date must be >= borrow_date (matches the CheckConstraint)
+                return_date = borrow_date + timedelta(days=random.randint(1, 60))
+
+            # IMPORTANT: the real return_date is NOT written at insert time,
+            # even though we already know its planned value. Two things are
+            # fighting each other here:
+            #
+            # 1) bulk_create() triggers auto_now_add, which forces
+            #    borrow_date = today on insert. If we also inserted an old
+            #    planned return_date in that same row, it would briefly be
+            #    (borrow_date=today, return_date=<old date>), which fails
+            #    chk_return_after_borrow immediately, before bulk_update
+            #    ever runs.
+            #
+            # 2) The obvious fix -- insert every row with return_date=NULL,
+            #    then bulk_update the real values in afterward -- has its
+            #    own bug: while every row is momentarily NULL, if the SAME
+            #    (user, book) pair appears twice among the planned records
+            #    (e.g. one destined to end up "returned", one destined to
+            #    stay "active"), both rows look active at once and collide
+            #    on the one_active_borrowing_per_user_book unique index --
+            #    even though their FINAL states would never actually clash.
+            #
+            # Fix: only rows that will genuinely stay ACTIVE get NULL at
+            # insert time. Rows headed toward a "returned" final state get a
+            # harmless non-null placeholder (safely >= today) instead, so
+            # they never look active during the transient insert phase.
+            # bulk_update then overwrites both fields with their real values
+            # together, in one statement per row.
+            insert_placeholder = None if return_date is None else FAR_FUTURE_PLACEHOLDER
+            to_create.append(BorrowedBook(user=user, book=book, return_date=insert_placeholder))
+            planned_dates.append((borrow_date, return_date))
+
+        # Step 1: bulk_create with the placeholder/NULL scheme above.
+        # borrow_date still gets auto_now_add-stamped to today, and every
+        # placeholder we chose is >= today, so chk_return_after_borrow
+        # always passes here, and the active-pair uniqueness is preserved.
+        created = BorrowedBook.objects.bulk_create(to_create, batch_size=1000)
+
+        # Step 2: overwrite borrow_date (and re-set return_date alongside it,
+        # in the same UPDATE per row) via bulk_update. bulk_update issues raw
+        # SQL and does NOT re-trigger auto_now_add, so the values stick, and
+        # since both fields land in one UPDATE statement the row is never in
+        # an inconsistent state that the CHECK constraint could reject.
+        for obj, (borrow_date, return_date) in zip(created, planned_dates):
+            obj.borrow_date = borrow_date
+            obj.return_date = return_date
+        BorrowedBook.objects.bulk_update(
+            created, ['borrow_date', 'return_date'], batch_size=1000
+        )

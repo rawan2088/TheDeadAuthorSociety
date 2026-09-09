@@ -1,20 +1,40 @@
-# # authentication/views.py
-# import json
-# from django.http import JsonResponse
-# from django.views.decorators.csrf import csrf_exempt
-# # to make the user still logged in after a password change  
-# from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
-# from django.contrib.auth import get_user_model
+# users/views.py
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+# to make the user still logged in after a password change  
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+from django.contrib.auth import get_user_model
+from rest_framework import generics
+from .serializers import UserSerializer
+from rest_framework.permissions import IsAuthenticated
+# from .models import User
 
-# User = get_user_model()  # this is All.User, which has is_admin
+User = get_user_model()  # this is All.User, which has is_admin
 
 # # i put this in settings
 # # ADMIN_SECRET_CODE = "DEADAUTHOR2024"
 
-# from django.conf import settings
+from django.conf import settings
+from borrowed.models import BorrowedBook
+from borrowed.serializers import BorrowedBookSerializer
 
-# # the biggest change that happend to this file is that instead of falling back to the profile mode
-# # i made it fall back on the default one and then check if it is admin or normal user
+#  -------- Class views ---------
+
+class UserProfileAPIView(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    
+class UserBorrowedListAPIView(generics.ListAPIView):
+    queryset = BorrowedBook.objects.all()
+    serializer_class = BorrowedBookSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return super().get_queryset().filter(user=self.request.user)
+
+# the biggest change that happend to this file is that instead of falling back to the profile mode
+# i made it fall back on the default one and then check if it is admin or normal user
 # def user_to_dict(user):
 #     """Reusable helper so every view returns the same shape."""
 #     return {

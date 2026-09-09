@@ -1,9 +1,12 @@
+from datetime import timedelta
+
 from django.db import models
 
 # from books.management.commands.seed import User
 from books.models import Book
 # from users.models import User
 from django.conf import settings
+from django.utils import timezone
 
 # Create your models here.
 #! each user can have up to 5 active borrowings, we will enforce that in the view
@@ -15,8 +18,13 @@ class BorrowedBook(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='borrowed_books')
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='borrow_records')
     borrow_date = models.DateField(auto_now_add=True)
+    due_date = models.DateField()  # Assuming a 2-week borrowing period
     return_date = models.DateField(null=True, blank=True)
     
+    def save(self, *args, **kwargs):
+        if not self.due_date:
+            self.due_date = self.borrow_date + timedelta(days=14)
+        super().save(*args, **kwargs)
     
     # it is better to make a property of is_returned to check wether this specific one is returned or not rather than making another status field
     # why you ask?

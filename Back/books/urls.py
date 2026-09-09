@@ -1,18 +1,18 @@
 from django.urls import path
 from . import views
-from .views import (
-    books_view, 
-#     book_detail_view, 
-#     add_copy_view, 
-#     book_comments_view, 
-#     recent_books_view, 
-#     popular_books_view, book_search
-)
+# from .views import (
+#     # books_view, 
+# #     book_detail_view, 
+# #     add_copy_view, 
+# #     book_comments_view, 
+# #     recent_books_view, 
+# #     popular_books_view, book_search
+# )
 
 urlpatterns = [
     # # General Book List & Search
-    path('books/', books_view, name="books_list"),
-    
+    path('books/', views.BookListView.as_view(), name="books_list"),
+
     # path('books/search/', book_search, name='book_search'),
 
 
@@ -29,7 +29,7 @@ urlpatterns = [
     # path("books/authors/<str:author_name>/", views.book_by_author, name="book_by_author"),
 
     # # Individual Book Operations
-    # path('books/<int:id>/', book_detail_view, name="book_detail"),
+    path('books/<int:pk>/', views.BookDetailView.as_view(), name="book_detail"),
     # path('books/<int:id>/comments/', book_comments_view, name="book_comments"),
     # path('books/<int:id>/borrow/', views.borrow_book, name='borrow_book'),
     # path('books/<int:id>/add-copy/', add_copy_view, name="add_copy"),

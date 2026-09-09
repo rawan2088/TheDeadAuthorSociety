@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'users',
     'django_extensions',  # for shell_plus
     'rest_framework',  # for API
+    'silk',  # for API documentation
 ]
 
 MIDDLEWARE = [
@@ -54,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'silk.middleware.SilkyMiddleware',  # for API documentation
 ]
 
 CORS_ALLOWED_ORIGINS = [

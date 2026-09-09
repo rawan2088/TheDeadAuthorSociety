@@ -7,7 +7,7 @@ class BorrowedBookSerializer(serializers.ModelSerializer):
     # so the website itself would not provide us with these data at that point, so we need to make the user here explictly 
     # this is called unique_together problem
     
-    user = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
 
     # ! A golden rule of thump, if the data is not required to be changed manually, never make it not read only
     # the return date here should be readonly to not allow the user to manually change it, it should be changed only when the user returns the book, and that should be done in the view
@@ -18,6 +18,6 @@ class BorrowedBookSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = BorrowedBook
-        fields = ['id', 'user','book', 'borrow_date', 'return_date', 'is_returned']
-        read_only_fields = ['id', 'book', 'borrow_date', 'return_date']  # 'user' is also read-only, but we set it explicitly above
+        fields = ['id', 'user','book', 'borrow_date','due_date', 'return_date', 'is_returned']
+        read_only_fields = ['id', 'book', 'borrow_date','due_date', 'return_date']  # 'user' is also read-only, but we set it explicitly above
 

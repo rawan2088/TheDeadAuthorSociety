@@ -50,23 +50,33 @@ class Book(models.Model):
     
     
     # availableCopies = models.PositiveIntegerField(default=1)
-    @property 
-    def available_copies (self):
+    
+    # when to use a property and when to use a method
+    # The logic is a fact about the model instance itself — it doesn't depend on the request, the serializer context, or which serializer is being used.
+    # You want it usable outside serializers too: in the admin, in shell, in other views, in templates.
+    # It should show up identically no matter which serializer exposes it.
+    
+    
+    #!!! this is extremly heavy query, we should do it database level
+    # @property 
+    # def available_copies (self):
         # ! you cannot use a property in filter, because filter is calculated at the database level while the property is python level
         # return self.total_copies - self.borrowers.filter(is_returned = False).count() 
-        return self.total_copies - self.borrow_records.filter(return_date__isnull = True).count() 
+        # return self.total_copies - self.borrow_records.filter(return_date__isnull = True).count() 
     #again get away from duplicated entries
     
-    @property
-    def is_available(self):
-        return self.available_copies > 0
+    
+    # for optimization purposes, we will do this in the serializer
+    # @property
+    # def is_available(self):
+    #     return self.available_copies > 0
     
     @property 
     def avg_rating(self):
         comments = self.comments.all()
         if not comments:
             return None
-        return sum(comment.rating for comment in comments) / len(comments)
+        return round(sum(comment.rating for comment in comments) / len(comments), 2)
 
 
     # # adds a property that shouldn't be violated
