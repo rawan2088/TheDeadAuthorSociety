@@ -19,3 +19,5 @@ class CommentAdmin(admin.ModelAdmin):
     list_display = ('book', 'user', 'content', 'created_at')
     search_fields = ('book__title', 'user__username', 'content')
     list_filter = ('created_at',) 
+    
+# @admin.register registers the class automatically

@@ -1,17 +1,10 @@
 from django.urls import path
 from . import views
-# from .views import (
-#     # books_view, 
-# #     book_detail_view, 
-# #     add_copy_view, 
-# #     book_comments_view, 
-# #     recent_books_view, 
-# #     popular_books_view, book_search
-# )
+
 
 urlpatterns = [
     # # General Book List & Search
-    path('books/', views.BookListView.as_view(), name="books_list"),
+    path('books/', views.BookListAPIView.as_view(), name="books_list"), 
 
     # path('books/search/', book_search, name='book_search'),
 
@@ -21,16 +14,16 @@ urlpatterns = [
     # path('books/popular/', popular_books_view, name="popular_books"),
     
     # #! Category-Based
-    # path("books/categories/", views.book_by_category, name="book_by_category"),
-    # path("books/categories/<str:category_name>/", views.book_by_category, name="book_by_category"),
+    path("categories/", views.CategoryAPIView.as_view(), name="book_by_category"), # get, post, update, delete
+    # path("categories/<int:pk>/", views.book_by_category, name="book_by_category"),
 
     # #! Author-Based
     # path("books/authors/", views.book_by_author, name="book_by_author"),
     # path("books/authors/<str:author_name>/", views.book_by_author, name="book_by_author"),
 
     # # Individual Book Operations
-    path('books/<int:pk>/', views.BookDetailView.as_view(), name="book_detail"),
-    # path('books/<int:id>/comments/', book_comments_view, name="book_comments"),
+    path('books/<int:pk>/', views.BookDetailAPIView.as_view(), name="book_detail"), #get list of books, creates a book
+    path('books/<int:pk>/comments/', views.CommentCreateAPIView.as_view(), name="book_comments"), # create a comment
     # path('books/<int:id>/borrow/', views.borrow_book, name='borrow_book'),
     # path('books/<int:id>/add-copy/', add_copy_view, name="add_copy"),
 

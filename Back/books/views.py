@@ -11,12 +11,16 @@ from django.shortcuts import get_object_or_404, render
 from .models import Book, Comment, Category
 
 from django.http import JsonResponse
-from .serializers import BookSerializer, AdminBookSerializer, CommentSerializer, CategorySerializer
+from .serializers import BookSerializer, AdminBookSerializer, CommentSerializer, CategorySerializer, CommentCreateSerializer
 from .models import Book, Comment, Category
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import generics
+from rest_framework import generics, status
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser, IsAuthenticatedOrReadOnly
+
+from rest_framework.views import APIView
+
 
 # # helper funcitons
 # def get_image_url(request, book):
@@ -29,9 +33,24 @@ from rest_framework import generics
 # ------- Class based Views --------
 
 # -- Book views --
-class BookListView(generics.ListAPIView ):
+
+AnnotatedBooks= Book.objects.all().annotate(available_copies=F('total_copies') - Count('borrow_records', filter=Q(borrow_records__return_date__isnull=True))).prefetch_related('categories', 'comments', 'borrow_records')
+
+
+# uses the list mixin and create mixin
+# * views all books for everyone, and creates a new book if admin
+class BookListAPIView(generics.ListCreateAPIView ):
     queryset = Book.objects.all().annotate(available_copies=F('total_copies') - Count('borrow_records', filter=Q(borrow_records__return_date__isnull=True))).prefetch_related('categories', 'comments', 'borrow_records')
     serializer_class = AdminBookSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    
+    # def post(self, request, *args, **kwargs):
+    #     if not request.user.is_authenticated or not request.user.is_admin:
+    #         return Response({'error': 'Not authorized'}, status=status.HTTP_403_FORBIDDEN)
+        
+    #     return super().post(request, *args, **kwargs)
+    
+        
     
     
 # start learning permissions here, there are three different views for a book details page
@@ -52,93 +71,85 @@ class BookListView(generics.ListAPIView ):
 
 # annotation happens in the query set and it is far more efficint than property
 # AnnotatedBook = Book.objects.annotate(available_copies blablabla=Count('borrow_records', filter=Q(borrow_records__return_date__isnull=True))).prefetch_related('categories', 'comments', 'borrow_records')
-class BookDetailView(generics.RetrieveAPIView):
+
+# * views the book for everyone, with extra details for admin.
+class BookDetailAPIView(APIView):
     # queryset = get_object_or_404(Book, id=pk) dont need to do it, takes the object auto
-    queryset = Book.objects.all().annotate(available_copies=F('total_copies') - Count('borrow_records', filter=Q(borrow_records__return_date__isnull=True))).prefetch_related('categories', 'comments', 'borrow_records')
-    serializer_class = AdminBookSerializer
     
+    
+    def get(self, request, id):
+        # annotation doesn't work on single instances, it works on querysets
+        book = get_object_or_404(AnnotatedBooks, id=id)
+        
+        if not request.user.is_admin:
+            serializer = BookSerializer(book)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+            
+        serializer = AdminBookSerializer(book)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    # def put(self, request):
+    #     data = json.loads(request.body)
+    #     serializer = Ad
+    #     return JsonResponse({'message': 'Book updated'}, status=200)
+        
+    # def delete(self, request):
+    #     book.delete()
+    #     return JsonResponse({'message': 'Book deleted'}, status=200)
+    
+
+# * views all comments for a book, 
+class CommentCreateAPIView(generics.ListCreateAPIView):
+    # should be added
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    
+    
+    # * ------ Both are valid ways to set the authentication to only get unless authenticated
+        #** permission_classes = [IsAuthenticatedOrReadOnly]
+    
+    #* the ultimate way to set customized permissions
+    def get_permissions(self):
+        self.permission_classes = [AllowAny]
+        if self.request.method == 'POST':
+            self.permission_classes = [IsAuthenticated]
+            
+        return super().get_permissions()
+    
+    # * third way
+        # def post(self, request, *args, **kwargs):
+        #     if not request.user.is_authenticated:
+        #         return Response({'error': 'Not authorized'}, status=status.HTTP_403_FORBIDDEN)
+            
+        #     return super().post(request, *args, **kwargs)
+    
+    def get_queryset(self):
+        qs = super.get_queryset()
+        
+        # both are valid, but the second indicates the FK
+        # return Comment.objects.filter(book__id = self.kwargs['pk'])
+        return qs.filter(book_id = self.kwargs['pk'])
+    
+    
+    def perform_create(self, serializer):
+        # if you want to use book = , you have to pass a book object.
+        # but django gives you the ability to do it using book_id to only pass the id
+        serializer.save(user=self.request.user, book_id=self.kwargs['pk'])
+
+    # if request.method == 'GET':
+    #     comments = Comment.objects.filter(bookId=book)
+    #     data = [{'username': c.username, 'rating': c.rating, 
+    #              'content': c.content} for c in comments]
+    #     return JsonResponse(data, safe=False)
+    
+
+class CategoryAPIView(APIView):
+    queryset = Category.objects.all()
+    serializer = CategorySerializer
+
 
 # --- BOOK VIEWS ---
 
-
-# @csrf_exempt
-# @api_view(['GET', 'POST'])
-# def books_view(request):
-#     if request.method == "GET":
-#         # here we should do the optimization
-#         # since it make database lever queries here
-#         # more optimization here, it is better to get the active_borrows here only then calculate the available copies, since it is more efficent to do it in the database level
-#         # books = AnnotatedBook.annotate(active_borrows=Count('borrow_records', filter=Q(borrow_records__return_date__isnull=True))).prefetch_related('categories', 'comments', 'borrow_records')
-#         books = Book.objects.all().annotate(active_borrows=Count('borrow_records', filter=Q(borrow_records__return_date__isnull=True))).prefetch_related('categories', 'comments', 'borrow_records')
-#         # serializer = BookSerializer(books, many=True)
-#         serializer = AdminBookSerializer(books, many=True)
-        
-#         return Response(serializer.data)
-        
-        # ! instead of this we can use api_view, which is neater to see
-        # return JsonResponse(
-        #     {  'data':
-        #         serializer.data
-        #         }, safe=False)
-    
-        # ! the old way of doing it, which is more manual and less neat
-        # data = [serialize_book(request, b) for b in books]
-        # return JsonResponse(data, safe=False)
-    
-    # elif request.method == 'POST':
-    #     if not request.user.is_authenticated or not request.user.is_admin:
-    #         return JsonResponse({'error': 'Not authorized'}, status=403)
-    #     data = json.loads(request.body)
-        
-    #     # Resolve category object if provided
-    #     cat_name = data.get('category')
-    #     category_obj = None
-    #     if cat_name:
-    #         category_obj, _ = Category.objects.get_or_create(name=cat_name)
-
-    #     Book.objects.create(
-    #         title=data.get('title', ''),
-    #         author=data.get('author', ''),
-    #         category=category_obj,
-    #         description=data.get('description', ''),
-    #         totalCopies=data.get('totalCopies', 1),
-    #         availableCopies=data.get('totalCopies', 1),
-    #         published_date=data.get('published_date', '1900-01-01'),
-    #     )
-    #     return JsonResponse({'message': 'Book created'}, status=201)
-
-# @csrf_exempt
-# def book_detail_view(request, id):
-    #// try:
-        #// book = Book.objects.get(id=id)
-    #// except Book.DoesNotExist:
-        #// return JsonResponse({'error': 'Book not found'}, status=404)
-        
-    #* the better way
-    # book = get_object_or_404(Book, id=id)
-    # serializer = BookSerializer(book)
-    
-    # if request.method == 'GET':
-        # return Response(serializer.data)
-        # // return JsonResponse(serialize_book(request, book))
-    
-    
-#     if not request.user.is_authenticated or not request.user.is_admin:
-#         return JsonResponse({'error': 'Not authorized'}, status=403)
-
-#     if request.method == 'PUT':
-#         data = json.loads(request.body)
-#         book.title = data.get('title', book.title)
-#         book.author = data.get('author', book.author)
-#         book.description = data.get('description', book.description)
-#         book.totalCopies = data.get('totalCopies', book.totalCopies)
-#         book.availableCopies = data.get('availableCopies', book.availableCopies)
-#         book.save()
-#         return JsonResponse({'message': 'Book updated'}, status=200)
-    
-#     elif request.method == 'DELETE':
-#         book.delete()
-#         return JsonResponse({'message': 'Book deleted'}, status=200)
 
 # @csrf_exempt
 # def add_copy_view(request, id):
@@ -243,32 +254,7 @@ class BookDetailView(generics.RetrieveAPIView):
 #     except BorrowedBook.DoesNotExist:
 #         return JsonResponse({'error': 'Record not found'}, status=404)
     
-# # Add to All/views.py:
-# @csrf_exempt
-# def book_comments_view(request, id):
-#     try:
-#         book = Book.objects.get(id=id)
-#     except Book.DoesNotExist:
-#         return JsonResponse({'error': 'Book not found'}, status=404)
 
-#     if request.method == 'GET':
-#         comments = Comment.objects.filter(bookId=book)
-#         data = [{'username': c.username, 'rating': c.rating, 
-#                  'content': c.content} for c in comments]
-#         return JsonResponse(data, safe=False)
-
-#     if request.method == 'POST':
-#         if not request.user.is_authenticated:
-#             return JsonResponse({'error': 'Login to post a comment.'}, status=401)
-#         body = json.loads(request.body)
-#         Comment.objects.create(
-#             userId=request.user,
-#             bookId=book,
-#             username=request.user.username,
-#             rating=body.get('rating', 5),
-#             content=body.get('content', ''),
-#         )
-#         return JsonResponse({'message': 'Comment added'}, status=201)
 
 # # --- PAGE RENDERING ---
 

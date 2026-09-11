@@ -28,9 +28,10 @@ class CategorySerializer(serializers.ModelSerializer):
 # we don't have to make a serializer for book list, in the view, we would use each single book serialzier and return a list of them
 class BookSerializer(serializers.ModelSerializer):
     categories = CategorySerializer(many=True, read_only=True)
-    is_available = serializers.SerializerMethodField()
+    is_available = serializers.IntegerField()
     
     def get_is_available(self, obj):
+        # available copies is calculated in the annotated view
         return obj.available_copies > 0
 
     class Meta:
@@ -38,14 +39,19 @@ class BookSerializer(serializers.ModelSerializer):
         # already implicitly read only 
         fields = ['id', 'title', 'author', 'published_date', 'description', 'image', 'categories', 'is_available', 'avg_rating']
         # all is only valid for fields
-        # read_only_fields = ['id', 'title', 'author', 'published_date', 'description', 'image', 'categories', 'is_available', 'avg_rating']
+        read_only_fields = ['id', 'title', 'author', 'published_date', 'description', 'image', 'categories', 'is_available', 'avg_rating']
         # read_only_fields = ['__all__'] // no
         # fields = ['__all__']
         
         
 class AdminBookSerializer(serializers.ModelSerializer):
     # we can use a primary key related field, where it would only provide us with the primary keys of the categories
-    categories = CategorySerializer(many=True)
+    
+    
+    # TEMP
+    categories = serializers.CharField()
+    # categories = CategorySerializer(many=True)
+    
     avg_rating = serializers.ReadOnlyField()
     borrow_records = BorrowedBookSerializer(many=True, read_only=True)
     
@@ -58,9 +64,13 @@ class AdminBookSerializer(serializers.ModelSerializer):
     #         active = obj.borrow_records.filter(return_date__isnull=True).count()
     #     return obj.total_copies - active
 
-    is_available = serializers.SerializerMethodField()
-    def get_is_available(self, obj):
-        return getattr(obj, 'available_copies', None) > 0
+    is_available = serializers.BooleanField(read_only=True, default=True )
+    # def get_is_available(self, obj):
+    #     av_co = getattr(obj, 'available_copies', None)
+    #     if not av_co is None:
+    #         return  av_co > 0
+        
+    #     return False
     
     
     class Meta:
@@ -91,3 +101,11 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = ['id', 'user', 'book', 'content', 'rating', 'created_at']
         read_only_fields = ['id', 'user', 'book', 'created_at'] 
+
+class CommentCreateSerializer(serializers.ModelSerializer):
+    # the user and book fields 
+
+    class Meta:
+        model = Comment
+        fields = ['user', 'book', 'content', 'rating']
+        read_only_fields = ['user', 'book', 'created_at']
