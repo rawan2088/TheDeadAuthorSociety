@@ -1,28 +1,36 @@
 import json
+
+# this is how we access the database table
+from django.db import IntegrityError, transaction
+from django.db.models import Count, F, Q
 # Returns data formatted as json instead of returning an HTML page. This is what APIs use
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, render
+from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 # CSRF is protection that blocks certain requests
 from django.views.decorators.csrf import csrf_exempt
-# this is how we access the database table
-from django.db import transaction
-from django.db.models import F, Q, Count
-from django.utils import timezone
-from django.shortcuts import get_object_or_404, render
-from .models import Book, Comment, Category
-
-from django.http import JsonResponse
-from .serializers import BookSerializer, AdminBookSerializer, CommentSerializer, CategorySerializer, CommentCreateSerializer
-from .models import Book, Comment, Category
-
-from rest_framework.decorators import api_view
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, generics, status, viewsets
+from rest_framework.decorators import action, api_view
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import (AllowAny, IsAdminUser, IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
-from rest_framework import generics, status
-from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser, IsAuthenticatedOrReadOnly
-
 from rest_framework.views import APIView
 
+from books.filters import BookListFilter
+from borrowed.models import BorrowedBook
+from borrowed.serializers import BorrowedBookSerializer
 
-# # helper funcitons
+from .models import Book, Category, Comment
+from .serializers import (AdminBookSerializer, BookSerializer,
+                          CategoryDetailSerializer, CategorySerializer,
+                          CommentCreateSerializer, CommentSerializer)
+from .tasks import send_order_confirmation_email
+
+# # helper function 
 # def get_image_url(request, book):
 #     if book.image:
 #         return request.build_absolute_uri(book.image.url)
@@ -39,64 +47,193 @@ AnnotatedBooks= Book.objects.all().annotate(available_copies=F('total_copies') -
 
 # uses the list mixin and create mixin
 # * views all books for everyone, and creates a new book if admin
-class BookListAPIView(generics.ListCreateAPIView ):
-    queryset = Book.objects.all().annotate(available_copies=F('total_copies') - Count('borrow_records', filter=Q(borrow_records__return_date__isnull=True))).prefetch_related('categories', 'comments', 'borrow_records')
-    serializer_class = AdminBookSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+# class BookListAPIView(generics.ListCreateAPIView ):
+#     queryset = AnnotatedBooks
+#     serializer_class = AdminBookSerializer
+#     permission_classes = [IsAuthenticatedOrReadOnly]
+#     # this only accepts equality based filter
+#     # filter_backends = ['title', 'author', 'published_date', 'categories', 'is_available', 'avg_rating']
+#     filterset_class = BookListFilter
+#     filter_backends = [filters.SearchFilter, DjangoFilterBackend, filters.OrderingFilter]
     
-    # def post(self, request, *args, **kwargs):
-    #     if not request.user.is_authenticated or not request.user.is_admin:
-    #         return Response({'error': 'Not authorized'}, status=status.HTTP_403_FORBIDDEN)
+#     # works as case insensitive fitlering
+#     # * of we did '=title' it would return exact match
+#     search_fields = ['title', 'description']
+#     ordering_fields = ['title'] 
+#     # ! when you run pagination on an unordered set, it gets back an error, you can just add order_by to the main queryset
+    
+#     # * we can add per view pagination
+#     # from rest_framework.pagination import PageNumberPagination
+#     # pagination_class = PageNumberPagination
+#     # pagination_class.page_size = 5
+    
+#     # pagequeryparam
+    
+#     # you have to make the first one to use the rest
+#     pagination_class = PageNumberPagination
+#     pagination_class.page_size_query_param = 'page_size'
+#     pagination_class.max_page_size = 50
+    
+#     # ! pagination_class = none
+
+    
+#     # def post(self, request, *args, **kwargs):
+#     #     if not request.user.is_authenticated or not request.user.is_admin:
+#     #         return Response({'error': 'Not authorized'}, status=status.HTTP_403_FORBIDDEN)
         
-    #     return super().post(request, *args, **kwargs)
+#     #     return super().post(request, *args, **kwargs)
     
         
     
     
-# start learning permissions here, there are three different views for a book details page
-# -- Guest--
-# would  view the basic book details and comments of other people only
+# # start learning permissions here, there are three different views for a book details page
+# # -- Guest--
+# # would  view the basic book details and comments of other people only
 
-# -- User --
-# I should keep the borrowing btn available but with a warning sign if the user is not authenticated
+# # -- User --
+# # I should keep the borrowing btn available but with a warning sign if the user is not authenticated
 
-# -- Admin --
-# added info of available books, and total
-# and can edit or delete a book
+# # -- Admin --
+# # added info of available books, and total
+# # and can edit or delete a book
 
-# there are two layers for this, first in the frontend we wouldn't show these data at all
-# but here, even if the request happens we would not allow it
+# # there are two layers for this, first in the frontend we wouldn't show these data at all
+# # but here, even if the request happens we would not allow it
 
-# retrieve a book, edit a book, delete a book
+# # retrieve a book, edit a book, delete a book
 
-# annotation happens in the query set and it is far more efficint than property
-# AnnotatedBook = Book.objects.annotate(available_copies blablabla=Count('borrow_records', filter=Q(borrow_records__return_date__isnull=True))).prefetch_related('categories', 'comments', 'borrow_records')
+# # annotation happens in the query set and it is far more efficint than property
+# # AnnotatedBook = Book.objects.annotate(available_copies blablabla=Count('borrow_records', filter=Q(borrow_records__return_date__isnull=True))).prefetch_related('categories', 'comments', 'borrow_records')
 
-# * views the book for everyone, with extra details for admin.
-class BookDetailAPIView(APIView):
-    # queryset = get_object_or_404(Book, id=pk) dont need to do it, takes the object auto
+# # * views the book for everyone, with extra details for admin.
+# class BookDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+#     # queryset = get_object_or_404(Book, id=pk) dont need to do it, takes the object auto
+#     queryset = AnnotatedBooks
+#     serializer_class = AdminBookSerializer
     
-    
-    def get(self, request, id):
-        # annotation doesn't work on single instances, it works on querysets
-        book = get_object_or_404(AnnotatedBooks, id=id)
+#     def get_permissions(self):
+#         self.permission_classes = [AllowAny]
+#         if self.request.method in ['PUT', 'PATCH', 'DELETE']:
+#             self.permission_classes = [IsAdminUser]
         
-        if not request.user.is_admin:
-            serializer = BookSerializer(book)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+#         return super().get_permissions()
+        
+#     def get_serializer_class(self):
+#         if self.request.user.is_admin:
+#             return AdminBookSerializer
+#         return BookSerializer
+    
+#     # def get(self, request, id):
+#     #     # annotation doesn't work on single instances, it works on querysets
+#     #     book = get_object_or_404(AnnotatedBooks, id=id)
+        
+#     #     if not request.user.is_admin:
+#     #         serializer = BookSerializer(book)
+#     #         return Response(serializer.data, status=status.HTTP_200_OK)
             
-        serializer = AdminBookSerializer(book)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+#     #     serializer = AdminBookSerializer(book)
+#     #     return Response(serializer.data, status=status.HTTP_200_OK)
+
     
-    # def put(self, request):
-    #     data = json.loads(request.body)
-    #     serializer = Ad
-    #     return JsonResponse({'message': 'Book updated'}, status=200)
+#     # def put(self, request):
+#     #     data = json.loads(request.body)
+#     #     serializer = Ad
+#     #     return JsonResponse({'message': 'Book updated'}, status=200)
         
-    # def delete(self, request):
-    #     book.delete()
-    #     return JsonResponse({'message': 'Book deleted'}, status=200)
+#     # def delete(self, request):
+#     #     book.delete()
+#     #     return JsonResponse({'message': 'Book deleted'}, status=200)
     
+
+
+MAX_ACTIVE_RECORDS = 5
+class BookViewSet(viewsets.ModelViewSet):
+    queryset = AnnotatedBooks
+    serializer_class = AdminBookSerializer
+    # permission_classes = [IsAuthenticatedOrReadOnly]
+    filterset_class = BookListFilter
+    filter_backends = [filters.SearchFilter, DjangoFilterBackend, filters.OrderingFilter]
+    
+    search_fields = ['title', 'description']
+    ordering_fields = ['title'] 
+    
+    pagination_class = PageNumberPagination
+    pagination_class.page_size_query_param = 'page_size'
+    pagination_class.max_page_size = 50
+
+
+    @method_decorator(cache_page(60* 15, key_prefix='book_list'))
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    def get_queryset(self):
+        import time
+        time.sleep(2)
+        return super().get_queryset()
+
+    def get_permissions(self):
+        # self.permission_classes = [IsAuthenticatedOrReadOnly]
+        if self.request.method in ['PUT', 'PATCH', 'DELETE']:
+            permission_classes = [IsAdminUser]
+        else:
+            permission_classes = [IsAuthenticatedOrReadOnly]
+        
+        return [permission() for permission in permission_classes]
+        
+    def get_serializer_class(self):
+        # adding the is authenticated is important since the anonymouse user doesn't have the is_admin attribute
+        if self.request.user.is_authenticated and self.request.user.is_admin:
+            return AdminBookSerializer
+        return BookSerializer
+    
+    @action(
+        detail=True,
+        methods=['post'],
+        permission_classes=[IsAuthenticated]
+    )
+    def borrow(self, request, pk=None):
+        book = self.get_object()
+        user = request.user
+        borrowedBooks = BorrowedBook.objects.all()
+        current_active_records = borrowedBooks.filter(
+            user=user,
+            return_date__isnull=True,
+        ).count()
+        
+        if current_active_records >= MAX_ACTIVE_RECORDS:
+            return Response({'detail': 'You can not borrow more than 5 books at a time'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        available_copies = book.total_copies -  book.borrow_records.filter(return_date__isnull=True).count()
+            
+        if available_copies <= 0:
+            return Response({'detail': 'This book is currently out of stock, retry again later this week.'},status=status.HTTP_400_BAD_REQUEST )
+            
+            
+        # this is already done in the borrowed model
+        # is_borrowed = borrowedBooks.filter(user=user, book=book, return_date__isnull=False).count() > 0
+        
+        # if is_borrowed:
+        #     return Response(
+        #         {'detail': 'You already have this book borrowed.'}, status=status.HTTP_400_BAD_REQUEST
+        #     )
+        
+        try:
+            # todo: learn transactions
+            with transaction.atomic():
+                record = BorrowedBook.objects.create(user=user, book=book)
+        except IntegrityError: # if the user and book 
+            return Response(
+                {'detail': 'You already have this book borrowed.'}, status=status.HTTP_400_BAD_REQUEST
+            )
+            
+        # the delay function makes the task asynchronous
+        send_order_confirmation_email.delay(record.id, self.request.user.email)
+
+        return Response(BorrowedBookSerializer(record).data, status=status.HTTP_201_CREATED)
+    
+    
+
+
 
 # * views all comments for a book, 
 class CommentCreateAPIView(generics.ListCreateAPIView):
@@ -124,7 +261,7 @@ class CommentCreateAPIView(generics.ListCreateAPIView):
         #     return super().post(request, *args, **kwargs)
     
     def get_queryset(self):
-        qs = super.get_queryset()
+        qs = super().get_queryset()
         
         # both are valid, but the second indicates the FK
         # return Comment.objects.filter(book__id = self.kwargs['pk'])
@@ -143,9 +280,30 @@ class CommentCreateAPIView(generics.ListCreateAPIView):
     #     return JsonResponse(data, safe=False)
     
 
-class CategoryAPIView(APIView):
-    queryset = Category.objects.all()
-    serializer = CategorySerializer
+# class CategoryAPIView(generics.ListCreateAPIView):
+#     queryset = Category.objects.all()
+#     serializer_class = CategorySerializer
+#     filter_backends = [filters.OrderingFilter]
+#     ordering_fields = ['name']
+    
+    
+
+# class CategoryDetailAPIView(generics.RetrieveAPIView):
+#     queryset = Category.objects.prefetch_related('books__borrow_records').all()
+#     serializer_class = CategoryDetailSerializer
+
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.prefetch_related('books__borrow_records').all()
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['name']
+    
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return CategorySerializer
+        elif self.action == 'retrieve':
+            return CategoryDetailSerializer
+        return CategorySerializer
 
 
 # --- BOOK VIEWS ---

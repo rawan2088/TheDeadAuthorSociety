@@ -9,10 +9,20 @@ Content-Type': 'application/json
 ###
 
 
-POST http://127.0.0.1:8000/api/token/refresh/
-Content-Type': 'application/json
+POST http://127.0.0.1:8000/api/token/
+Content-Type: application/json
 
 
 {
-
+    "username": "seeduser_2",
+    "password": "testpass123"
 }
+
+
+###
+
+Post http://127.0.0.1:8000/api/books/3/borrow/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzkwNTE2NTc5LCJpYXQiOjE3OTA1MTI5NzksImp0aSI6ImE0Y2QwNjc0YzQyMTQ5ODBiYTYxNzA5ZTk5ZGIzNmIwIiwidXNlcl9pZCI6IjMifQ.RHsMiBNcVkoJ-3fEbeKDpDL7ODXu0TWXQBIk7mDdZRE
+
+

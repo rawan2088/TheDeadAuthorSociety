@@ -2,10 +2,11 @@
 from django.urls import path
 from . import views
 
+# todo: reset password
 urlpatterns = [
-    # path('auth/signup/',        views.signup_view,         name='signup'),
-    # path('auth/login/',         views.login_view,           name='login'),
-    # path('auth/logout/',        views.logout_view,          name='logout'),
+    path('auth/signup/',        views.UserCreateAPIView.as_view(),         name='signup'),
+    # path('auth/login/',         views.login_view,           name='login'), # no longer useful
+    # path('auth/logout/',        views.UserLogoutAPIView.as_view(),          name='logout'), # unnecessary
     
     # path('auth/refresh/',        views.logout_view,          name='logout'),
     

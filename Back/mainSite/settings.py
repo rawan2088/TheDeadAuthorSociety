@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,12 +39,21 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    
     'books',
     'borrowed',
     'users',
+    
+    
     'django_extensions',  # for shell_plus
     'rest_framework',  # for API
-    'silk',  # for API documentation
+    'rest_framework_simplejwt.token_blacklist',
+    'silk', # for testing the api response time
+    'drf_spectacular',# for API documentation
+    'django_filters'
+    
+
 ]
 
 MIDDLEWARE = [
@@ -144,9 +154,56 @@ ADMIN_SECRET_CODE = "DEADAUTHOR2024"  # secret code for admin signup
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        
         # 'rest_framework.authentication.BasicAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-        ]
+        ],
+    
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 10,
+    
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/day',
+        'user': '1000/day'
+    
+    }
+
+
 }
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'TheDeadPoetSociety API',
+    'DESCRIPTION': 'Main API for our library.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # OTHER SETTINGS
+}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6370/1",
+        "OPTIONS":{
+            "CLIENT_CLASS": "django_redis.client.DefaultClient"
+        }
+    }
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1)
+}
+
+CELERY_BROKER_URL = "redis://127.0.0.1:6370/1"
+
+# we will not use it here, but it is for making the celery backend stored in redis
+CELERY_RESULT_BACKEND = "redis://127.0.0.1:6370/1"
+
+EMAIL_BACKEND ="django.core.mail.backends.console.EmailBackend"

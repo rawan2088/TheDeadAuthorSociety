@@ -17,13 +17,17 @@ class BorrowedBook(models.Model):
     # if a user is deleted, we would keep the borrowing in history
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='borrowed_books')
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='borrow_records')
-    borrow_date = models.DateField(auto_now_add=True)
+    # borrow_date = models.DateField(auto_now_add=True)
+    borrow_date = models.DateField(default=timezone.localdate)
     due_date = models.DateField()  # Assuming a 2-week borrowing period
     return_date = models.DateField(null=True, blank=True)
     
     def save(self, *args, **kwargs):
-        if not self.due_date:
+        if self.due_date is None:
             self.due_date = self.borrow_date + timedelta(days=14)
+            # this made an error because the borrow date is not added before this function
+            # self.due_date = self.borrow_date + timedelta(days=14)
+            # self.due_date = timezone.localdate()  + timedelta(days=14)
         super().save(*args, **kwargs)
     
     # it is better to make a property of is_returned to check wether this specific one is returned or not rather than making another status field

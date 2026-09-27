@@ -25,6 +25,7 @@ class Book(models.Model):
         blank=True, 
         null=True
     )
+    date_added= models.DateTimeField(auto_now_add=True)
     
     # a book can belong to multiple categories
     #* there is something called thorough, which we can use with many to many relationships to make the intermediate table.

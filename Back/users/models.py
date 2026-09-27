@@ -8,6 +8,8 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
+    email = models.EmailField(unique=True)
+
     is_admin = models.BooleanField(default=False)
     
     #* related_name is the name Django gives you for accessing the related objects from the other side of a relationship.

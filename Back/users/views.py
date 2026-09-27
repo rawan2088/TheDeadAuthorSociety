@@ -1,14 +1,19 @@
 # users/views.py
 import json
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+# from django.views.decorators.csrf import csrf_exempt
 # to make the user still logged in after a password change  
-from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+# from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth import get_user_model
-from rest_framework import generics
-from .serializers import UserSerializer
+from rest_framework import generics, status
+from rest_framework.response import Response
+from .serializers import UserSerializer, UserSignupSerializer
 from rest_framework.permissions import IsAuthenticated
 # from .models import User
+from rest_framework.views import APIView
+
+from rest_framework_simplejwt.tokens import RefreshToken
+
 
 User = get_user_model()  # this is All.User, which has is_admin
 
@@ -33,18 +38,26 @@ class UserBorrowedListAPIView(generics.ListAPIView):
     def get_queryset(self):
         return super().get_queryset().filter(user=self.request.user)
 
+class UserCreateAPIView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSignupSerializer
+    
+    
+# ! unnecessary
+# class UserLogoutAPIView(APIView):
+#     permission_classes = [IsAuthenticated]
+    
+#     def Post(self, request):
+#         try:
+#             token = RefreshToken(request.data['refresh'])
+#             token.blacklist()
+#             return Response(status = status.HTTP_205_RESET_CONTENT)
+#         except Exception:
+#             return Response(status = status.HTTP_400_BAD_REQUEST)
+            
+
 # the biggest change that happend to this file is that instead of falling back to the profile mode
 # i made it fall back on the default one and then check if it is admin or normal user
-# def user_to_dict(user):
-#     """Reusable helper so every view returns the same shape."""
-#     return {
-#         'id':        user.id,
-#         'username':  user.username,
-#         'firstName': user.first_name,
-#         'lastName':  user.last_name,
-#         'email':     user.email,
-#         'role':      'admin' if user.is_admin else 'user',  # frontend still gets "role"
-#     }
 
 # @csrf_exempt
 # def signup_view(request):

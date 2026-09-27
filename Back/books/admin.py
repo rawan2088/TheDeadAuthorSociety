@@ -21,3 +21,4 @@ class CommentAdmin(admin.ModelAdmin):
     list_filter = ('created_at',) 
     
 # @admin.register registers the class automatically
+
